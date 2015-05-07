@@ -1,7 +1,6 @@
 <div class="wrap">
     <script src="<?php echo plugin_dir_url(__FILE__) . 'js/jquery.arcticmodal-0.3.min.js'?>" type="text/javascript"></script>
     <link rel='stylesheet'  href='<?php echo plugin_dir_url(__FILE__) . 'js/jquery.arcticmodal-0.3.css'?>' type='text/css' media='all' />
-    <a href="<?php echo admin_url( 'admin-post.php?action=wpadm_delete_pub_key' )?>">delete WPAdm key</a><br />
     <h2>DropBox Full Backup (files+database) bei WPAdm</h2>
     <?php if (!empty($error)) {
             echo '<div class="error" style="text-align: center; color: red; font-weight:bold;">
