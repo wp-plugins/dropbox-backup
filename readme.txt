@@ -5,7 +5,7 @@ Donate link: http://www.wpadm.com/donate
 URI: http://www.wpadm.com/dropbox-backup
 Tags: DropBox, Backup, Dropbox Backup
 Requires at least: 4.0.0
-Tested up to: 4.2.1
+Tested up to: 4.2.2
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
