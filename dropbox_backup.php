@@ -21,7 +21,7 @@ if ( !get_option('wpadm_pub_key')/* && (is_admin())*/) {
 if (!function_exists('wpadm_full_backup_dropbox_run')) {
     function wpadm_full_backup_dropbox_run()
     {
-        wpadm_run('full_backup_dropbox', dirname(__FILE__));
+        wpadm_run('dropbox-backup', dirname(__FILE__));
     }
 }
 
