@@ -52,7 +52,7 @@ if (!class_exists('WPadm_Method_Send_To_Dropbox')) {
                 $errors[] = 'Dropbox: '.$this->queue->getError();
             }
             WPAdm_Core::log('Закончили копирование файлов на Dropbox');
-            if (!empty($errors)) {
+            if (count($errors) > 0) {
                 $this->result->setError(implode("\n", $errors));
                 $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
             }
