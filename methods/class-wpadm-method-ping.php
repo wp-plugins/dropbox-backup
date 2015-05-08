@@ -10,12 +10,16 @@ if (!class_exists('WPAdm_Method_Ping')) {
                 require_once ABSPATH . 'wp-admin/includes/plugin.php';
             }
             $plugin_name = array_pop( explode("/", WPAdm_Core::getPluginDir()) );
-            //WPAdm_Core::log("plugins_info_dir " . WPAdm_Core::getPluginDir() . "/$plugin_name.php");
-            $plugin     = get_plugins();
+            $plugin_name2 = str_replace("-", "_", $plugin_name);
+            $plugin     = get_plugins("/$plugin_name");
             $pl_version = "";
-            if (isset($plugin["$plugin_name/$plugin_name.php"])) {
-                $pl_version = $plugin["$plugin_name/$plugin_name.php"]['Version'];
+            if (isset($plugin["$plugin_name.php"])) {
+                $pl_version = $plugin["$plugin_name.php"]['Version'];
             }
+            if (isset($plugin["$plugin_name2.php"])) {
+                $pl_version = $plugin["$plugin_name2.php"]['Version'];
+            }
+            
 
             $data_return = array(
                 'reply'             => 'pong',
