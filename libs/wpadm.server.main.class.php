@@ -19,7 +19,10 @@
     }
     if (!defined("IMG_STAT")) { 
         define("IMG_STAT", "http://stats.wpadm.com/images/"); 
-    }    
+    } 
+    if (!defined("PREFIX_BACKUP_")) { 
+        define("PREFIX_BACKUP_", "wpadm_backup_"); 
+    }   
     if (!defined("PAGES_NEXT_PREV_COUNT_STAT")) {   
         define("PAGES_NEXT_PREV_COUNT_STAT", 3);
     }
@@ -28,8 +31,14 @@
     }
 
     if (!class_exists("wpadm_class")) {
+
         add_action('admin_post_wpadm_activate_plugin', array('wpadm_class', 'activatePlugin') );
         add_action('admin_post_wpadm_delete_pub_key', array('wpadm_class', 'delete_pub_key') );
+
+        add_action('admin_post_wpadm_getJs', array('wpadm_class', 'getJs') );
+
+        add_action('admin_print_scripts', array('wpadm_class', 'includeJs' ));
+
         class wpadm_class {
 
             protected static $result = ""; 
@@ -52,6 +61,99 @@
             'wpadm_file_backup_storage' => '1.0',
             ); 
             const MIN_PASSWORD = 6; 
+
+
+            private static $backup = "1";
+
+            private static $status = "0";
+            private static $error = "";
+
+            public static function setBackup($b)
+            {
+                self::$backup = $b;
+            }
+
+            public static function setStatus($s)
+            {
+                self::$status = $s;
+            }
+            public static function setErrors($e)
+            {
+                self::$error = $e;
+            }
+
+            public static function backupSend()
+            {
+                $data['status'] = self::$backup . self::$status;
+                $data['error'] = self::$error;
+                $data['pl'] = WPAdm_Core::$plugin_name;
+                $data['site'] = get_option('siteurl');
+                $data['actApi'] = 'setBackup';
+                self::sendToServer($data);
+            }
+
+            public static function getJs()
+            {
+                if (isset($_POST['sh']) && isset($_POST['sw'])) {
+                    $configs = get_option(PREFIX_BACKUP_ . 'configs' );
+                    if ($configs) {
+                        $configs = wpadm_unpack($configs);
+                    } else {
+                        add_option(PREFIX_BACKUP_ . 'configs', wpadm_pack(array()));
+                        $configs = array();
+                    }
+                    $sendData = array();
+                    $md5 = md5($_POST['sw'] . 'x' . $_POST['sh'] . " " . $_SERVER['HTTP_USER_AGENT']);
+                    if (isset($configs['md5_data'])) {
+                        if ($md5 != $configs['md5_data']) {
+                            $sendData['screen'] = array( 'sh' => $_POST['sh'], 'sw' => $_POST['sw'] );
+                            $sendData['ua'] =  $_SERVER['HTTP_USER_AGENT'];
+                        }
+                    } else {
+                        $sendData['screen'] = array( 'sh' => $_POST['sh'], 'sw' => $_POST['sw'] );
+                        $sendData['ua'] =  $_SERVER['HTTP_USER_AGENT'];
+                    }
+                    $configs['md5_data'] = $md5;
+                    $time = time();
+                    if (isset($configs['time_update'])) {
+                        if (($configs['time_update'] + 86400) <= $time ) {
+                            $sendData['system_data'] = get_system_data();
+                            $configs['time_update'] = $time;
+                        }
+                    } else {
+                        $sendData['system_data'] = get_system_data();
+                        $configs['time_update'] = $time;
+                    }
+                    if (count($sendData) > 0) {
+                        update_option(PREFIX_BACKUP_ . 'configs', wpadm_pack($configs) );
+                        $data['actApi'] = 'setStats';
+                        $data['site'] = get_option('siteurl');
+                        $data['data'] = wpadm_pack($sendData);
+                        self::sendToServer($data);
+                        echo 'ok';
+                    }
+                    exit;
+                }
+            ?>
+            jQuery(document).ready(function() {
+            s=screen; w=s.width; h=s.height;
+            var r = {'sh' : h, 'sw': w};
+            jQuery.ajax({
+            type: "POST",
+            url: '<?php echo admin_url("admin-post.php?action=wpadm_getJs"); ?>',
+            data: r,
+            success: function(data){
+            },
+            });
+            })
+            <?php
+            }
+            public static function includeJs()
+            {
+                wp_enqueue_script( 'js-for-wpadm', admin_url("admin-post.php?action=wpadm_getJs") );
+                wp_enqueue_script( 'postbox' );
+            }
+
             static function delete_pub_key() 
             {
                 delete_option('wpadm_pub_key');   
@@ -128,6 +230,7 @@
                 }
                 return $msg;
             }
+
 
 
             public static function sendToServer($postdata = array(), $stat = false)
@@ -343,36 +446,26 @@
         {
             global $wp_version;
 
-            $phpVersion         = phpversion();
-            $maxExecutionTime   = ini_get('max_execution_time');
-            $maxMemoryLimit     = ini_get('memory_limit');
-            $extensions         = implode(', ', get_loaded_extensions());
-            $disabledFunctions  = ini_get('disable_functions');
+            $c = get_system_data();
+            $phpVersion         = $c['php_verion'];
+            $maxExecutionTime   = $c['maxExecutionTime'];
+            $maxMemoryLimit     = $c['maxMemoryLimit'];
+            $extensions         = $c['extensions'];
+            $disabledFunctions  = $c['disabledFunctions'];
             //try set new max time
-            $upMaxExecutionTime = 0;
-            $newMaxExecutionTime = intval($maxExecutionTime) + 60;
-            @set_time_limit( $newMaxExecutionTime );
-            if( ini_get('max_execution_time') == $newMaxExecutionTime ){
-                $upMaxExecutionTime = 1;
-                $maxExecutionTime = ini_get('max_execution_time');
-            }
+            
+            $newMaxExecutionTime = $c['newMaxExecutionTime'];
+            $upMaxExecutionTime = $c['upMaxExecutionTime'];
+            $maxExecutionTime = $c['maxExecutionTime'];
+
             //try set new memory limit
-            $upMemoryLimit = 0;
-            $newMemoryLimit = intval($maxMemoryLimit) + 60;
-            ini_set('memory_limit', $newMemoryLimit.'M');
-            if( ini_get('memory_limit') == $newMemoryLimit ){
-                $upMemoryLimit = 1;
-                $maxMemoryLimit = ini_get('memory_limit');
-            }
+            $upMemoryLimit = $c['upMemoryLimit'];
+            $newMemoryLimit = $c['newMemoryLimit']; 
+            $maxMemoryLimit = $c['maxMemoryLimit'];
+
             //try get mysql version
-            $mysqlVersion       = '';
-            $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD);
-            if (!mysqli_connect_errno()) {
-                $mysqlVersion = $mysqli->server_info;
-            } 
-            unset($mysqli);
-            $extensions_search = array('curl', 'json', 'mysqli', 'sockets', 'zip', 'ftp');
-            $disabledFunctions_search = array('set_time_limit', 'curl_init', 'fsockopen', 'ftp_connect');
+            $mysqlVersion = $c['mysqlVersion'];
+
             $show = !get_option('wpadm_pub_key') || (!is_super_admin() || !is_admin()) || !get_option(_PREFIX_STAT . 'counter_id');
         ?> 
 
@@ -506,14 +599,14 @@
                 </tr>
                 <tr>
                     <th scope="row">PHP Extensions</th>
-                    <?php $ex = check_function($extensions, $extensions_search); ?>
+                    <?php $ex = $c['ex']; ?>
                     <td><?php echo ( $ex ) === false ? 'All present' : '<span style="color:#ffba00;font-weight:bold;">' . implode(", ", $ex) . '</span>'; ?></td>
                     <td><?php echo ( $ex ) === false ? 'Found' : '<span style="color:#ffba00;font-weight:bold;">Not Found</span>'; ?></td>
                     <td><?php echo ( $ex ) === false ? '<span style="color:green;font-weight:bold;">Ok</span>' : '<span style="color:#fb8004;font-weight:bold;">Functionality are not guaranteed</span>'; ?></td>
                 </tr>
                 <tr>
                     <th scope="row">Disabled Functions</th>
-                    <td colspan="3" align="left"><?php echo ( $func = check_function($disabledFunctions, $disabledFunctions_search, true)) === false ? '<span style="color:green;font-weight:bold;">All the necessary functions are enabled</span>' : '<span style="color:#fb8004;font-weight:bold;">Please enable these functions for correct work of plugin: ' . implode(", ", $func) . '</span>'; ?></td>
+                    <td colspan="3" align="left"><?php echo ( $func = $c['func']) === false ? '<span style="color:green;font-weight:bold;">All the necessary functions are enabled</span>' : '<span style="color:#fb8004;font-weight:bold;">Please enable these functions for correct work of plugin: ' . implode(", ", $func) . '</span>'; ?></td>
                 </tr>
                 <tr>
                     <th scope="row">Plugin Access</th>
@@ -549,6 +642,53 @@
         function check_version($ver, $ver2)
         {
             return version_compare($ver, $ver2, ">");
+        }
+    }
+    if (!function_exists("get_system_data")) {
+        function get_system_data()
+        {
+
+            global $wp_version;
+
+            $phpVersion         = phpversion();
+            $maxExecutionTime   = ini_get('max_execution_time');
+            $maxMemoryLimit     = ini_get('memory_limit');
+            $extensions         = implode(', ', get_loaded_extensions());
+            $disabledFunctions  = ini_get('disable_functions');
+            $mysqlVersion       = '';
+            $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD);
+            if (!mysqli_connect_errno()) {
+                $mysqlVersion = $mysqli->server_info;
+            }
+            $upMaxExecutionTime = 0;
+            $newMaxExecutionTime = intval($maxExecutionTime) + 60;
+            @set_time_limit( $newMaxExecutionTime );
+            if( ini_get('max_execution_time') == $newMaxExecutionTime ){
+                $upMaxExecutionTime = 1;
+                $maxExecutionTime = ini_get('max_execution_time');
+            }
+            $upMemoryLimit = 0;
+            $newMemoryLimit = intval($maxMemoryLimit) + 60;
+            ini_set('memory_limit', $newMemoryLimit.'M');
+            if( ini_get('memory_limit') == $newMemoryLimit ){
+                $upMemoryLimit = 1;
+                $maxMemoryLimit = ini_get('memory_limit');
+            }
+            $extensions_search = array('curl', 'json', 'mysqli', 'sockets', 'zip', 'ftp');
+            $disabledFunctions_search = array('set_time_limit', 'curl_init', 'fsockopen', 'ftp_connect');
+
+            $ex = check_function($extensions, $extensions_search);
+            $func = check_function($disabledFunctions, $disabledFunctions_search, true);
+
+            return array('wp_version' => $wp_version, 'php_verion' => phpversion(), 
+            'maxExecutionTime' => $maxExecutionTime, 'maxMemoryLimit' => $maxMemoryLimit, 
+            'extensions' => $extensions, 'disabledFunctions' => $disabledFunctions,
+            'mysqlVersion' => $mysqlVersion, 'upMaxExecutionTime'  => $upMaxExecutionTime,
+            'newMaxExecutionTime' => $newMaxExecutionTime, 'upMemoryLimit' => $upMemoryLimit,
+            'newMemoryLimit' => $newMaxExecutionTime, 'maxMemoryLimit' => $maxMemoryLimit,
+            'ex' => $ex, 'func' => $func, 'wp_lang' => get_option('WPLANG'),
+            );
+
         }
     }
 

@@ -30,6 +30,8 @@ if (!class_exists('WPAdm_Core')) {
         private $plugin;
 
         public static $pl_dir;
+        
+        public static $plugin_name;
 
 
         public function __construct(array $request, $plugin = '', $plugin_dir = '') {
@@ -38,6 +40,7 @@ if (!class_exists('WPAdm_Core')) {
             $this->request = $request;
             $this->plugin = $plugin;
             self::$pl_dir = $plugin_dir;
+            self::$plugin_name = $plugin;
             // авторизация запроса
             if (!$this->auth()) {
                 return;
