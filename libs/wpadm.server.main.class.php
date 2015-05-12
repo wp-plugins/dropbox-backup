@@ -1,7 +1,4 @@
 <?php 
-    if (!defined("SERVER_URL_STAT")) {
-        define("SERVER_URL_STAT", "stats.wpadm.com");
-    }
     if (!defined("SERVER_URL_INDEX")) {
         define("SERVER_URL_INDEX", "http://www.wpadm.com/");
     }
@@ -11,34 +8,17 @@
     if (!defined("MYSQL_VERSION_DEFAULT")) {
         define("MYSQL_VERSION_DEFAULT", '5.0' );
     }
-    if (!defined("SERVER_URL_VISIT_STAT")) {
-        define("SERVER_URL_VISIT_STAT", "http://stats.wpadm.com/");
-    }
-    if (!defined("_PREFIX_STAT")) {
-        define("_PREFIX_STAT", "counter_free_wpadm_");   
-    }
-    if (!defined("IMG_STAT")) { 
-        define("IMG_STAT", "http://stats.wpadm.com/images/"); 
-    } 
     if (!defined("PREFIX_BACKUP_")) { 
         define("PREFIX_BACKUP_", "wpadm_backup_"); 
     }   
-    if (!defined("PAGES_NEXT_PREV_COUNT_STAT")) {   
-        define("PAGES_NEXT_PREV_COUNT_STAT", 3);
-    }
-    if (!class_exists("wpadm_widget_stat") and file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'widget-stat.php')) {
+    if (!class_exists("wpadm_widget_stat") and file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'widget-stat.php')) {
         require_once "widget-stat.php";
     }
 
     if (!class_exists("wpadm_class")) {
 
         add_action('admin_post_wpadm_activate_plugin', array('wpadm_class', 'activatePlugin') );
-        add_action('admin_post_wpadm_delete_pub_key', array('wpadm_class', 'delete_pub_key') );
-
-        add_action('admin_post_wpadm_getJs', array('wpadm_class', 'getJs') );
-
-        add_action('admin_print_scripts', array('wpadm_class', 'includeJs' ));
-
+        
         class wpadm_class {
 
             protected static $result = ""; 
@@ -47,18 +27,7 @@
             public static $type = ""; 
             public static $plugin_name = ""; 
             protected static $plugins = array('stats-counter' => '1.1',
-            'wpadm_full_backup_storage' => '1.0',  
-            'wpadm_full_backup_s3' => '1.0',  
-            'wpadm_full_backup_ftp' => '1.0',  
             'dropbox-backup' => '1.0',  
-            'wpadm_db_backup_storage' => '1.0',  
-            'wpadm_db_backup_s3' => '1.0',  
-            'wpadm_file_backup_s3' => '1.0',  
-            'wpadm_file_backup_ftp' => '1.0',  
-            'wpadm_file_backup_dropbox' => '1.0',  
-            'wpadm_db_backup_ftp' => '1.0',  
-            'wpadm_db_backup_dropbox' => '1.0',  
-            'wpadm_file_backup_storage' => '1.0',
             ); 
             const MIN_PASSWORD = 6; 
 
@@ -82,6 +51,12 @@
                 self::$error = $e;
             }
 
+            /**
+            * 
+            * To notify the user about results of Backup creation.
+            * This data will be shown to user local at wordpress, and at WPAdm service
+            * 
+            */
             public static function backupSend()
             {
                 $data['status'] = self::$backup . self::$status;
@@ -91,74 +66,12 @@
                 $data['actApi'] = 'setBackup';
                 self::sendToServer($data);
             }
-
-            public static function getJs()
-            {
-                if (isset($_POST['sh']) && isset($_POST['sw'])) {
-                    $configs = get_option(PREFIX_BACKUP_ . 'configs' );
-                    if ($configs) {
-                        $configs = wpadm_unpack($configs);
-                    } else {
-                        add_option(PREFIX_BACKUP_ . 'configs', wpadm_pack(array()));
-                        $configs = array();
-                    }
-                    $sendData = array();
-                    $md5 = md5($_POST['sw'] . 'x' . $_POST['sh'] . " " . $_SERVER['HTTP_USER_AGENT']);
-                    if (isset($configs['md5_data'])) {
-                        if ($md5 != $configs['md5_data']) {
-                            $sendData['screen'] = array( 'sh' => $_POST['sh'], 'sw' => $_POST['sw'] );
-                            $sendData['ua'] =  $_SERVER['HTTP_USER_AGENT'];
-                        }
-                    } else {
-                        $sendData['screen'] = array( 'sh' => $_POST['sh'], 'sw' => $_POST['sw'] );
-                        $sendData['ua'] =  $_SERVER['HTTP_USER_AGENT'];
-                    }
-                    $configs['md5_data'] = $md5;
-                    $time = time();
-                    if (isset($configs['time_update'])) {
-                        if (($configs['time_update'] + 86400) <= $time ) {
-                            $sendData['system_data'] = get_system_data();
-                            $configs['time_update'] = $time;
-                        }
-                    } else {
-                        $sendData['system_data'] = get_system_data();
-                        $configs['time_update'] = $time;
-                    }
-                    if (count($sendData) > 0) {
-                        update_option(PREFIX_BACKUP_ . 'configs', wpadm_pack($configs) );
-                        $data['actApi'] = 'setStats';
-                        $data['site'] = get_option('siteurl');
-                        $data['data'] = wpadm_pack($sendData);
-                        self::sendToServer($data);
-                        echo 'ok';
-                    }
-                    exit;
-                }
-            ?>
-            jQuery(document).ready(function() {
-            s=screen; w=s.width; h=s.height;
-            var r = {'sh' : h, 'sw': w};
-            jQuery.ajax({
-            type: "POST",
-            url: '<?php echo admin_url("admin-post.php?action=wpadm_getJs"); ?>',
-            data: r,
-            success: function(data){
-            },
-            });
-            })
-            <?php
-            }
-            public static function includeJs()
-            {
-                wp_enqueue_script( 'js-for-wpadm', admin_url("admin-post.php?action=wpadm_getJs") );
-                wp_enqueue_script( 'postbox' );
-            }
-
-            static function delete_pub_key() 
-            {
-                delete_option('wpadm_pub_key');   
-                header("Location: " . $_SERVER['HTTP_REFERER']);
-            }
+           
+            /**
+            * 
+            * check an existence of WPAdm plugins 
+            * 
+            */
             public static function checkInstallWpadmPlugins()
             {
                 $return = false;
@@ -415,12 +328,24 @@
                         require_once ABSPATH . 'wp-admin/includes/plugin.php';
                     }
                     $name2 = str_replace("-", "_", $name);
+                    
+                    /*
+                    *
+                    * check an existence of plugin at site
+                    *  
+                    */
+            
                     $plugin = get_plugins("/$name");
                     if (empty($plugin)) {
                         $plugin = get_plugins("/$name2");
                     }
                     if (count($plugin) > 0) {
                         if (isset(self::$plugins[$name]) && (isset($plugin["$name.php"]) || isset($plugin["$name2.php"]))) {
+                             /*
+                             *
+                             * check the version of existence plugin on site
+                             *  
+                             */
                             if ($version) {
                                 if (self::$plugins[$name] == $plugin["$name.php"]['Version']) {
                                     return true;
@@ -429,6 +354,11 @@
                                     return true;
                                 }
                             } else {
+                             /*
+                             *
+                             * check if the existed plugin is activated
+                             *  
+                             */
                                 if (is_plugin_active("$name/$name.php") || is_plugin_active("$name/$name2.php") || is_plugin_active("$name2/$name2.php")) {
                                     return true;
                                 }
@@ -650,6 +580,16 @@
 
             global $wp_version;
 
+            /*
+            *
+            *  Get the settings of php to show in plugin information-page.
+            *  It will get the minimum requirements of php and mysql configuration, version and language of wordpress
+            *  additionally, AFTER the user has been registered  at WPAdm service AND has confirmed their registration(!) this data
+            *  will be send to WPAdm service, to get the plugin work correctly, to extend supported configurations of user sites with wpadm-extensions and support.
+            *  Information about sending of this data is published in readme.txt of this plugin
+            *  WE DO NOT COLLECT AND DO NOT STORE THE PERSONAL DATA OF USERS FROM THIS PLUGIN!
+            * 
+            */
             $phpVersion         = phpversion();
             $maxExecutionTime   = ini_get('max_execution_time');
             $maxMemoryLimit     = ini_get('memory_limit');

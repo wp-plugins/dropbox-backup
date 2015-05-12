@@ -76,14 +76,13 @@ if (!class_exists('WPAdm_Method_Queue_Controller')) {
                     $this->done();
                     return $this->result;
                 } elseif (!$cmd->execute($context)) {
-                    //произошла какая то ошибка
                     $this->result->setError('Command error:' . $com . ': '. $context->getError());
                     $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
                     array_unshift($this->contexts, $context);
                     $this->done();
                     return $this->result;
                 } else {
-                    //команда выполнена успешно
+                    //
                     //WPAdm_Core::log("Команда выполнена: {$com}");
                 }
                 //продолжаем работу
@@ -140,9 +139,13 @@ if (!class_exists('WPAdm_Method_Queue_Controller')) {
                 'sign'      =>  '',
     
             );
-    
+            /**
+            * 
+            * request to itself to predict multitasking
+            * 
+            */
             $socket = fsockopen($host, 80, $errno, $errstr, 30);
-//            $pl =  (defined('WPADM_PLUGIN')) ? WPADM_PLUGIN . '_' : '';
+
             $dp = explode(DIRECTORY_SEPARATOR,dirname(dirname(__FILE__)));
             $pl = array_pop($dp) . '_';
 //            $data = 'wpadm_'.$pl.'request='.base64_encode(serialize($data));

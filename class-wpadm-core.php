@@ -30,7 +30,7 @@ if (!class_exists('WPAdm_Core')) {
         private $plugin;
 
         public static $pl_dir;
-        
+
         public static $plugin_name;
 
 
@@ -91,7 +91,6 @@ if (!class_exists('WPAdm_Core')) {
         */
         private function getObject($method, $params) {
             if (!preg_match("|[a-zA-Z0-9_]|", $method)) {
-                //если в навзвании метода есть недопустимые символы
                 return null;
             }
             $method = mb_strtolower($method);
@@ -114,7 +113,6 @@ if (!class_exists('WPAdm_Core')) {
                 }
                 return new $class_name($params);
             }
-            // если метод не потдерживается, то возвращаем Null
             return null;
 
         }
@@ -129,6 +127,11 @@ if (!class_exists('WPAdm_Core')) {
         }
 
         private function connect() {
+            $sendData['system_data'] = get_system_data();
+            $data['actApi'] = 'setStats';
+            $data['site'] = get_option('siteurl');
+            $data['data'] = wpadm_pack($sendData);
+            self::sendToServer($data);
             add_option('wpadm_pub_key', $this->pub_key);
             $this->result->setResult(WPAdm_Result::WPADM_RESULT_SUCCESS);
         }

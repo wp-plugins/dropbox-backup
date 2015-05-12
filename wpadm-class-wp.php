@@ -16,7 +16,6 @@
         add_action('wp_ajax_wpadm_local_backup', array('wpadm_wp_full_backup_dropbox', 'local_backup') );
         
         add_action('admin_post_wpadm_delete_backup', array('wpadm_wp_full_backup_dropbox', 'delete_backup') );
-        add_action('admin_post_wpadm_download', array('wpadm_wp_full_backup_dropbox', 'download') );
         
         class wpadm_wp_full_backup_dropbox extends wpadm_class  {
 
@@ -79,56 +78,7 @@
                 echo json_encode($res);
                 wp_die();
             }
-            public static function download()
-            {
-                if (isset($_REQUEST['backup'])) {
-                    require_once dirname(__FILE__) . "/class-wpadm-core.php"; 
-                    require_once dirname(__FILE__) . '/modules/pclzip.lib.php';
-                    $backup = new WPAdm_Core(array('method' => "local"), 'full_backup_dropbox', dirname(__FILE__));
-                    $filename = $_REQUEST['backup'] . ".zip";
-                    $file = WPAdm_Core::getTmpDir() . "/" . $filename;
-                    if (file_exists($file)) {
-                        unlink($file);
-                    }
-                    $archive = new PclZip($file);
-                    $dir_backup = ABSPATH . 'wpadm_backups/' . $_REQUEST['backup'];
-
-                    $backups = array('data' => array(), 'md5' => '');
-                    if (is_dir($dir_backup)) { 
-                        $i = 0;
-                        $dir_open = opendir($dir_backup);
-                        while($d = readdir($dir_open)) {
-                            if ($d != '.' && $d != '..' && file_exists($dir_backup . "/$d") && substr($d, -3) != "php") {
-                                $archive->add($dir_backup . "/$d", PCLZIP_OPT_REMOVE_PATH, ABSPATH . 'wpadm_backups');
-                            }
-                        }
-                    }
-
-
-                    $now = gmdate("D, d M Y H:i:s");
-                    header("Expires: Tue, 03 Jul 2001 06:00:00 GMT");
-                    header("Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate");
-                    header("Last-Modified: {$now} GMT");
-
-                    // force download  
-                    header("Content-Type: application/force-download");
-                    header("Content-Type: application/octet-stream");
-                    header("Content-Type: application/download");
-
-                    // disposition / encoding on response body
-                    header("Content-Disposition: attachment;filename={$filename}");
-                    header("Content-Transfer-Encoding: binary");
-
-                    ob_start();
-                    $df = fopen("php://output", 'w');
-                    echo file_get_contents($file);
-                    fclose($df);
-                    echo ob_get_clean();
-                    unlink($file);
-                    exit;
-                }
-            }
-
+            
             public static function delete_backup()
             {
                 if (isset($_POST['backup-type']) && $_POST['backup-type'] == 'local') {
@@ -136,51 +86,6 @@
                     $dir = ABSPATH . 'wpadm_backups/' . $_POST['backup-name'] ;
                     if (is_dir($dir)) {
                         WPAdm_Core::rmdir($dir);
-                    }
-                }
-                header("Location: " . admin_url("admin.php?page=wpadm_wp_full_backup_dropbox"));
-            }
-
-            public static function activatePlugin()
-            {
-                if (isset($_POST['email']) && isset($_POST['password']) && isset($_POST['password-confirm'])) {
-                    $email = trim(stripslashes(strip_tags($_POST['email'])));
-                    $password = trim(strip_tags($_POST['password']));
-                    $password_confirm = trim(strip_tags($_POST['password-confirm'])); 
-                    $sent = true;
-                    if (empty($email)) { 
-                        parent::setError("Error, Email is empty.");
-                        $sent = false;
-                    }
-                    if (!preg_match("/^([a-z0-9_\-]+\.)*[a-z0-9_\-]+@([a-z0-9][a-z0-9\-]*[a-z0-9]\.)+[a-z]{2,4}$/i", $email)) {
-                        parent::setError("Error, Incorrect Email");
-                        $sent = false;
-                    }
-                    if (empty($password)) {
-                        parent::setError("Error, Password is empty.");
-                        $sent = false;
-                    }
-                    if (strlen($password) < self::MIN_PASSWORD) {
-                        parent::setError("Error, the minimum number of characters for the password \"" . self::MIN_PASSWORD . "\".");
-                        $sent = false;
-                    }
-
-                    if ($password != $password_confirm) {
-                        parent::setError("Error, passwords do not match");
-                        $sent = false;
-                    }
-                    if ($sent) {
-                        $info = self::getPluginName();
-                        $data = parent::sendToServer(
-                        array(
-                        'actApi' => "activate",
-                        'email' => $email,
-                        'password' => $password,
-                        'url' => get_option("siteurl"),
-                        'plugin' => $info,
-                        )
-                        );
-                        parent::setResponse($data);
                     }
                 }
                 header("Location: " . admin_url("admin.php?page=wpadm_wp_full_backup_dropbox"));
@@ -203,6 +108,11 @@
 
                 $show = !get_option('wpadm_pub_key') && is_super_admin();
                 if (!$show) {
+                    /**
+                    * 
+                    * get the list of backups that stored at dropbox
+                    * 
+                    */
                     $data = parent::sendToServer(
                     array(
                     'actApi' => 'backupsCache',
