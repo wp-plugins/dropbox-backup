@@ -11,7 +11,9 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'wpadm-class-wp.php';
 add_action('init', 'wpadm_full_backup_dropbox_run');
 
 add_action('admin_print_scripts', array('wpadm_wp_full_backup_dropbox', 'include_admins_script' ));
+// add item to menu
 add_action('admin_menu', array('wpadm_wp_full_backup_dropbox', 'draw_menu'));
+
 add_action('admin_post_activate_wpadm_full_backup_dropbox', array('wpadm_wp_full_backup_dropbox', 'activatePlugin') );
 
 if ( !get_option('wpadm_pub_key')/* && (is_admin())*/) {
