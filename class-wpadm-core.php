@@ -127,13 +127,23 @@ if (!class_exists('WPAdm_Core')) {
         }
 
         private function connect() {
+            
+            add_option('wpadm_pub_key', $this->pub_key);
+            $this->result->setResult(WPAdm_Result::WPADM_RESULT_SUCCESS);
+            
             $sendData['system_data'] = get_system_data();
             $data['actApi'] = 'setStats';
             $data['site'] = get_option('siteurl');
             $data['data'] = wpadm_pack($sendData);
-            self::sendToServer($data);
-            add_option('wpadm_pub_key', $this->pub_key);
-            $this->result->setResult(WPAdm_Result::WPADM_RESULT_SUCCESS);
+            if (!class_exists('WP_Http')) {
+                include_once ABSPATH.WPINC.'/class-http.php';
+            }
+
+            $remote            = array();
+            $remote['body']    = $data;
+            $remote['timeout'] = 20;
+
+            $result = wp_remote_post(WPADM_URL_BASE, $remote);
         }
         public static function setPluginDIr($dir)
         {
@@ -168,7 +178,7 @@ if (!class_exists('WPAdm_Core')) {
 
             $sign = md5(serialize($this->request['params']));
             //openssl_public_decrypt($this->request['sign'], $request_sign, $this->pub_key);
-            $ret = $this->verifySignature($this->request['sign'], $this->pub_key, $sign);
+            $ret = $this->verifySignature($this->request['sign'], $this->request['sign2'], $this->pub_key, $sign);
 
 
             //$ret = ($sign == $request_sign);
@@ -199,7 +209,7 @@ if (!class_exists('WPAdm_Core')) {
         }
 
 
-        public function verifySignature($sign, $pub_key, $text) {
+        public function verifySignature($sign, $sign2, $pub_key, $text) {
             if (function_exists('openssl_public_decrypt')) {
                 openssl_public_decrypt($sign, $request_sign, $pub_key);
                 $ret = ($text == $request_sign);
@@ -208,8 +218,9 @@ if (!class_exists('WPAdm_Core')) {
                 set_include_path(get_include_path() . PATH_SEPARATOR . self::getPluginDir() . '/modules/phpseclib');
                 require_once 'Crypt/RSA.php';
                 $rsa = new Crypt_RSA();
-                $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
-                return ($rsa->decrypt($sign) == $text);
+                $rsa->loadKey($pub_key);
+                $ret = $rsa->verify($text, $sign2);
+                return $ret;
             }
         }
 

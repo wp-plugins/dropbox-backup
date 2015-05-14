@@ -1,4 +1,38 @@
 
+.wpadm-notice {
+    background: #fff;
+    border-left: 4px solid #dd3d36;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    overflow: hidden;
+    position: relative;
+    text-align: left;
+    clear: both;
+    height: 60px;
+    margin-top: 15px;
+    width: 95%;
+}
+.button-link {
+    background:none!important;
+    border:none; 
+    padding:0!important;
+    font: inherit;
+    color:#0074a2;
+    border-bottom:1px solid #0074a2; 
+    padding-bottom: 1px;
+    cursor: pointer;
+    line-height: 15px;
+}
+.button-link:hover {
+    color:#2ea2cc;
+    border-bottom:1px solid #2ea2cc; 
+}
+.wpadm-notice div.registr {
+    margin-top : 20px;
+    font-size: 16px;
+    margin-left: 15px;
+}
+
 .form-counter {
     background: #0096d6;
     border: 1px solid #fff;
@@ -254,8 +288,8 @@ h3.plugins-title {
     text-align: center;
 }
 .info-path td {
-     font-size: 11px;
-     padding:0px;
+    font-size: 11px;
+    padding:0px;
 }
 .table tr:last td {
 
