@@ -87,17 +87,17 @@
                     <input type="hidden" name="plugin" value="<?php echo md5($plugin);?>" />
                     <input type="hidden" name="u" value="<?php echo 1;?>" />
                     Dear user, <br />
-                    all Backups you have made by <strong>Dropbox Backup</strong> plugin are safe and available at their place, but, according to the rules of Wordpress system, we had to update the logic of <strong>Dropbox Backup</strong> plugin.<br />
+                    all Backups you have made by <strong>Dropbox Backup</strong> plugin are safe and available at their place, but, according to the rules of WordPress system, we had to update the logic of <strong>Dropbox Backup</strong> plugin.<br />
                     Now, if you want to see the <strong>Dropbox Backup</strong> plugin interface in your admin-panel again, you must upgrade this plugin from 
                     <input type="submit" value="our page" class="button-link"  />.
                     This is optional feature, you mustn’t do it, but you can. <br />
-                    Also, you can administrate all of your Backups for all of your web pages from one place – <input type="submit" value="WPAdm-account" class="button-link" />. This account is FULL FREE.<br />
-                    Here you can <input type="submit" value="login" class="button-wpadm" style="margin-top: -3px;" /> to your account or register in the WPAdm system.
+                    Also, you can administrate all of your Backups for all of your web pages from one place – <input type="submit" value="WPAdm-account" class="button-link" />. This account is FULLY FREE.<br />
+                    Here you can <input type="submit" value="login" class="button-wpadm" style="margin-top: -3px;" /> to your account at WPAdm system or <a href="<?php echo $actions;?>">deactivate DropBox Backup</a> plugin.
                     </form>
                 </div>
             </div> 
             <?php 
-        } ?>
+        } ?> 
 
 
         <?php 
