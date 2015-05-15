@@ -12,16 +12,15 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Author: WPAdm.com
 Contributors: WPAdm.com
 
-DropBox Backup Plugin to create DropBox Full Backup (Files + Database) of your Web Page
+Dropbox Backup management for Full Backup (Files + Database) of your Web Page from one place!
 
 == Description ==
 
-Supports WordPress backups to Local Storage or upload Backup to DropBox.
+Dropbox Backup management from one place!
 
-* Local Backup: create the Full Backup of Web Page (Files + Database) and store this at Local Storage of the Site
-* DropBox Backup: create the Full Backup (Files + Database) of Web Page at Local Storage and upload this to DropBox
-* Administrate ALL of Backups for ALL of your sites from one place – WPAdm-account
+Settings that you can to set within WPAdm account: backup destination, file and folders exclusions or file and folders inclusions.
 
+You can manage ALL of Dropbox Backups for ALL of your sites at WPAdm account.
 
 You can create your WPAdm account for central Backup administration at http://www.wpadm.com 
 WPAdm account is FULLY FREE.
@@ -34,8 +33,6 @@ If you need help with the plugin or you want to report a bug please refer to htt
 2. Activate the plugin through the `Plugins` menu in WordPress
 
 
-
-DropBox Backup Plugin have a settings section on WordPress plugin page.
 If you need help with the plugin or you want to report a bug please refer to http://www.wpadm.com/support/
 
 == Other ==
