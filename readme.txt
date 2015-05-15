@@ -20,7 +20,7 @@ Dropbox Backup management from one place!
 
 Settings that you can to set within WPAdm account: backup destination, file and folders exclusions or file and folders inclusions.
 
-You can manage ALL of Dropbox Backups for ALL of your sites at WPAdm account.
+You can manage ALL of your Dropbox Backups for ALL of your sites at WPAdm account.
 
 You can create your WPAdm account for central Backup administration at http://www.wpadm.com 
 WPAdm account is FULLY FREE.
