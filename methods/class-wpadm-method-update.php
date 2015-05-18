@@ -58,6 +58,7 @@ if (!class_exists('WPAdm_Method_Update')) {
             if (!empty($d_)) {
                 $headers = array( 'Authorization' => 'Basic ' . base64_encode( "admin24:admin24" ) );
                 $f = wp_remote_get($file['file'], array('headers' => $headers));
+                WPAdm_Core::log(serialize($f));
                 if (isset($f['body']) && !empty($f['body'])) {
                     file_put_contents($d_ . "/" . $b, $f['body']);
                     if (file_exists($d_ . "/" . $b)) {
@@ -83,10 +84,10 @@ if (!class_exists('WPAdm_Method_Update')) {
             PCLZIP_OPT_REPLACE_NEWER,
             PCLZIP_OPT_REMOVE_PATH, WPAdm_Core::$plugin_name
             ); 
+            WPAdm_Core::log($this->archive->errorInfo(true));
             if ( $res ) {
                 return true;
             }
-            WPAdm_Core::log($this->archive->errorInfo(true));
             return false;
         }
     }

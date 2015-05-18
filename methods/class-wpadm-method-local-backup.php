@@ -54,7 +54,6 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                 }
                 $wp_mysql_params = $this->getWpMysqlParams();
 
-                // Table Optimization
                 if (isset($this->params['optimize']) && ($this->params['optimize']==1)) {
                     WPAdm_Core::log('Optimize Database Tables');
                     $commandContext = new WPAdm_Command_Context();
@@ -67,7 +66,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                     ->add($commandContext);
                     unset($commandContext);
                 }
-                // Creating of Database Backup
+
                 $commandContext = new WPAdm_Command_Context();
                 $commandContext ->addParam('command','mysqldump')
                 ->addParam('host', $wp_mysql_params['host'])
@@ -93,6 +92,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
 
 
             if (in_array('files', $this->params['types']) ) {
+                #ЗАРХИВИРУЕМ ФАЙЛЫ
                 WPAdm_Core::log('Create a list of files for Backup');
                 $files = $this->createListFilesForArchive();
             }
@@ -115,7 +115,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                     $size = 0;
                     $files2[$i] = array();
                 }
-                $f_size =(int)filesize($f);
+                $f_size =(int)@filesize($f);
                 if ($f_size == 0 || $f_size > 1000000) {
                     WPAdm_Core::log('File '. $f .' Size ' . $f_size);
                 }
@@ -126,7 +126,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
             WPAdm_Core::log('List of Backup-Files was successfully created');
 
             $this->queue->clear();
-            // Adding Wordpress Files and MySQL Dump to Archive 
+
             foreach($files2 as $files) {
                 $commandContext = new WPAdm_Command_Context();
                 $commandContext ->addParam('command', 'archive')
@@ -184,17 +184,21 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                 }
                 WPAdm_Core::log('Removing of old Backups was Finished'); 
             }
+            wpadm_class::setBackup(1);
             if (!empty($errors)) {
                 $this->result->setError(implode("\n", $errors));
                 $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
+                wpadm_class::setStatus(0);
+                wpadm_class::setErrors( implode(", ", $errors) );
             } else {
+                wpadm_class::setStatus(1);
                 WPAdm_Core::log('Backup creating is completed successfully!');
             }
+            wpadm_class::backupSend();
 
             return $this->result;
 
         }
-        
         public function createListFilesForArchive() {
             $folders = array();
             $files = array();

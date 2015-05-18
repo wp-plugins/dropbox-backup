@@ -140,7 +140,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                     $size = 0;
                     $files2[$i] = array();
                 }
-                $f_size =(int)@filesize($f);
+                $f_size =(int)filesize($f);
                 if ($f_size == 0 || $f_size > 1000000) {
                     WPAdm_Core::log('file '. $f .' size ' . $f_size);
                 }
@@ -330,11 +330,16 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
 
             WPAdm_Core::log('Creating a backup is completed');
 
+            wpadm_class::setBackup(2);
             if (!empty($errors)) {
                 $this->result->setError(implode("\n", $errors));
                 $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
+                wpadm_class::setStatus(0);
+                wpadm_class::setErrors( implode(", ", $errors) );
+            } else {
+                wpadm_class::setStatus(1);
             }
-
+            wpadm_class::backupSend();
             return $this->result;
 
 
@@ -435,7 +440,9 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
             $d1 = mb_strtolower($tmp[0]);
             unset($tmp[0]);
             $d2 = mb_strtolower(implode('/', $tmp));
-            if (strpos($d2, 'cache') !== false && isset($tmp[0]) && !in_array($tmp[0], array('plugins', 'themes')) ) {
+            if (strpos($d2, 'cache') !== false
+            && !in_array($tmp[0], array('plugins', 'themes')) 
+            ) {
                 WPAdm_Core::log('Skip dir(cache) ' . $directory);
                 return array();
             }

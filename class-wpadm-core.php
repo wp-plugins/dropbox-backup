@@ -155,14 +155,14 @@ if (!class_exists('WPAdm_Core')) {
         */
         private function auth() {
             $this->pub_key = get_option('wpadm_pub_key');
-            if ('local_backup' == $this->request['method'] || 'local_restore' == $this->request['method'] || 'queue_controller' == $this->request['method'] || 'local' == $this->request['method']) {
+            if ('local_backup' == $this->request['method'] || 'send-to-dropbox' == $this->request['method'] || 'local_restore' == $this->request['method'] || 'queue_controller' == $this->request['method'] || 'local' == $this->request['method']) {
                 return true;
             }
             if (empty($this->pub_key)) {
                 if ('connect' == $this->request['method']) {
                     $this->pub_key = $this->request['params']['pub_key'];
                 } else {
-                    $this->getResult()->setError('Активируйте сайт на wpadm.com для работы плагинов.');
+                    $this->getResult()->setError('Activate site in WPAdm.com for work to plugins.Активируйте сайт на wpadm.com для работы плагинов.');
                     return false;
                 }
             } elseif ('connect' == $this->request['method']) {

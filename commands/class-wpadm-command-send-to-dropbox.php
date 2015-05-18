@@ -8,8 +8,11 @@ if (!class_exists('WPadm_Command_Send_To_Dropbox')) {
             @session_start();
             require_once WPAdm_Core::getPluginDir() . '/modules/dropbox.class.php';
 
-            WPAdm_Core::log('Send Files to Dropbox');
+            WPAdm_Core::log('Send to drop box files');
             $dropbox = new dropbox($context->get('key'), $context->get('secret'), $context->get('token'));
+
+            //$token = $dropbox->getAccessToken($_SESSION['request_token']);
+            //WPAdm_Core::log('Token: ' . print_r($context->get('token'), true));
 
             if (!$dropbox->isAuth()) {
                 $context->setError("Error auth in Dropbox");

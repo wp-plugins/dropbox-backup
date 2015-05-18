@@ -25,13 +25,13 @@ if (!class_exists('WPadm_Method_Send_To_Dropbox')) {
             $this->queue = new WPAdm_Queue($this->id);
 
             $ad = $this->params['access_details'];
-            WPAdm_Core::log('Copying of Files to Dropbox');
+            WPAdm_Core::log('Start copy to Dropbox Cloud');
             $this->queue->clear();
             $files = $this->params['files'];
             //$this->getResult()->setData($files);
 
             $dir = (isset($ad['dir'])) ? $ad['dir'] : '/';
-            // Task creating to copy files to Dropbox
+            //$dir = trim($dir, '/') . '/' . $this->name;
             foreach($files as $file) {
                 $commandContext = new WPAdm_Command_Context();
                 $commandContext->addParam('command', 'send_to_dropbox')
@@ -50,17 +50,17 @@ if (!class_exists('WPadm_Method_Send_To_Dropbox')) {
                 WPAdm_Core::log('Dropbox: ' . $this->queue->getError());
                 $errors[] = 'Dropbox: '.$this->queue->getError();
             }
-            WPAdm_Core::log('End of copying files to Dropbox');
+            WPAdm_Core::log('End Copy Files to Dropbox');
             if (count($errors) > 0) {
                 $this->result->setError(implode("\n", $errors));
                 $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
-            }
+            } 
 
             return $this->result;
 
 
         }
-
+       
         private function init(array $conf) {
             //todo: нормализация
             $this->id = $conf['id'];
