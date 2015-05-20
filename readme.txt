@@ -35,7 +35,7 @@ If you need help with the plugin or you want to report a bug please refer to htt
 
 
 
-DropBox Backup Plugin have a settings section on WordPress plugin page.
+Dropbox Backup Plugin have a settings section on WordPress plugin page.
 If you need help with the plugin or you want to report a bug please refer to http://www.wpadm.com/support/
 
 
@@ -47,3 +47,20 @@ Information about privacy: AFTER the user has been registered at WPAdm service A
 our plugin will get the minimum requirements of php and mysql configuration, version and language of wordpress.
 This data will be send to WPAdm service, to get the plugin work correctly, to extend supported configurations of user sites with wpadm-extensions and support.
 WE DO NOT COLLECT AND DO NOT STORE THE PERSONAL DATA OF USERS FROM THIS PLUGIN!
+
+== Frequently Asked Questions ==
+
+FAQ
+
+== Changelog ==
+
+ChangeLog
+
+== Upgrade Notice ==
+
+Upgrade Notice
+
+== Screenshots ==
+
+
+Screens coming soon
