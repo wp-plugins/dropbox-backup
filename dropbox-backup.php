@@ -1,7 +1,7 @@
 <?php
 /*
-Plugin Name: DropBox Backup
-Description: DropBox Backup Plugin to create DropBox Full Backup (Files + Database) of your Web Page
+Plugin Name: Dropbox Backup
+Description: Dropbox Backup Plugin to create Dropbox Full Backup (Files + Database) of your Web Page
 Version: 1.1.2
 */
 
