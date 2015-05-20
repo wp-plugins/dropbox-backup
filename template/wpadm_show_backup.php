@@ -435,7 +435,7 @@
     <div style="margin-top:20px;">
         <div style="background-image: url(<?php echo plugins_url('/img/dropbox.png', dirname(__FILE__));?>); height: 180px; width: 154px; float: left;">
         </div>
-        <div style="float: left; font-size: 40px; font-weight: bold; text-shadow: 1px 2px 2px #666;">
+        <div style="float: bottom; font-size: 40px; font-weight: bold; text-shadow: 1px 2px 2px #666;">
             DropBox Full Backup <span style="font-size: 20px;">(files+database)</span>
         </div>
         <?php if ($show) {?>
