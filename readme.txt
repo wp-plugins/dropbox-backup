@@ -18,9 +18,9 @@ DropBox Backup Plugin to create DropBox Full Backup (Files + Database) of your W
 
 Supports WordPress Backups to Local Storage or upload Backup to DropBox.
 
-* Local Backup: create the Full Backup of Web Page (Files + Database) and store this at Local Storage of the Site
-* DropBox Backup: create the Full Backup (Files + Database) of Web Page at Local Storage and upload this to DropBox
-* Administrate ALL of Backups for ALL of your sites from one place – WPAdm-account (FULLY FREE)
+* Local Backup: create the Full Backup of Web Page (Files + Database) and store this at Local Storage of the Site;
+* DropBox Backup: create the Full Backup (Files + Database) of Web Page at Local Storage and upload this to DropBox;
+* Administrate ALL of Backups for ALL of your sites from one place – WPAdm-account (FULLY FREE);
 
 
 You can create your WPAdm account for central Backup administration at http://www.wpadm.com 
