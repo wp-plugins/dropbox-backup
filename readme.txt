@@ -1,5 +1,5 @@
 === DropBox Backup ===
-Plugin Name: DropBox Backup
+Plugin Name: Dropbox Backup
 Version: 1.1.2
 Donate link: http://www.wpadm.com/donate
 URI: http://www.wpadm.com/dropbox-backup
@@ -12,14 +12,14 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Author: WPAdm.com
 Contributors: WPAdm.com
 
-DropBox Backup Plugin to create DropBox Full Backup (Files + Database) of your Web Page
+Dropbox Backup Plugin to create Dropbox Full Backup (Files + Database) of your Web Page
 
 == Description ==
 
 Supports WordPress Backups to Local Storage or upload Backup to DropBox.
 
 * Local Backup: create the Full Backup of Web Page (Files + Database) and store this at Local Storage of the Site;
-* DropBox Backup: create the Full Backup (Files + Database) of Web Page at Local Storage and upload this to DropBox;
+* DropBox Backup: create the Full Backup (Files + Database) of Web Page at Local Storage and upload this to Dropbox;
 * Administrate ALL of Backups for ALL of your sites from one place – WPAdm-account (FULLY FREE);
 
 
@@ -30,7 +30,7 @@ If you need help with the plugin or you want to report a bug please refer to htt
 
 == Installation ==
 
-1. Upload the plugin folder `DropBox Backup` to the `/wp-content/plugins/` directory of your WordPress installation.
+1. Upload the plugin folder `Dropbox Backup` to the `/wp-content/plugins/` directory of your WordPress installation.
 2. Activate the plugin through the `Plugins` menu in WordPress
 
 
