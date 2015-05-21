@@ -38,15 +38,20 @@ function show_form_auth(file_val)
         document.form_auth_backup.submit();
     }
 }
-function blick(id)
+var blick_form = true;
+function blick(id, border_)
 {
+    if (border_ == 'undefined') {
+        border_ = 10;
+    }
     jQuery('#' + id).css({
-        outline: "0px solid #ffba00",
+        outline: "0px solid #cd433d",
         border: "0px"
     }).animate({
-        outlineWidth: '10px',
-        outlineColor: '#ffba00'
-    }, 500).animate({outlineWidth: '0px',outlineColor: '#0096d6' } , 500);
-
-    setTimeout('blick("' + id + '")', 2000);
+        outlineWidth: border_ + 'px',
+        outlineColor: '#cd433d'
+    }, 500).animate({outlineWidth: '0px',outlineColor: '#cd433d' } , 500);
+    if (blick_form) {
+        setTimeout('blick("' + id + '", ' + border_ + ')', 2000);
+    }
 }

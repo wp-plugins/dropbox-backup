@@ -3,6 +3,8 @@
 if (!class_exists('WPAdm_Method_Local_Backup')) {
     class WPAdm_Method_Local_Backup extends WPAdm_Method_Class {
 
+        private $start = true;
+
         public function __construct($params)
         {
             parent::__construct($params);
@@ -27,16 +29,33 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
             $this->time = date("d.m.Y H:i");   //23.04.2015 13:45
             $name .= '-' . wpadm_class::$type . '-' . date("Y_m_d_H_i");
             $this->name = $name;
-            
+
 
             // folder for backup
             $this->dir = ABSPATH . 'wpadm_backups/' . $this->name;
+            if (($f = $this->checkBackup()) !== false) {
+                $this->dir = ABSPATH . 'wpadm_backups/' . $f;
+            }
             WPAdm_Core::mkdir(ABSPATH . 'wpadm_backups/');
             WPAdm_Core::mkdir($this->dir);
         }
+        public function checkBackup()
+        {
+            $archives = glob("{$this->dir}");
+            if (empty($archives) && count($archives) <= 1) {
+                return false;
+            }
+            $n = count($archives);
+            $f = "{$this->name}({$n})";
+            return $f;
+        }
         public function getResult()
         {
-
+            if ($this->start === false) {
+                $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
+                $this->result->setError('Backup process was started, please, wait a few minutes...');
+                return $this->result;
+            }
             $errors = array();
 
             $this->result->setResult(WPAdm_Result::WPADM_RESULT_SUCCESS);
@@ -85,7 +104,8 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                     $errors[] = 'MySQL Error: Database-Dump File is empty';
                     WPAdm_Core::log('Dump of Database wasn\'t created (File of Database-Dump is empty!)');
                 } else {
-                    WPAdm_Core::log('Database Dump was successfully created('.filesize($mysql_dump_file).'b):' . $mysql_dump_file);
+                    $size_dump = round( (filesize($mysql_dump_file) / 1024 / 1024) , 2);
+                    WPAdm_Core::log('Database Dump was successfully created(' . $size_dump . 'Mb):' . $mysql_dump_file);
                 }
                 unset($commandContext);
             }

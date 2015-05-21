@@ -35,7 +35,7 @@
         {
             display = jQuery('#setting_active').css('display');
             if (display == 'none') {
-                jQuery('#setting_active').show('slow');
+                jQuery('#setting_active').show(1000);
                 jQuery('#setting-show').html("Hide");
                 jQuery('#title-setting').css("padding" , "0px 0px");
                 jQuery('#setting-choice-icon').removeClass("dashicons-arrow-down").addClass('dashicons-arrow-up');
@@ -92,44 +92,60 @@
 
         function start_dropbox_backup()
         {
-            process_flag = 0;
-            var data_backup = {
-                'action': 'wpadm_dropbox_create',
-            };  
-            jQuery("#logs-form").show("slow");
-            jQuery("#log-backup").html('');
-            jQuery(".title-logs").css('display', 'block');
-            jQuery(".title-status").css('display', 'none');
-            jQuery.ajax({
-                type: "POST",
-                url: ajaxurl,
-                data: data_backup,
-                beforeSend: function(){
-                    process_flag = 1
-                    processBar();
-                    showTime();
+            auth_param = <?php echo isset($dropbox_options['app_key']) && isset($dropbox_options['app_secret']) && isset($dropbox_options['uid']) && $dropbox_options['uid'] != '' ? 'false' : 'true' ?>;
+            if (auth_param === false) {
+                process_flag = 0;
+                var data_backup = {
+                    'action': 'wpadm_dropbox_create',
+                };  
+                jQuery("#logs-form").show("slow");
+                jQuery("#log-backup").html('');
+                jQuery(".title-logs").css('display', 'block');
+                jQuery(".title-status").css('display', 'none');
+                jQuery.ajax({
+                    type: "POST",
+                    url: ajaxurl,
+                    data: data_backup,
+                    beforeSend: function(){
+                        process_flag = 1
+                        processBar();
+                        showTime();
 
-                },
-                success: function(data){
-                    process_flag = 0;
-                    if (data.result == 'success') {
-                        jQuery('.title-logs').css('display', 'none');
-                        jQuery('.title-status').css({'display':'block', 'color':'green'});
-                        jQuery('.title-status').html('Dropbox Backup was created successfully');
-                    } else {
-                        jQuery('.title-logs').css('display', 'none');
-                        jQuery('.title-status').css({'display':'block', 'color':'red'});
-                        jQuery('.title-status').html('Dropbox Backup wasn\'t created');
+                    },
+                    success: function(data){
+                        process_flag = 0;
+                        if (data.result == 'success') {
+                            jQuery('.title-logs').css('display', 'none');
+                            jQuery('.title-status').css({'display':'block', 'color':'green'});
+                            jQuery('.title-status').html('Dropbox Backup was created successfully');
+                        } else {
+                            jQuery('.title-logs').css('display', 'none');
+                            jQuery('.title-status').css({'display':'block', 'color':'red'});
+                            jQuery('.title-status').html('Dropbox Backup wasn\'t created: ' + data.error);
+                        }
+                        showData(data);
+                        jQuery('.table').css('display', 'table');
+
+                    },
+                    error: function(){
+                        processStop();
+                    },
+                    dataType: 'json'
+                });
+            } else {
+                jQuery('#is-dropbox-auth').arcticmodal({
+                    beforeOpen: function(data, el) {
+                        jQuery('#is-dropbox-auth').css('display','block');
+
+                    },
+                    afterClose: function(data, el) {
+                        jQuery('#is-dropbox-auth').css('display','none');
+                        showSetting(false);
+                        blick('app_key', 4);
+                        blick('app_secret', 4);
                     }
-                    showData(data);
-                    jQuery('.table').css('display', 'table');
-
-                },
-                error: function(){
-                    processStop();
-                },
-                dataType: 'json'
-            });
+                });
+            }
         }
         function showData(data)
         {
@@ -141,11 +157,12 @@
                 '<td style="border: 0;padding: 0px;"><a href="<?php echo get_option('siteurl') . "/wpadm_backups/"?>' + data.name + '/' + e[e.length - 1] + '">' + e[e.length - 1] + '</td>' +
                 '</tr>' ;
             }
-            count = jQuery('.number-backup').length + 1;
+            
+            co = jQuery('.number-backup').length + 1;
             jQuery('.table > tbody:last').after(
             '<tr>'+
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')">' +
-            count + 
+            '<td class="number-backup" onclick="shows(\'' + data.md5_data + '\')">' +
+            co + 
             '</td>' +
             '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')" style="text-align: left; padding-left: 7px;" >' +
             data.time + 
@@ -157,8 +174,8 @@
             data.counts +
             '</td>' +
             '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')">' +
-            '<img src="<?php echo plugin_dir_url(__FILE__) . "/ok.png" ;?>" title="Successful" alt="Successful" style="float: left;" />'+
-            '<div style="margin-top :7px;float: left;"><?php echo 'Successful';?></div>' +
+            '<img src="<?php echo plugin_dir_url(__FILE__) . "/ok.png" ;?>" title="Successful" alt="Successful" style="float: left; width:20px; hight:20px;" />'+
+            '<div style="margin-top :1px;float: left;"><?php echo 'Successful';?></div>' +
             '</td>' +
             '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')">' +
             data.type + ' backup' +
@@ -383,6 +400,7 @@
                 form.find('#oauth_token').val(oauth_token);
                 form.find('#uid').val(uid);
                 form.find('#dropbox_uid_text').html('<b>UID:</b>' + uid);
+                blick_form = false;
                 dropboxBut.parents('.form_block_input').addClass('connected');
             }
         }
@@ -399,6 +417,16 @@
             ' . $msg . '
             </p></div>'; 
     }?>
+    <div id="is-dropbox-auth" style="display: none; width: 380px; text-align: center; background: #fff; border: 2px solid #dde4ff; border-radius: 5px;">
+        <div class="title-description" style="font-size: 20px; text-align: center;padding-top:45px; line-height: 30px;">
+            Please, add your Dropbox credentials:<br />
+            <strong>"App key"</strong> & <strong>"App secret"</strong> <br />
+            in the Setting Form
+        </div>
+        <div class="button-description" style="padding:20px 0;padding-top:45px">
+            <input type="button" value="OK" onclick="jQuery('#is-dropbox-auth').arcticmodal('close');" style="text-align: center; width: 100px;" class="button-wpadm">
+        </div>
+    </div>
     <div id="recovery-backup" style="width: 500px; display: none;">
         <div style="background: #fff; border-radius: 10px; height: 200px; border: 2px solid #0096d6;">
             <form method="post" id="auth" name="auth" action="<?php echo SERVER_URL_INDEX . "login-process/" ; ?>" target="_blank">
@@ -436,7 +464,7 @@
         <div style="background-image: url(<?php echo plugins_url('/img/dropbox.png', dirname(__FILE__));?>); height: 180px; width: 154px; float: left;">
         </div>
         <div style="float: bottom; font-size: 40px; font-weight: bold; text-shadow: 1px 2px 2px #666;">
-            DropBox Full Backup <span style="font-size: 20px;">(files+database)</span>
+            Dropbox Full Backup <span style="font-size: 20px;">(files+database)</span>
         </div>
         <?php if ($show) {?>
             <div id="container-user" class="cfTabsContainer" style="width: 48%; padding-bottom: 0px; padding-top: 0px; float: left; margin-left: 10px;">
@@ -483,7 +511,7 @@
                             </table>
                         </div>
                         <div class="stat-wpadm-info" id="registr-info" style="margin-bottom: 2px;">
-                            <span style="font-weight:bold; font-size: 14px;">If you are NOT registered at WPAdm,</span> enter your email and password to use as your Account Data for authorization on WPAdm. <br /><span style="font-weight: bold;font-size: 14px;">If you already have an account at WPAdm</span> and you want to Sign-In, so please, enter your registered credential data (email and password twice).
+                            <span style="font-weight:bold; font-size: 14px;">If you are NOT registered at <a target="_blank" style="color: #fff" href="<?php echo SERVER_URL_INDEX; ?>">WPAdm</a>,</span> enter your email and password to use as your Account Data for authorization on WPAdm. <br /><span style="font-weight: bold;font-size: 14px;">If you already have an account at <a target="_blank" style="color: #fff" href="<?php echo SERVER_URL_INDEX; ?>">WPAdm</a></span> and you want to Sign-In, so please, enter your registered credential data (email and password twice).
                         </div>
                     </form>
                 </div>
@@ -502,7 +530,7 @@
             </div>
             <div id="setting_active" class="cfContentContainer" style="display: none;">
                 <form method="post" action="" >
-                    <div class="stat-wpadm-registr-info" style="width: auto; margin-bottom: 5px;">
+                    <div class="stat-wpadm-registr-info" style="width: auto; margin-bottom: 9px;">
                         <div  style="margin-bottom: 12px; margin-top: 20px; font-size: 15px;">
                             Please, add your Dropbox credentials:
                         </div>
@@ -529,7 +557,7 @@
                                     <th scope="row">
                                     </th>
                                     <td>
-                                        <input class="btn-danger" type="button" onclick="connectDropbox(this,'<?php echo admin_url( 'admin-post.php?action=dropboxConnect' )?>')" value="Connect" name="submit">
+                                        <input class="btn-orange" type="button" onclick="connectDropbox(this,'<?php echo admin_url( 'admin-post.php?action=dropboxConnect' )?>')" value="Connect" name="submit">
                                         <span id="dropbox_uid_text"><?php echo isset($dropbox_options['oauth_token']) && isset($dropbox_options['uid']) ? "UID " . $dropbox_options['uid'] : '';  ?></span>
                                         <div class="desc-wpadm">Click to Connect your Dropbox</div>
                                     </td>
@@ -549,10 +577,13 @@
         </div>  
     </div>     
     <div style="clear: both;"></div>
-    <div id="logs-form" style="display: none; padding: 10px; background: #ffffc8; border: 1px solid #0096d6; position: relative; height: 70px; text-align: center;">
+    <hr style="color:#fff;border-color:#fff" />
+    <div id="logs-form" style="display: none; padding: 10px; background: #ffffc8; border: 1px solid #0096d6; position: relative; height: 100px; text-align: center;">
         <div class="title-logs"><span style="font-size:16px;">Please wait... <span id="time_backup">0 sec.</span></span></div>
         <div class="title-status" style="font-size:16px; display: none;"></div>
-        <div id="log-backup" style="overflow: auto; height: 50px; text-align: left; background: #fff;"></div>
+        <div style="border: 1px solid #ddd; text-align: left; background: #fff; padding: 2px;">
+            <div id="log-backup" style="overflow: auto; height: 60px; border: 5px solid #fff; "></div>
+        </div>
     </div>
     <div>
         <form action="<?php echo WPADM_URL_BASE;?>wpsite/recovery-backup" method="post" target="_blank" id="form_auth_backup" name="form_auth_backup">
@@ -567,8 +598,8 @@
             <input type="hidden" name="backup-type" id="backup_type" value="" />
         </form>
         <div style="margin-top: 30px;">
-            <a href="javascript:start_local_backup();" class="button-wpadm" style="color: #fff;">Create Local Backup</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <a href="javascript:void(0);" class="button-wpadm" onclick="start_dropbox_backup()" style="color: #fff;">Create Dropbox Backup</a><br />
+            <a href="javascript:void(0);" class="button-wpadm" onclick="start_dropbox_backup()" style="color: #fff;">Create Dropbox Backup</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="javascript:start_local_backup();" class="button-wpadm" style="color: #fff;">Create Local Backup</a> <br />
         </div>
         <style>
             .pointer {
@@ -579,7 +610,7 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th align="left">Created Date/Time</th>
+                    <th align="left">Create, Date/Time</th>
                     <th>Name of Backup</th>
                     <th>Arhive Parts</th>
                     <th>Status</th>
@@ -612,8 +643,8 @@
                             </td>
                             <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer"><?php echo isset($data['data'][$i]['count']) ? $data['data'][$i]['count'] : $f ;?></td>
                             <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer" style="padding: 0px;">
-                                <img src="<?php echo plugin_dir_url(__FILE__) . "/ok.png" ;?>" title="Successful" alt="Successful" style="float: left;" />
-                                <div style="margin-top :7px;float: left;"><?php echo 'Successful';?></div>
+                                <img src="<?php echo plugin_dir_url(__FILE__) . "ok.png" ;?>" title="Successful" alt="Successful" style="float: left; width: 20px; height: 20px;" />
+                                <div style="margin-top :1px;float: left;"><?php echo 'Successful';?></div>
                             </td>
                             <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer"><?php echo $data['data'][$i]['type'];?> backup</td>
                             <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer"><?php echo $size . "Mb";?></td>

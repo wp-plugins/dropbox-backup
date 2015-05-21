@@ -1,5 +1,5 @@
 <?php 
-   
+
     if (!defined("SERVER_URL_INDEX")) {
         define("SERVER_URL_INDEX", "http://www.wpadm.com/");
     }
@@ -9,18 +9,18 @@
     if (!defined("MYSQL_VERSION_DEFAULT")) {
         define("MYSQL_VERSION_DEFAULT", '5.0' );
     }
-    
+
     if (!defined("_PREFIX_STAT")) {
         define("_PREFIX_STAT", "counter_free_wpadm_");   
     }
-     
+
     if (!defined("PREFIX_BACKUP_")) { 
         define("PREFIX_BACKUP_", "wpadm_backup_"); 
     }   
     if (!defined("PAGES_NEXT_PREV_COUNT_STAT")) {   
         define("PAGES_NEXT_PREV_COUNT_STAT", 3);
     }
-    
+
     if (!class_exists("wpadm_class")) {
 
         add_action('admin_post_wpadm_activate_plugin', array('wpadm_class', 'activatePlugin') );
@@ -83,7 +83,7 @@
                 self::sendToServer($data);
             }
 
-            
+
 
             static function delete_pub_key() 
             {
@@ -298,7 +298,7 @@
                 wp_enqueue_script( 'postbox' );
 
             }
-            protected static function read_backups()
+            protected static function read_backups($dirs_read = false)
             {
                 $name = get_option('siteurl');
 
@@ -317,22 +317,24 @@
                         if ($d != '.' && $d != '..' && is_dir($dir_backup . "/$d") && strpos($d, self::$type) !== false) {
                             $backups['data'][$i]['dt'] = date("d.m.Y H:i", filectime($dir_backup . "/$d"));
                             $backups['data'][$i]['name'] = "$d";
-                            $size = 0;
-                            $dir_b = opendir($dir_backup . "/$d");
-                            $count_zip = 0;
-                            $backups['data'][$i]['files'] = "[";
-                            while($d_b = readdir($dir_b)) {
-                                if ($d_b != '.' && $d_b != '..' && file_exists($dir_backup . "/$d/$d_b") && substr($d_b, -3) != "php") {
-                                    $backups['data'][$i]['files'] .= "$d_b,";
-                                    $size += filesize($dir_backup . "/$d/$d_b");
-                                    $count_zip = $count_zip + 1;
+                            if ($dirs_read === false) {
+                                $size = 0;
+                                $dir_b = opendir($dir_backup . "/$d");
+                                $count_zip = 0;
+                                $backups['data'][$i]['files'] = "[";
+                                while($d_b = readdir($dir_b)) {
+                                    if ($d_b != '.' && $d_b != '..' && file_exists($dir_backup . "/$d/$d_b") && substr($d_b, -3) != "php") {
+                                        $backups['data'][$i]['files'] .= "$d_b,";
+                                        $size += filesize($dir_backup . "/$d/$d_b");
+                                        $count_zip = $count_zip + 1;
+                                    }
                                 }
+                                $backups['data'][$i]['files'] .= ']';
+                                $backups['data'][$i]['size'] = $size;
+                                $backups['data'][$i]['type'] = 'local';
+                                $backups['data'][$i]['count'] = $count_zip;
                             }
-                            $backups['data'][$i]['files'] .= ']';
-                            $backups['data'][$i]['size'] = $size;
-                            $backups['data'][$i]['type'] = 'local';
-                            $backups['data'][$i]['count'] = $count_zip;
-                            $i++;
+                            $i += 1;
                         }
                     }
                 }
@@ -384,7 +386,7 @@
             $extensions         = $c['extensions'];
             $disabledFunctions  = $c['disabledFunctions'];
             //try set new max time
-            
+
             $newMaxExecutionTime = $c['newMaxExecutionTime'];
             $upMaxExecutionTime = $c['upMaxExecutionTime'];
             $maxExecutionTime = $c['maxExecutionTime'];

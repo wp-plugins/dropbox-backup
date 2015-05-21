@@ -21,9 +21,9 @@
         add_action('admin_post_dropboxConnect', array('wpadm_wp_full_backup_dropbox', 'dropboxConnect') );
 
         add_action('admin_post_wpadm_download', array('wpadm_wp_full_backup_dropbox', 'download') );
-        
+
         @set_time_limit(0);
-        
+
         class wpadm_wp_full_backup_dropbox extends wpadm_class  {
 
             const MIN_PASSWORD = 6;
@@ -265,43 +265,46 @@
             }
 
             public static function dropbox_backup_create()
-            {
+            {      
                 require_once dirname(__FILE__) . "/class-wpadm-core.php";
                 @session_write_close();
-                parent::$type = 'full'; 
+                $log = new WPAdm_Core(array('method' => "local"), 'full_backup_dropbox', dirname(__FILE__));
                 if (file_exists(WPAdm_Core::getTmpDir() . "/logs2")) {
                     unlink(WPAdm_Core::getTmpDir() . "/logs2");
                 }
-                $backup = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'types' => array('db', 'files') )), 'full_backup_dropbox', dirname(__FILE__));
-                $res = $backup->getResult()->toArray();
-                $res['md5_data'] = md5( print_r($res, 1) );
-                $res['name'] = $backup->name;
-                $res['time'] = $backup->time;
-                $res['type'] = 'dropbox';
-                $res['counts'] = count($res['data']);
-                unset($backup);
                 $dropbox_options = get_option(PREFIX_BACKUP_ . 'dropbox-setting');
                 $send_to_dropbox = true;
                 if ($dropbox_options) {
                     $dropbox_options = unserialize( base64_decode( $dropbox_options ) );
                     if (!isset($dropbox_options['app_key'])) {
-                        WPAdm_Core::log("Error: Not Save \"App Key\" for Auth in Dropbox cloud");
+                        WPAdm_Core::log("Error: \"App Key\" is not exist. You cannot make Auth in Dropbox cloud without \"App Key\". Please, type your \"App Key\" in the Settings form. This data can be found at your Dropbox account.");
                         $send_to_dropbox = false;
                     }
                     if (!isset($dropbox_options['app_secret'])) {
-                        WPAdm_Core::log("Error: Not Save \"App Secret\" for Auth in Dropbox cloud");
+                        WPAdm_Core::log("Error: \"App Secret\" is not exist. You cannot make Auth in Dropbox cloud without \"App Secret\". Please, type your \"App Secret\" in the Settings form. This data can be found at your Dropbox account.");
                         $send_to_dropbox = false;
                     }
                     if (!isset($dropbox_options['oauth_token'])) {
-                        WPAdm_Core::log("Error: \"Token\" not exist for sending files to Dropbox cloud");
+                        WPAdm_Core::log("Error: \"Token\" is not exist. Files cannot be sent to Dropbox cloud. Please, test your connection within Settings form.");
                         $send_to_dropbox = false;
                     }
                 } else {
-                    WPAdm_Core::log("Error: Not Save \"App Key\" && \"App Secret\" for Auth in dropbox cloud");
+                    WPAdm_Core::log("Error: \"App Key\" && \"App Secret\" is not exist. ");
                     $res['type'] = 'local';
                     $send_to_dropbox = false;
                 }
+
                 if ($send_to_dropbox) {
+                    parent::$type = 'full'; 
+
+                    $backup = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'types' => array('db', 'files') )), 'full_backup_dropbox', dirname(__FILE__));
+                    $res = $backup->getResult()->toArray();
+                    $res['md5_data'] = md5( print_r($res, 1) );
+                    $res['name'] = $backup->name;
+                    $res['time'] = $backup->time;
+                    $res['type'] = 'dropbox';
+                    $res['counts'] = count($res['data']);
+                    unset($backup);
                     $folder_project = self::getNameProject();
                     $backup = new WPAdm_Core(array('method' => "send-to-dropbox", 
                     'params' => array('files' => $res['data'], 
