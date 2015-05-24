@@ -1,4 +1,4 @@
-=== DropBox Backup ===
+=== Dropbox Backup ===
 Plugin Name: Dropbox Backup
 Version: 1.2
 Donate link: http://www.wpadm.com/donate
@@ -16,7 +16,7 @@ Dropbox Backup Plugin to create Dropbox Full Backup (Files + Database) of your W
 
 == Description ==
 
-Supports WordPress Backups to Local Storage or upload Backup to DropBox.
+Supports WordPress Backups to Local Storage or upload Backup to Dropbox.
 
 * Local Backup: create the Full Backup of Web Page (Files + Database) and store this at Local Storage of the Site;
 * DropBox Backup: create the Full Backup (Files + Database) of Web Page at Local Storage and upload this to Dropbox;
