@@ -16,6 +16,7 @@
         add_action('wp_ajax_wpadm_logs', array('wpadm_wp_full_backup_dropbox', 'getLog') );
         add_action('wp_ajax_wpadm_local_backup', array('wpadm_wp_full_backup_dropbox', 'local_backup') );
         add_action('wp_ajax_wpadm_dropbox_create', array('wpadm_wp_full_backup_dropbox', 'dropbox_backup_create') );
+        add_action('wp_ajax_set_user_mail', array('wpadm_wp_full_backup_dropbox', 'setUserMail') );
 
         add_action('admin_post_wpadm_delete_backup', array('wpadm_wp_full_backup_dropbox', 'delete_backup') );
         add_action('admin_post_dropboxConnect', array('wpadm_wp_full_backup_dropbox', 'dropboxConnect') );
@@ -27,6 +28,21 @@
         class wpadm_wp_full_backup_dropbox extends wpadm_class  {
 
             const MIN_PASSWORD = 6;
+
+            public static function setUserMail()
+            {
+                if (isset($_POST['email'])) {
+                    $email = trim($_POST['email']);
+                    $mail = get_option(PREFIX_BACKUP_ . "email");
+                    if ($mail) {
+                        add_option(PREFIX_BACKUP_ . "email", $email);
+                    } else {
+                        update_option(PREFIX_BACKUP_ . "email",$email);
+                    }
+                } 
+                echo 'true';
+                wp_die();
+            }
 
             public static function local_backup()
             {

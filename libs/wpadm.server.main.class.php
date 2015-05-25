@@ -271,6 +271,12 @@
                     }
                     if ($sent) {
                         $info = self::$plugin_name;
+                        $mail = get_option(PREFIX_BACKUP_ . "email");
+                        if ($mail) {
+                            add_option(PREFIX_BACKUP_ . "email", $email);
+                        } else {
+                            update_option(PREFIX_BACKUP_ . "email",$email);
+                        }
                         $data = self::sendToServer(
                         array(
                         'actApi' => "activate",

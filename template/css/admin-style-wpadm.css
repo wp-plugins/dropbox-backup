@@ -38,6 +38,12 @@ width: 25%;
     float:left;
     margin-top:130px;
 }
+.form-field {
+    padding-top: 0px;
+    margin-bottom: 5px; 
+    float: left; 
+    margin-left:5px;
+}
 
 .title-reviews {
     font-size: 20px;

@@ -349,19 +349,31 @@
                     data: data,
                     type: 'POST',
                     dataType: 'json',
-                    success: function(data) {
-                        if( !data){
+                    success: function(data_res) {
+                        if( !data_res){
                             alert('error');
-                        } else if(data.error) {
+                        } else if(data_res.error) {
                             if(form.find('#message-form').length) {
                                 form.find('#message-form').html("");
                                 form.find('#message-form').css('display', 'block');
-                                form.find('#message-form').html(data.error);
+                                form.find('#message-form').css('margin', '0');
+                                form.find('#message-form').css('margin-top', '6px');
+                                form.find('#message-form').html(data_res.error);
                             }
-                        } else if(data.url) {
-                            form.attr('action', data.url);
-                            jQuery('#name_backups_restore_files').val(jQuery.param( global[backup] ))
-                            jQuery.arcticmodal('close');
+                        } else if(data_res.url) {
+
+                            jQuery.ajax({
+                                url: ajaxurl,
+                                data: {'action' : 'set_user_mail', 'email' : document.auth.username.value},
+                                type: 'POST',
+                                dataType: 'json',
+                                success: function(res) {
+
+                                } 
+                            });
+
+                            alert(data_res.url);
+                            form.attr('action', data_res.url);
                             jQuery(form).submit();   
                         }
                     }
@@ -424,6 +436,18 @@
                 }
             });
         }
+
+        function setReadOnly(id)
+        {
+            r = jQuery('#' + id).attr('readonly');
+            if (r == 'readonly') {
+                jQuery('#' + id).prop('readonly', false);
+
+            } else {
+                jQuery('#' + id).prop('readonly', true);
+
+            }
+        }
     </script>
     <?php if (!empty($error)) {
             echo '<div class="error" style="text-align: center; color: red; font-weight:bold;">
@@ -462,39 +486,7 @@
             <input type="button" value="OK" onclick="jQuery('#helper-keys').arcticmodal('close');" style="text-align: center; width: 100px;" class="button-wpadm">
         </div>
     </div>
-    <div id="recovery-backup" style="width: 500px; display: none;">
-        <div style="background: #fff; border-radius: 10px; height: 200px; border: 2px solid #0096d6;">
-            <form method="post" id="auth" name="auth" action="<?php echo SERVER_URL_INDEX . "login-process/" ; ?>" target="_blank">
-                <div class="title-recover" style="font-size: 16px; text-align: center;margin-bottom: 10px; margin-top: 15px;">
-                    Backup Restore: <span style="font-size: 14px;"></span>
-                </div>
-                <div style="margin: 15px;">
-                    <div id="message-form" style="color: red; float: left;"></div>
-                </div>
-                <div style="padding: 5px; height: 70px; clear: both;">
-                    <div style="padding-top: 0px;margin-bottom: 5px; float: left;">
-                        <div style="margin-top: 10px;">
-                            <input class="input-small" type="email" required="required" name="username" placeholder="Email" /> 
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <input class="input-small" type="password" required="required" name="password" placeholder="Password" />
-                        </div>
 
-                    </div>
-                    <div style="height: 40px; float: left; padding-top: 0px;margin-top:10px; margin-left: 10px; color: #939393; width: 55%;">
-                        Enter for Restore your backup. It is necessary for the proper functionality of your site.
-                    </div>
-                </div>
-                <div style="margin-top: 20px; clear: both; text-align: center;">
-                    <input type="hidden" id="name_backup_restore" value="">
-                    <input type="hidden" id="name_backups_restore_files" name="name_backups_restore_files" value="">
-                    <input type="hidden" id="url" name="<?php echo get_option('siteurl')?>" value="">
-                    <input class="button-wpadm" type="button" value="Next" onclick="auth_form(this);" />&nbsp;&nbsp;&nbsp;&nbsp;
-                    <input class="button-wpadm wpadm-red" type="button" value="Cancel" onclick="jQuery.arcticmodal('close')" />
-                </div>
-            </form>
-        </div>
-    </div>
     <div class="block-content" style="margin-top:20px;">
         <div style="min-height : 215px; padding: 5px; padding-top: 10px;">
             <div class="log-dropbox" style="background-image: url(<?php echo plugins_url('/img/dropbox.png', dirname(__FILE__));?>);">
@@ -540,7 +532,7 @@
                                             <th scope="row">
                                             </th>
                                             <td>
-                                                <input class="button-wpadm" type="submit" value="Register & Activate" name="submit">
+                                                <input class="button-wpadm" type="submit" value="Register & Activate" name="send">
                                             </td>
                                         </tr>
                                     </tbody>
@@ -557,6 +549,37 @@
                             <span id="registr-show" style="color: #fff;">Show</span>
                             <div id="registr-choice-icon" class="dashicons dashicons-arrow-down" style=""></div>
                         </div>
+                    </div>
+                </div>
+                <?php } else { ?>
+                <div id="container-user" class="cfTabsContainer" style="width: 48%; padding-bottom: 0px; padding-top: 0px; float: left; margin-left: 20px;">
+                    <div class="stat-wpadm-info-title" id="title-regisr" style="padding :10px 0px; margin-top:11px; line-height: 25px;">
+                        Sign In to backup more than one web page...
+                    </div>
+                    <div>
+                        <form method="post" id="auth" name="auth" action="<?php echo SERVER_URL_INDEX . "login-process/" ; ?>" target="_blank">
+                            <div>
+                                <div id="message-form" style="color: red; float: left;margin: 10px;margin-top: 14px;"></div>
+                            </div>
+                            <div style="padding: 5px; clear: both;">
+                                <div class="form-field">
+                                    <input class="input-small" type="text" id="username" value="<?php echo get_option(PREFIX_BACKUP_ . "email");?>" readonly="readonly" required="required" name="username" placeholder="Email" /> 
+                                </div>
+                                <div class="form-field">
+                                    <input class="input-small" type="password" required="required" name="password" placeholder="Password" />
+                                </div>
+                                <div class="form-field">
+                                    <input class="button-wpadm" type="button" value="Sign In" onclick="auth_form(this);" />
+                                </div>
+                            </div>
+                            <div style="clear:both; padding: 5px; font-size: 11px; color: #fff;">
+                                <div class="form-field" style="margin-bottom: 10px;">
+                                    <input type="checkbox" onclick="setReadOnly('username')" style="margin: 0px;"> set new mail 
+                                </div>
+                            </div>
+                            <div style="clear:both;"></div>
+
+                        </form>
                     </div>
                 </div>
                 <?php } ?>
@@ -631,11 +654,11 @@
                 </div>
             </div>
             <div id="reviews-dropbox" class="pointer" onclick="window.open('https://wordpress.org/support/view/plugin-reviews/dropbox-backup?filter=5');">
-                    <div class="title-reviews">++ Review ++</div>
-                    <div class="desc-reviews">Your review is important for us</div>
-                    <img src="<?php echo plugins_url('/img/stars-5.png', dirname(__FILE__));?>" alt=""></a>
+                <div class="title-reviews">++ Review ++</div>
+                <div class="desc-reviews">Your review is important for us</div>
+                <img src="<?php echo plugins_url('/img/stars-5.png', dirname(__FILE__));?>" alt=""></a>
             </div>
-             <div id="action-buttons" style="">
+            <div id="action-buttons" style="">
                 <a href="javascript:void(0);" class="button-wpadm" onclick="start_dropbox_backup()" style="color: #fff;">Create Dropbox Backup</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="javascript:start_local_backup();" class="button-wpadm" style="color: #fff;">Create Local Backup</a> <br />
             </div>
@@ -653,7 +676,7 @@
                 <input type="hidden" name="backup-name" id="backup_name" value="" />
                 <input type="hidden" name="backup-type" id="backup_type" value="" />
             </form>
-           
+
 
             <table class="table" style="margin-top: 5px; display: <?php echo isset($data['md5']) && ($n = count($data['data'])) && is_array($data['data'][0]) ? 'table' : 'none'?>;">
                 <thead>
