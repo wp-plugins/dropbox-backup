@@ -50,7 +50,11 @@ WE DO NOT COLLECT AND DO NOT STORE THE PERSONAL DATA OF USERS FROM THIS PLUGIN!
 
 == Frequently Asked Questions ==
 
-FAQ coming soon
+= Where I get my app key & secret? =
+
+You can get an API app key and secret by creating an app on the <a href="https://www.dropbox.com/developers/apps/create?app_type_checked=api" target="_blank">app creation page</a>. 
+Once you have an app created, the app key and secret will be available on the app's page on the <a href="https://www.dropbox.com/developers/apps" target="_blank">App Console</a>. 
+Note that Drop-ins have app keys but no app secrets.
 
 == Changelog ==
 
