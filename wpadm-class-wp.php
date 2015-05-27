@@ -52,7 +52,7 @@
                 if (file_exists(WPAdm_Core::getTmpDir() . "/logs2")) {
                     unlink(WPAdm_Core::getTmpDir() . "/logs2");
                 }
-                $backup = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'types' => array('db', 'files') )), 'full_backup_dropbox', dirname(__FILE__));
+                $backup = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'time' => @$_POST['time'], 'types' => array('db', 'files') )), 'full_backup_dropbox', dirname(__FILE__));
                 $res = $backup->getResult()->toArray();
                 $res['md5_data'] = md5( print_r($res, 1) );
                 $res['name'] = $backup->name;
@@ -313,7 +313,7 @@
                 if ($send_to_dropbox) {
                     parent::$type = 'full'; 
 
-                    $backup = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'types' => array('db', 'files') )), 'full_backup_dropbox', dirname(__FILE__));
+                    $backup = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'time' => @$_POST['time'], 'types' => array('db', 'files') )), 'full_backup_dropbox', dirname(__FILE__));
                     $res = $backup->getResult()->toArray();
                     $res['md5_data'] = md5( print_r($res, 1) );
                     $res['name'] = $backup->name;
@@ -351,6 +351,7 @@
             {
 
                 require_once dirname(__FILE__) . "/modules/dropbox.class.php";
+                parent::$type = 'full';
                 $dropbox_options = get_option(PREFIX_BACKUP_ . 'dropbox-setting');
                 if ($dropbox_options) {
                     $dropbox_options = unserialize( base64_decode( $dropbox_options ) );
@@ -364,7 +365,7 @@
                             $backup = $dropbox->listing($folder_project . "/" . $backups['items'][$i]['name']); 
                             $data['data'][$i]['name'] = $backups['items'][$i]['name'];
                             $data['data'][$i]['size'] = (int)$backup['size'] * 1024 * 1024;
-                            $data['data'][$i]['dt'] = date("d.m.Y H:i", strtotime($backup['date']) );
+                            $data['data'][$i]['dt'] = parent::getDateInName($backups['items'][$i]['name']);
                             $data['data'][$i]['count'] = count($backup['items']);
                             $data['data'][$i]['type'] = 'dropbox';
                             $k = $data['data'][$i]['count'];
@@ -375,8 +376,6 @@
                         }
                     }
                 } 
-
-                parent::$type = 'full';
                 $data_local = parent::read_backups();
                 if (isset($data['data'])) {
                     $data['data'] = array_merge($data_local['data'], $data['data']);

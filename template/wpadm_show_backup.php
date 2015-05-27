@@ -56,8 +56,10 @@
         process_flag = 0;
         function start_local_backup()
         {
+            d = new Date();
             var data_backup = {
                 'action': 'wpadm_local_backup',
+                'time': Math.ceil(  (d.getTime() + (-d.getTimezoneOffset() * 60000 ) ) / 1000 )
             };  
             jQuery("#logs-form").show("slow");
             jQuery("#action-buttons").css('margin-top', '8px');
@@ -96,13 +98,15 @@
             });
         }
 
+        var auth_param = <?php echo isset($dropbox_options['app_key']) && isset($dropbox_options['app_secret']) && isset($dropbox_options['uid']) && $dropbox_options['uid'] != '' ? 'false' : 'true' ?>;
         function start_dropbox_backup()
         {
-            auth_param = <?php echo isset($dropbox_options['app_key']) && isset($dropbox_options['app_secret']) && isset($dropbox_options['uid']) && $dropbox_options['uid'] != '' ? 'false' : 'true' ?>;
             if (auth_param === false) {
+                d = new Date();
                 process_flag = 0;
                 var data_backup = {
                     'action': 'wpadm_dropbox_create',
+                    'time': Math.ceil(  (d.getTime() + (-d.getTimezoneOffset() * 60000 ) ) / 1000 ),
                 };  
                 jQuery("#logs-form").show("slow");
                 jQuery("#action-buttons").css('margin-top', '8px');
@@ -371,8 +375,6 @@
 
                                 } 
                             });
-
-                            alert(data_res.url);
                             form.attr('action', data_res.url);
                             jQuery(form).submit();   
                         }
@@ -419,6 +421,7 @@
                 form.find('#oauth_token_secret').val(oauth_token_secret);
                 form.find('#oauth_token').val(oauth_token);
                 form.find('#uid').val(uid);
+                auth_param = false;
                 form.find('#dropbox_uid_text').html('<b>UID:</b>' + uid);
                 blick_form = false;
                 dropboxBut.parents('.form_block_input').addClass('connected');
@@ -570,6 +573,7 @@
                                 </div>
                                 <div class="form-field">
                                     <input class="button-wpadm" type="button" value="Sign In" onclick="auth_form(this);" />
+                                    <input type="hidden" value="<?php echo 'dropbox-backup'?>" name="plugin" />
                                 </div>
                             </div>
                             <div style="clear:both; padding: 5px; font-size: 11px; color: #fff;">
@@ -659,8 +663,13 @@
                 <img src="<?php echo plugins_url('/img/stars-5.png', dirname(__FILE__));?>" alt=""></a>
             </div>
             <div id="action-buttons" style="">
-                <a href="javascript:void(0);" class="button-wpadm" onclick="start_dropbox_backup()" style="color: #fff;">Create Dropbox Backup</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="javascript:start_local_backup();" class="button-wpadm" style="color: #fff;">Create Local Backup</a> <br />
+                <div style="float: left;">
+                    <button onclick="start_dropbox_backup();" class="backup_button" style="">Create Dropbox Backup</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+                <div style="float: left; margin-top: 2px;">
+                    <button onclick="start_local_backup()" class="backup_button" style="padding: 5px 10px; margin-top: 10px; font-size: 15px;bottom: 0px;">Create Local Backup</button> <br />
+                </div>
+                <div style="clear: both;"></div>
             </div>
         </div>
         <div style="clear: both; margin-bottom: 10px;"></div>

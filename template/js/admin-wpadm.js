@@ -50,8 +50,8 @@ function blick(id, border_)
     }).animate({
         outlineWidth: border_ + 'px',
         outlineColor: '#cd433d'
-    }, 500).animate({outlineWidth: '0px',outlineColor: '#cd433d' } , 500);
+    }, 400).animate({outlineWidth: '0px',outlineColor: '#cd433d' } , 400);
     if (blick_form) {
-        setTimeout('blick("' + id + '", ' + border_ + ')', 2000);
+        setTimeout('blick("' + id + '", ' + border_ + ')', 800);
     }
 }

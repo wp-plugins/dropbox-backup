@@ -25,9 +25,14 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
 
             $name = str_replace("http://", '', $name);
             $name = str_replace("https://", '', $name);
-            $name = preg_replace("|\W|", "_", $name);
-            $this->time = date("d.m.Y H:i");   //23.04.2015 13:45
-            $name .= '-' . wpadm_class::$type . '-' . date("Y_m_d_H_i");
+            $name = preg_replace("|\W|", "_", $name);  
+            if (isset($params['time']) && !empty($params['time'])) { // time  1432751372
+                $this->time = date("d.m.Y H:i", $params['time']);
+                $name .= '-' . wpadm_class::$type . '-' . date("Y_m_d_H_i", $params['time']);
+            } else {
+                $this->time = date("d.m.Y H:i");   //23.04.2015 13:45  
+                $name .= '-' . wpadm_class::$type . '-' . date("Y_m_d_H_i");
+            }
             $this->name = $name;
 
 
