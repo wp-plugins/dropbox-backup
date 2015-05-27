@@ -73,6 +73,16 @@
                 self::$error = $e;
             }
 
+            public static function getDateInName($name)
+            {
+                $date_ = explode(self::$type . '-', $name);
+                if (isset($date_[1])) {
+                    $date = explode('_', $date_[1]);
+                    $d = "{$date[0]}-{$date[1]}-{$date[2]} {$date[3]}:" . preg_replace("/\([0-9]+\)/", '', $date[4]);
+                }
+                return $d;
+
+            }
             public static function backupSend()
             {
                 $data['status'] = self::$backup . self::$status;
@@ -321,7 +331,7 @@
                     $dir_open = opendir($dir_backup);
                     while($d = readdir($dir_open)) {
                         if ($d != '.' && $d != '..' && is_dir($dir_backup . "/$d") && strpos($d, self::$type) !== false) {
-                            $backups['data'][$i]['dt'] = date("d.m.Y H:i", filectime($dir_backup . "/$d"));
+                            $backups['data'][$i]['dt'] = self::getDateInName($d);
                             $backups['data'][$i]['name'] = "$d";
                             if ($dirs_read === false) {
                                 $size = 0;

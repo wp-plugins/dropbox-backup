@@ -266,7 +266,7 @@
                     if(window.opener){
                     window.opener.connectDropbox(null, null, "'.htmlspecialchars($access_token['oauth_token_secret']).'", "'.htmlspecialchars($access_token['oauth_token']).'", "'.htmlspecialchars($access_token['uid']).'");window.close();
                     }else{
-                    window.location.href="/wpsite";
+                    window.location.href="' . admin_url("admin.php?page=wpadm_wp_full_backup_dropbox") . '";
                     }
                     </script>';
                     echo '<script>window.close();</script>';exit;
