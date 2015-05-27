@@ -2,7 +2,7 @@
 /*
 Plugin Name: Dropbox Backup
 Description: Dropbox Backup Plugin to create Dropbox Full Backup (Files + Database) of your Web Page
-Version: 1.2.3
+Version: 1.2.4
 */
 
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'wpadm.php';

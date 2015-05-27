@@ -63,6 +63,7 @@
             };  
             jQuery("#logs-form").show("slow");
             jQuery("#action-buttons").css('margin-top', '8px');
+            jQuery("#support-button").css('margin-top', '8px');
             jQuery("#log-backup").html('');
             jQuery(".title-logs").css('display', 'block');
             jQuery(".title-status").css('display', 'none');
@@ -110,6 +111,7 @@
                 };  
                 jQuery("#logs-form").show("slow");
                 jQuery("#action-buttons").css('margin-top', '8px');
+                jQuery("#support-button").css('margin-top', '8px');
                 jQuery("#log-backup").html('');
                 jQuery(".title-logs").css('display', 'block');
                 jQuery(".title-status").css('display', 'none');
@@ -282,6 +284,8 @@
                 'name': name,
             };  
             jQuery("#log-backup").html('');
+            jQuery("#action-buttons").css('margin-top', '8px');
+            jQuery("#support-button").css('margin-top', '8px');
             jQuery(".title-logs").css('display', 'block');
             jQuery(".title-status").css('display', 'none');
             jQuery("#logs-form").show("slow");
@@ -657,10 +661,14 @@
                     <div id="log-backup" style="overflow: auto; height: 60px; border: 5px solid #fff; "></div>
                 </div>
             </div>
+
             <div id="reviews-dropbox" class="pointer" onclick="window.open('https://wordpress.org/support/view/plugin-reviews/dropbox-backup?filter=5');">
                 <div class="title-reviews">++ Review ++</div>
                 <div class="desc-reviews">Your review is important for us</div>
                 <img src="<?php echo plugins_url('/img/stars-5.png', dirname(__FILE__));?>" alt=""></a>
+            </div>
+            <div id="support-button" style="float: right; margin-top: 130px; margin-right: 20px;">
+                <button onclick="window.open('<?php echo SERVER_URL_INDEX . 'support/'?>')" class="backup_button" style="padding: 5px 10px; margin-top: 10px; font-size: 15px;bottom: 0px;">Help</button> <br />
             </div>
             <div id="action-buttons" style="">
                 <div style="float: left;">
