@@ -155,14 +155,15 @@ if (!class_exists('WPAdm_Core')) {
         */
         private function auth() {
             $this->pub_key = get_option('wpadm_pub_key');
-            if ('local_backup' == $this->request['method'] || 'send-to-dropbox' == $this->request['method'] || 'local_restore' == $this->request['method'] || 'queue_controller' == $this->request['method'] || 'local' == $this->request['method']) {
+            $methods_local = array('local_backup', 'send-to-dropbox', 'local_restore', 'local', 'queue_controller', 'local_send_to_s3');
+            if ( in_array($this->request['method'], $methods_local) ) {
                 return true;
             }
             if (empty($this->pub_key)) {
                 if ('connect' == $this->request['method']) {
                     $this->pub_key = $this->request['params']['pub_key'];
                 } else {
-                    $this->getResult()->setError('Activate site in WPAdm.com for work to plugins.Активируйте сайт на wpadm.com для работы плагинов.');
+                    $this->getResult()->setError('Activate site in WPAdm.com for work to plugins.');
                     return false;
                 }
             } elseif ('connect' == $this->request['method']) {
@@ -256,7 +257,7 @@ if (!class_exists('WPAdm_Core')) {
                     }
                     unlink($f);
                 }
-                rmdir($dir);
+                @rmdir($dir);
             }
         }
     }
