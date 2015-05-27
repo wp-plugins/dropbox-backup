@@ -3,7 +3,7 @@ Plugin Name: Dropbox Backup
 Version: 1.2.2
 Donate link: http://www.wpadm.com/donate
 URI: http://www.wpadm.com/dropbox-backup
-Tags: DropBox, Backup, Dropbox Backup, database, file, full backup, manage, sicherung, database backup, file backup, page backup, page, web, web backup, web page, web page backup, site, site backup, back up, cloud, Cloud Files, db backup, dump, german, migrate, multisite, Russian, schedule, storage, time, upload
+Tags: DropBox, Backup, Dropbox Backup, database, file, full backup, manage, sicherung, database backup, file backup, page backup, page, web, web backup, web page, web page backup, site, site backup, back up, cloud, Cloud Files, cloud backup, db backup, dump, german, migrate, multisite, Russian, schedule, storage, time, upload
 Requires at least: 4.0.0
 Tested up to: 4.2.2
 Stable tag: trunk
