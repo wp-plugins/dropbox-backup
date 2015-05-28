@@ -94,13 +94,16 @@ if ( ! function_exists('wpadm_get_blog_info')) {
     function  wpadm_get_blog_info() {
         $info = array(
         'url' => get_site_url(),
-        'email' => get_settings('admin_email')
+        'email' => get_option('admin_email')
         );
         $debug = debug_backtrace();
         $info['debug'] = $debug;
         $file = (is_array($debug[count($debug)-1]['args'][0]))?$debug[count($debug)-1]['args'][0][0] : $debug[count($debug)-1]['args'][0];
-        preg_match("|wpadm_.*wpadm_(.*)\.php|", $file, $m); ;
-        $info['plugin'] = $m[1];
+        preg_match("|wpadm_.*wpadm_(.*)\.php|", $file, $m); 
+        $info['plugin'] = '';
+        if (isset($m[1])) {
+            $info['plugin'] = $m[1];
+        } 
 
         return $info;
     }
