@@ -28,6 +28,13 @@
         class wpadm_wp_full_backup_dropbox extends wpadm_class  {
 
             const MIN_PASSWORD = 6;
+            
+            static function include_admins_script()
+            {
+                wp_enqueue_style('css-admin-wpadm', plugins_url( "/template/css/admin-style-wpadm.css", __FILE__) );
+                wp_enqueue_script( 'js-admin-wpadm', plugins_url( "/template/js/admin-wpadm.js",  __FILE__ ) );
+                wp_enqueue_script( 'postbox' );
+            }
 
             public static function setUserMail()
             {
