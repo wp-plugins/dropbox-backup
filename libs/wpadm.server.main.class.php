@@ -43,7 +43,7 @@
             'wpadm_full_backup_ftp' => '1.0',  
             'dropbox-backup' => '1.0',  
             'wpadm_db_backup_storage' => '1.0',  
-            'wpadm_db_backup_s3' => '1.0',  
+            'database-backup-amazon-s3' => '1.0',  
             'wpadm_file_backup_s3' => '1.0',  
             'wpadm_file_backup_ftp' => '1.0',  
             'wpadm_file_backup_dropbox' => '1.0',  
