@@ -13,135 +13,36 @@ if (!class_exists('WPAdm_Mysqldump')) {
         private function connect($db = '') {
             WPAdm_Core::log("----------------------------------------------------");
             WPAdm_Core::log("Connecting to MySQL...");
-            if ($db) {
-                $link = mysqli_connect($this->host, $this->user, $this->password, $db);
-            } else {
-                $link = mysqli_connect($this->host, $this->user, $this->password);
+            if (! class_exists('wpdb')) {
+                require_once ABSPATH . '/' . WPINC . '/wp-db.php';
             }
-            if (mysqli_connect_errno()) {
-                $this->setError('MySQL Connect failed: ' . mysqli_connect_error());
+            $this->dbh = new wpdb( $this->user, $this->password, $db, $this->host );
+            $errors = $this->dbh->last_error;
+            if ($errors) {
+                $this->setError('MySQL Connect failed: ' . $errors);
             }
-            $this->dbh = $link;
-            $this->init_charset($link);
-            $this->set_charset($link);
-            return $link;
-
-        }
-
-        public function set_charset( $link, $charset = null, $collate = null ) {
-            if ( ! isset( $charset ) )
-                $charset = $this->charset;
-            if ( ! isset( $collate ) )
-                $collate = $this->collate;
-            WPAdm_Core::log("MySQL set Charset $charset");
-            if (! empty( $charset ) ) {
-                if ( function_exists( 'mysqli_set_charset' )) {
-                    mysqli_set_charset( $link, $charset );
-                } else {
-                    $query = $this->prepare( 'SET NAMES %s', $charset );
-                    if ( ! empty( $collate ) )
-                        $query .= $this->prepare( ' COLLATE %s', $collate );
-                    mysqli_query( $link, $query );
-                }
-
-            }
-        }
-        public function init_charset($link) 
-        {
-            if ( function_exists('is_multisite') && is_multisite() ) {
-                $this->charset = 'utf8';
-                if ( defined( 'DB_COLLATE' ) && DB_COLLATE ) {
-                    $this->collate = DB_COLLATE;
-                } else {
-                    $this->collate = 'utf8_general_ci';
-                }
-            } elseif ( defined( 'DB_COLLATE' ) ) {
-                $this->collate = DB_COLLATE;
-            }
-
-            if ( defined( 'DB_CHARSET' ) ) {
-                $this->charset = DB_CHARSET;
-            }
-
-            if ( ( ! ( $link instanceof mysqli ) )
-            || ( empty( $link ) || ! ( $link instanceof mysqli ) ) ) {
-                return;
-            }
-
-            if ( 'utf8' === $this->charset && $this->has_cap( 'utf8mb4' ) ) {
-                $this->charset = 'utf8mb4';
-            }
-
-            if ( 'utf8mb4' === $this->charset && ( ! $this->collate || stripos( $this->collate, 'utf8_' ) === 0 ) ) {
-                $this->collate = 'utf8mb4_unicode_ci';
-            }
-        }
-        public function has_cap( $db_cap ) {
-            $version = $this->db_version();
-
-            switch ( strtolower( $db_cap ) ) {
-                case 'collation' :    // @since 2.5.0
-                case 'group_concat' : // @since 2.7.0
-                case 'subqueries' :   // @since 2.7.0
-                    return version_compare( $version, '4.1', '>=' );
-                case 'set_charset' :
-                    return version_compare( $version, '5.0.7', '>=' );
-                case 'utf8mb4' :      // @since 4.1.0
-                    if ( version_compare( $version, '5.5.3', '<' ) ) {
-                        return false;
-                    }
-                    $client_version = mysqli_get_client_info();
-                    if ( false !== strpos( $client_version, 'mysqlnd' ) ) {
-                        $client_version = preg_replace( '/^\D+([\d.]+).*/', '$1', $client_version );
-                        return version_compare( $client_version, '5.0.9', '>=' );
-                    } else {
-                        return version_compare( $client_version, '5.5.3', '>=' );
-                    }
-            }
-
-            return false;
-        }    
-        public function db_version() {
-
-            $server_info = mysqli_get_server_info( $this->dbh );
-
-            return preg_replace( '/[^0-9.].*/', '', $server_info );
-        }
-        public function prepare( $query, $args ) {
-            if ( is_null( $query ) )
-                return;
-
-            // This is not meant to be foolproof -- but it will catch obviously incorrect usage.
-            if ( strpos( $query, '%' ) === false ) {
-                _doing_it_wrong( 'wpdb::prepare', sprintf( __( 'The query argument of %s must have a placeholder.' ), 'wpdb::prepare()' ), '3.9' );
-            }
-
-            $args = func_get_args();
-            array_shift( $args );
-            // If args were passed as an array (as in vsprintf), move them up
-            if ( isset( $args[0] ) && is_array($args[0]) )
-                $args = $args[0];
-            $query = str_replace( "'%s'", '%s', $query ); // in case someone mistakenly already singlequoted it
-            $query = str_replace( '"%s"', '%s', $query ); // doublequote unquoting
-            $query = preg_replace( '|(?<!%)%f|' , '%F', $query ); // Force floats to be locale unaware
-            $query = preg_replace( '|(?<!%)%s|', "'%s'", $query ); // quote the strings, avoiding escaped strings like %%s
-            array_walk( $args, array( $this, 'escape_by_ref' ) );
-            return @vsprintf( $query, $args );
+            return $this->dbh;
         }
 
         public function optimize($db) {
             $link = $this->connect($db);
             WPAdm_Core::log("Optimize Database Tables was started");
-            if (!$result = mysqli_query($link, 'SHOW TABLES')) {
-                $this->setError(mysqli_error($link));
-            };
-            while($row = mysqli_fetch_row($result))
-            {
-                if (!mysqli_query($link, 'OPTIMIZE TABLE '.$row[0])) {
-                    $this->setError(mysqli_error($link));
-                };
+            $n = $link->query('SHOW TABLES');
+            $result = $link->last_result;
+            if (!empty( $link->last_error ) && $n > 0) {
+                $this->setError($link->last_error);
+            } else {
+                for($i = 0; $i < $n; $i++ ) {
+                    $res = array_values( get_object_vars( $result[$i] ) );
+                    $link->query('OPTIMIZE TABLE '. $res[0]);
+                    if (!empty( $link->last_error ) ) {
+                        WPAdm_Core::log("Error to Optimize Table `{$res[0]}`");
+                    } else {
+                        WPAdm_Core::log("Optimize Table `{$res[0]}` was successfully");
+                    }
+                }
+                WPAdm_Core::log("Optimize Database Tables was Finished");
             }
-            WPAdm_Core::log("Optimize Database Tables was Finished");
 
         }
 
@@ -149,60 +50,57 @@ if (!class_exists('WPAdm_Mysqldump')) {
             $link = $this->connect($db);
             WPAdm_Core::log("MySQL of Dump was started");
             $tables = array();
-            if (!$result = mysqli_query($link, 'SHOW TABLES')) {
-                $this->setError(mysqli_error($link));
-            };
-            while($row = mysqli_fetch_row($result))
-            {
+            $n = $link->query('SHOW TABLES');
+            $result = $link->last_result;
+            if (!empty( $link->last_error ) && $n > 0) {
+                $this->setError($link->last_error);
+            } 
+            for($i = 0; $i < $n; $i++ ) {
+                $row = array_values( get_object_vars( $result[$i] ) );
                 $tables[] = $row[0];
             }
 
-            //cycle through
-
             $return = '';
-            $charset = mysqli_get_charset($link);
-            if (isset($charset->charset)) {
-                $return .= "SET NAMES '{$charset->charset}';\n\n";
-                WPAdm_Core::log("SET NAMES Database {$charset->charset};");
-            }
             foreach($tables as $table)
             {
                 WPAdm_Core::log("Add a table {$table} in the database dump");
-                mysqli_close($link);
-                $link = $this->connect($db);
-                if (!$result = mysqli_query($link, 'SELECT * FROM ' . $table)) {
-                    $this->setError(mysqli_error($link));
-                };
-                $num_fields = mysqli_num_fields($result);
-
+                $num_fields = $link->query('SELECT * FROM ' . $table);
+                $result = $link->last_result;
+                if (!empty( $link->last_error ) && $n > 0) {
+                    $this->setError($link->last_error);
+                }
                 $return.= 'DROP TABLE '.$table.';';
-                if (!$ress = mysqli_query($link, 'SHOW CREATE TABLE ' . $table)) {
-                    $this->setError(mysqli_error($link));
-                };
 
-                $row2 = mysqli_fetch_row($ress);
+                $ress = $link->query('SHOW CREATE TABLE ' . $table);
+                $result2 = $link->last_result;
+                if (!empty( $link->last_error ) && $n > 0) {
+                    $this->setError($link->last_error);
+                }
+                $row2 = array_values( get_object_vars( $result2[0]  ) );
                 $return.= "\n\n".$row2[1].";\n\n";
-
-                for ($i = 0; $i < $num_fields; $i++)
-                {
-                    while($row = mysqli_fetch_row($result))
+                if ($num_fields > 0) {
+                    for ($i = 0; $i < $num_fields; $i++)
                     {
-                        $return.= 'INSERT INTO '.$table.' VALUES(';
-                        for($j=0; $j<$num_fields; $j++)
-                        {
-                            //$row[$j] = mb_convert_encoding($row[$j], 'UTF-8', 'auto');
-                            $row[$j] = addslashes($row[$j]);
-                            $row[$j] = str_replace("\n","\\n",$row[$j]);
-                            if (isset($row[$j])) { $return.= '"'.$row[$j].'"' ; } else { $return.= '""'; }
-                            if ($j<($num_fields-1)) { $return.= ','; }
+                        $row = array_values( get_object_vars( $result[$i] ) );
+                        //WPAdm_Core::log('row' . print_r($row, 1));
+                        $rows_num = count($row);
+                        if ($rows_num > 0) {
+                            $return.= 'INSERT INTO '.$table.' VALUES(';
+                            for($j=0; $j < $rows_num; $j++)
+                            {
+                                $row[$j] = addslashes($row[$j]);
+                                $row[$j] = str_replace("\n","\\n",$row[$j]);
+                                if (isset($row[$j])) { $return.= '"'.$row[$j].'"' ; } else { $return.= '""'; }
+                                if ($j<($rows_num-1)) { $return.= ','; }
+                            }
+                            $return.= ");\n";
                         }
-                        $return.= ");\n";
+
                     }
                 }
                 $return.="\n\n\n";
             }
-
-            mysqli_close($link);
+            unset($link);
             $handle = fopen($filename,'w+');
             fwrite($handle,$return);
             fclose($handle);
@@ -212,7 +110,6 @@ if (!class_exists('WPAdm_Mysqldump')) {
 
         private function setError($txt)
         {
-            //WPAdm_Core::log($txt);
             throw new Exception($txt);
         }
 
@@ -234,10 +131,10 @@ if (!class_exists('WPAdm_Mysqldump')) {
                     if ($char_new !== false && $char_new != "\n") {
                         $sql .= $char_new;
                     } else {
-                        $ress = mysqli_query($link, $sql);
-                        if (!$ress) {
-                            $this->setError(mysqli_error($link));
-                            WPAdm_Core::log("MySQL Error: " . mysqli_error($link));
+                        $ress = $link->query($sql);
+                        if (!empty( $link->last_error ) && $n > 0) {
+                            $this->setError($link->last_error);
+                            WPAdm_Core::log("MySQL Error: " . $link->last_error);
                             break;
                         };
                         $sql = "";

@@ -46,7 +46,7 @@
             'database-backup-amazon-s3' => '1.0',  
             'wpadm_file_backup_s3' => '1.0',  
             'wpadm_file_backup_ftp' => '1.0',  
-            'wpadm_file_backup_dropbox' => '1.0',  
+            'file-backup-dropbox' => '1.0',  
             'wpadm_db_backup_ftp' => '1.0',  
             'wpadm_db_backup_dropbox' => '1.0',  
             'wpadm_file_backup_storage' => '1.0',
@@ -605,9 +605,14 @@
             $extensions         = implode(', ', get_loaded_extensions());
             $disabledFunctions  = ini_get('disable_functions');
             $mysqlVersion       = '';
-            $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD);
-            if (!mysqli_connect_errno()) {
-                $mysqlVersion = $mysqli->server_info;
+            
+            if (! class_exists('wpdb')) {
+                require_once ABSPATH . '/' . WPINC . '/wp-db.php';
+            }
+            $mysqli = new wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
+            $errors = $mysqli->last_error;
+            if (empty($errors)) {
+                $mysqlVersion = $mysqli->db_version();
             }
             $upMaxExecutionTime = 0;
             $newMaxExecutionTime = intval($maxExecutionTime) + 60;
