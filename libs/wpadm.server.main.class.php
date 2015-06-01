@@ -526,19 +526,19 @@
                     <th scope="row">PHP Version</th>
                     <td><?php echo PHP_VERSION_DEFAULT ?> or greater</td>
                     <td><?php echo check_version($phpVersion , PHP_VERSION_DEFAULT) === false ? '<span style="color:#fb8004;font-weight:bold;">' . $phpVersion .'</span>' : $phpVersion ?></td>
-                    <td><?php echo (check_version($phpVersion , PHP_VERSION_DEFAULT) ? '<span style="color:green;font-weight:bold;">OK</span>' : '<span style="color:#fb8004;font-weight:bold;">Please update Your version for correct working of plugin</span>') ?></td>
+                    <td><?php echo (check_version($phpVersion , PHP_VERSION_DEFAULT) ? '<span style="color:green;font-weight:bold;">OK</span>' : '<span style="color:#fb8004;font-weight:bold;">Please update your PHP version to get it working correctly</span>') ?></td>
                 </tr>
                 <tr>
                     <th scope="row">MySQL Version</th>
                     <td><?php echo MYSQL_VERSION_DEFAULT ?> or greater</td>
                     <td><?php echo check_version($mysqlVersion , MYSQL_VERSION_DEFAULT) === false ? '<span style="color:#fb8004;font-weight:bold;">' . $mysqlVersion .'</span>' : $mysqlVersion; ?></td>
-                    <td><?php echo (check_version($mysqlVersion , MYSQL_VERSION_DEFAULT) ? '<span style="color:green;font-weight:bold;">OK</span>' : '<span style="color:#fb8004;font-weight:bold;">Please update Your version for correct working of plugin</span>') ?></td>
+                    <td><?php echo (check_version($mysqlVersion , MYSQL_VERSION_DEFAULT) ? '<span style="color:green;font-weight:bold;">OK</span>' : '<span style="color:#fb8004;font-weight:bold;">Please update your MySQL version to get it working correctly</span>') ?></td>
                 </tr>
                 <tr>
                     <th scope="row">Max Execution Time</th>
                     <td><?php echo $newMaxExecutionTime ?></td>
                     <td><?php echo ($upMaxExecutionTime == 0) ? '<span style="color:#fb8004;font-weight:bold;">' . $maxExecutionTime .'</span>' : $maxExecutionTime; ?></td>
-                    <td><?php echo ($upMaxExecutionTime == 1) ? '<span style="color:green; font-weight:bold;">OK</span>' : '<span style="color:#fb8004;font-weight:bold;">Correct operation of the plugin can not be guaranteed</span>'; ?></td>
+                    <td><?php echo ($upMaxExecutionTime == 1) ? '<span style="color:green; font-weight:bold;">OK</span>' : '<span style="color:#fb8004;font-weight:bold;">Correct operation of the plugin can not be guaranteed.</span>'; ?></td>
                 </tr>
                 <tr>
                     <th scope="row">Max Memory Limit</th>
@@ -551,15 +551,15 @@
                     <?php $ex = $c['ex']; ?>
                     <td><?php echo ( $ex ) === false ? 'All present' : '<span style="color:#ffba00;font-weight:bold;">' . implode(", ", $ex) . '</span>'; ?></td>
                     <td><?php echo ( $ex ) === false ? 'Found' : '<span style="color:#ffba00;font-weight:bold;">Not Found</span>'; ?></td>
-                    <td><?php echo ( $ex ) === false ? '<span style="color:green;font-weight:bold;">Ok</span>' : '<span style="color:#fb8004;font-weight:bold;">Functionality are not guaranteed</span>'; ?></td>
+                    <td><?php echo ( $ex ) === false ? '<span style="color:green;font-weight:bold;">Ok</span>' : '<span style="color:#fb8004;font-weight:bold;">Functionality are not guaranteed.</span>'; ?></td>
                 </tr>
                 <tr>
                     <th scope="row">Disabled Functions</th>
-                    <td colspan="3" align="left"><?php echo ( $func = $c['func']) === false ? '<span style="color:green;font-weight:bold;">All the necessary functions are enabled</span>' : '<span style="color:#fb8004;font-weight:bold;">Please enable these functions for correct work of plugin: ' . implode(", ", $func) . '</span>'; ?></td>
+                    <td colspan="3" align="left"><?php echo ( $func = $c['func']) === false ? '<span style="color:green;font-weight:bold;">All necessary functions are enabled</span>' : '<span style="color:#fb8004;font-weight:bold;">Please enable these functions to get plugin working correctly: ' . implode(", ", $func) . '</span>'; ?></td>
                 </tr>
                 <tr>
                     <th scope="row">Plugin Access</th>
-                    <td colspan="3" align="left"><?php echo ( ( is_admin() && is_super_admin() ) ? "<span style=\"color:green; font-weight:bold;\">Granted</span>" : "<span style=\"color:red; font-weight:bold;\">You can't administrate this WPAdm Plugin(s) as it requires an 'Admin' access for this website</span>")?></td>
+                    <td colspan="3" align="left"><?php echo ( ( is_admin() && is_super_admin() ) ? "<span style=\"color:green; font-weight:bold;\">Granted</span>" : "<span style=\"color:red; font-weight:bold;\">To administrate this Plugin(s) is an 'Admin' right required.</span>")?></td>
                 </tr>
             </tbody>
         </table>
