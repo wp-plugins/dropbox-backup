@@ -4,7 +4,7 @@ Version: 1.2.5
 Donate link: http://www.wpadm.com/donate
 URI: http://www.wpadm.com/dropbox-backup
 Tags: DropBox, Backup, Dropbox Backup, database, file, full backup, manage, sicherung, database backup, file backup, page backup, page, web, web backup, web page, web page backup, site, site backup, back up, cloud, Cloud Files, cloud backup, db backup, dump, german, migrate, multisite, Russian, schedule, storage, time, upload, data bank
-Requires at least: 4.0.0
+Requires at least: 3.9
 Tested up to: 4.2.2
 Stable tag: trunk
 License: GPLv2 or later
