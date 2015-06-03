@@ -655,7 +655,7 @@
     <div class="block-content">
         <div class="" style="margin-top:10px;">
             <div id="logs-form" style="display: none; float:left; width: 70%;">
-                <div class="title-logs"><span style="font-size:16px;">Please wait... <span id="time_backup">0 sec.</span></span></div>
+                <div class="title-logs"><span style="font-size:16px;">Please wait... <span id="time_backup">0 sec.</span><img style="float: right;" src="<?php echo plugins_url('/img/wpadmload.gif', dirname(__FILE__))?>" alt=""></span></div>
                 <div class="title-status" style="font-size:16px; display: none;"></div>
                 <div style="border: 1px solid #ddd; text-align: left; background: #fff; padding: 2px;">
                     <div id="log-backup" style="overflow: auto; height: 60px; border: 5px solid #fff; "></div>
