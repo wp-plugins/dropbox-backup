@@ -1,4 +1,17 @@
 
+.folder-class {
+    text-align: left;
+    font-size: 14px;
+    font-weight: 400;
+    color:#444444;
+}
+.folder-class .first, .folder-class .second {
+    margin-left:3px;
+}
+.folder-class .first:after, .folder-class .second:after {
+    content:"/";
+} 
+
 .backup_button {
     -moz-box-shadow:inset 0px 1px 0px 0px #9fb4f2;
     -webkit-box-shadow:inset 0px 1px 0px 0px #9fb4f2;
