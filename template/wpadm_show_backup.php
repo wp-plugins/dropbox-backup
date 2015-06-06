@@ -351,6 +351,7 @@
                 form.find('#message-form').css('display', 'none');
                 data['password'] = document.auth.password.value; 
                 data['username'] = document.auth.username.value;
+                data['plugin'] = document.auth.plugin.value;
                 backup = jQuery("#name_backup_restore").val();
                 jQuery.ajax({
                     url: form.attr('action'),
@@ -380,7 +381,8 @@
                                 } 
                             });
                             form.attr('action', data_res.url);
-                            jQuery(form).submit();   
+                            jQuery(form).submit();  
+                            location.reload();  
                         }
                     }
 
@@ -564,7 +566,7 @@
                         Sign In to backup more than one web page...
                     </div>
                     <div>
-                        <form method="post" id="auth" name="auth" action="<?php echo SERVER_URL_INDEX . "login-process/" ; ?>" target="_blank">
+                        <form method="post" id="auth" name="auth" action="<?php echo SERVER_URL_INDEX . "login-process" ; ?>" target="_blank">
                             <div>
                                 <div id="message-form" style="color: red; float: left;margin: 10px;margin-top: 14px;"></div>
                             </div>

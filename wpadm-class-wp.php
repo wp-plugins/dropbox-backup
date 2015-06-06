@@ -1,6 +1,6 @@
 <?php 
     if (! defined("WPADM_URL_BASE")) {
-        define("WPADM_URL_BASE", 'http://secure.wpadm.com/');
+        define("WPADM_URL_BASE", 'http://secure.webpage-backup.com/');
     }
 
     if(session_id() == '') {
@@ -22,13 +22,18 @@
         add_action('admin_post_dropboxConnect', array('wpadm_wp_full_backup_dropbox', 'dropboxConnect') );
 
         add_action('admin_post_wpadm_download', array('wpadm_wp_full_backup_dropbox', 'download') );
+        add_action('init', array('wpadm_wp_full_backup_dropbox', 'init') );
 
         @set_time_limit(0);
 
         class wpadm_wp_full_backup_dropbox extends wpadm_class  {
 
             const MIN_PASSWORD = 6;
-            
+            public static function init()
+            {
+                parent::$plugin_name = 'dropbox-backup';
+            }
+
             static function include_admins_script()
             {
                 wp_enqueue_style('css-admin-wpadm', plugins_url( "/template/css/admin-style-wpadm.css", __FILE__) );
@@ -402,7 +407,6 @@
             public static function draw_menu()
             {
                 $menu_position = '1.9998887771'; 
-                parent::$plugin_name = __CLASS__;
                 if(self::checkInstallWpadmPlugins()) {
                     $page = add_menu_page(
                     'WPAdm', 

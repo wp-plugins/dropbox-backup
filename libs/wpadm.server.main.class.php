@@ -1,7 +1,7 @@
 <?php 
 
     if (!defined("SERVER_URL_INDEX")) {
-        define("SERVER_URL_INDEX", "http://www.wpadm.com/");
+        define("SERVER_URL_INDEX", "http://www.webpage-backup.com/");
     }
     if (!defined("PHP_VERSION_DEFAULT")) {
         define("PHP_VERSION_DEFAULT", '5.2.4' );
@@ -40,13 +40,13 @@
             protected static $plugins = array('stats-counter' => '1.1',
             'wpadm_full_backup_storage' => '1.0',  
             'wpadm_full_backup_s3' => '1.0',  
-            'wpadm_full_backup_ftp' => '1.0',  
+            'ftp-backup' => '1.0',  
             'dropbox-backup' => '1.0',  
             'wpadm_db_backup_storage' => '1.0',  
             'database-backup-amazon-s3' => '1.0',  
             'wpadm_file_backup_s3' => '1.0',  
             'wpadm_file_backup_ftp' => '1.0',  
-            'file-backup-dropbox' => '1.0',  
+            'wpadm_file_backup_dropbox' => '1.0',  
             'wpadm_db_backup_ftp' => '1.0',  
             'wpadm_db_backup_dropbox' => '1.0',  
             'wpadm_file_backup_storage' => '1.0',
@@ -198,8 +198,6 @@
                         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
                         curl_setopt($curl, CURLOPT_POST, true);
                         curl_setopt($curl, CURLOPT_POSTFIELDS, $postdata);
-                        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-                        curl_setopt($curl, CURLOPT_USERPWD, "admin24:admin24");
                         self::$result = curl_exec($curl);
                         curl_close($curl);
                         if ($stat) {
@@ -605,7 +603,6 @@
             $extensions         = implode(', ', get_loaded_extensions());
             $disabledFunctions  = ini_get('disable_functions');
             $mysqlVersion       = '';
-            
             if (! class_exists('wpdb')) {
                 require_once ABSPATH . '/' . WPINC . '/wp-db.php';
             }
