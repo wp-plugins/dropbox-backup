@@ -56,7 +56,9 @@ You can get an API app key and secret by creating an app on the <a href="https:/
 Once you have an app created, the app key and secret will be available on the app's page on the <a href="https://www.dropbox.com/developers/apps" target="_blank">App Console</a>. 
 Note that Drop-ins have app keys but no app secrets.
 
-= My web page has crashed and not available. How can I restore my web page from backup? =
+= How to restore my site from dropbox backup? =
+
+= My web page completely crashed and not available. How can I restore my web page from dropbox backup? =
 
 Just login or Register at WPAdm www.wpadm.com If your web page wasn't added and verified - just do it. Add your domain and verified this on WPAdm account.
 
