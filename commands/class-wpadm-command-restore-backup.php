@@ -10,7 +10,7 @@ if (!class_exists('WPadm_Command_Restore_Backup')) {
                 $file = $context->get('file');  
                 $is_dump =  $file && strpos($file, "mysqldump.sql");
                 
-                WPAdm_Core::log( "Decompression Archive " . basename($context->get('zip_file'))  );
+                WPAdm_Core::log( "Data decompression " . basename($context->get('zip_file'))  );
                 if ($is_dump !== false)  {
                     $inzip = str_replace(ABSPATH, "", $file); 
                     $file_in_zip = $this->archive->extract(PCLZIP_OPT_BY_NAME, $inzip);

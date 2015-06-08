@@ -25,7 +25,7 @@ if (!class_exists('WPadm_Method_Send_To_Dropbox')) {
             $this->queue = new WPAdm_Queue($this->id);
 
             $ad = $this->params['access_details'];
-            WPAdm_Core::log('Start copy to Dropbox Cloud');
+            WPAdm_Core::log( langWPADM::get('Start copy to Dropbox Cloud' , false) );
             $this->queue->clear();
             $files = $this->params['files'];
             //$this->getResult()->setData($files);
@@ -47,10 +47,10 @@ if (!class_exists('WPadm_Method_Send_To_Dropbox')) {
             $res = $this->queue->save()
                 ->execute();
             if (!$res) {
-                WPAdm_Core::log('Dropbox: ' . $this->queue->getError());
-                $errors[] = 'Dropbox: '.$this->queue->getError();
+                WPAdm_Core::log(langWPADM::get('Dropbox: ' , false) . $this->queue->getError());
+                $errors[] = langWPADM::get('Dropbox: ' , false) . $this->queue->getError();
             }
-            WPAdm_Core::log('End Copy Files to Dropbox');
+            WPAdm_Core::log( langWPADM::get('End Copy Files to Dropbox' , false) );
             if (count($errors) > 0) {
                 $this->result->setError(implode("\n", $errors));
                 $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);

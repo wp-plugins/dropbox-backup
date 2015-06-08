@@ -24,13 +24,13 @@
             display = jQuery('#cf_activate').css('display');
             if (display == 'none') {
                 jQuery('#cf_activate').show('slow');
-                jQuery('#registr-show').html("Hide");
+                jQuery('#registr-show').html("<?php langWPADM::get('Hide'); ?>");
                 jQuery('#title-regisr').css("padding" , "0px 0px");
                 jQuery('#registr-choice-icon').removeClass("dashicons-arrow-down").addClass('dashicons-arrow-up');
             } else {
                 if (show) {
                     jQuery('#cf_activate').hide('slow');
-                    jQuery('#registr-show').html("Show");
+                    jQuery('#registr-show').html("<?php langWPADM::get('Show'); ?>");
                     jQuery('#title-regisr').css("padding" , "20px 0px");
                     jQuery('#registr-choice-icon').removeClass("dashicons-arrow-up").addClass('dashicons-arrow-down');
                 }
@@ -41,13 +41,13 @@
             display = jQuery('#setting_active').css('display');
             if (display == 'none') {
                 jQuery('#setting_active').show(1000);
-                jQuery('#setting-show').html("Hide");
+                jQuery('#setting-show').html("<?php langWPADM::get('Hide'); ?>");
                 jQuery('#title-setting').css("padding" , "0px 0px");
                 jQuery('#setting-choice-icon').removeClass("dashicons-arrow-down").addClass('dashicons-arrow-up');
             } else {
                 if (show) {
                     jQuery('#setting_active').hide('slow');
-                    jQuery('#setting-show').html("Show");
+                    jQuery('#setting-show').html("<?php langWPADM::get('Show'); ?>");
                     jQuery('#title-setting').css("padding" , "20px 0px");
                     jQuery('#setting-choice-icon').removeClass("dashicons-arrow-up").addClass('dashicons-arrow-down');
                 }
@@ -82,11 +82,11 @@
                     if (data.result == 'success') {
                         jQuery('.title-logs').css('display', 'none');
                         jQuery('.title-status').css({'display':'block', 'color':'green'});
-                        jQuery('.title-status').html('Local Backup was created successfully');
+                        jQuery('.title-status').html('<?php langWPADM::get('Local Backup was created successfully'); ?>');
                     } else {
                         jQuery('.title-logs').css('display', 'none');
                         jQuery('.title-status').css({'display':'block', 'color':'red'});
-                        jQuery('.title-status').html('Local Backup wasn\'t created');
+                        jQuery('.title-status').html("<?php langWPADM::get('Local Backup wasn\'t created'); ?>");
                     }
                     showData(data);
                     jQuery('.table').css('display', 'table');
@@ -130,11 +130,11 @@
                         if (data.result == 'success') {
                             jQuery('.title-logs').css('display', 'none');
                             jQuery('.title-status').css({'display':'block', 'color':'green'});
-                            jQuery('.title-status').html('Dropbox Backup was created successfully');
+                            jQuery('.title-status').html('<?php langWPADM::get('Dropbox Backup was created successfully'); ?>');
                         } else {
                             jQuery('.title-logs').css('display', 'none');
                             jQuery('.title-status').css({'display':'block', 'color':'red'});
-                            jQuery('.title-status').html('Dropbox Backup wasn\'t created: ' + data.error);
+                            jQuery('.title-status').html("<?php langWPADM::get('Dropbox Backup wasn\'t created: '); ?>" + data.error);
                         }
                         showData(data);
                         jQuery('.table').css('display', 'table');
@@ -187,18 +187,18 @@
             data.counts +
             '</td>' +
             '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')">' +
-            '<img src="<?php echo plugin_dir_url(__FILE__) . "/ok.png" ;?>" title="Successful" alt="Successful" style="float: left; width:20px; hight:20px;" />'+
-            '<div style="margin-top :1px;float: left;"><?php echo 'Successful';?></div>' +
+            '<img src="<?php echo plugin_dir_url(__FILE__) . "/ok.png" ;?>" title="<?php echo langWPADM::get('Successful', false);?>" alt="<?php echo langWPADM::get('Successful', false);?>" style="float: left; width:20px; hight:20px;" />'+
+            '<div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Successful', false);?></div>' +
             '</td>' +
             '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')">' +
-            data.type + ' backup' +
+            data.type + ' <?php langWPADM::get('backup')?>' +
             '</td>' +
             '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')">' +
-            size_backup.toFixed(2) + "Mb" +
+            size_backup.toFixed(2) + "<?php langWPADM::get('Mb')?>" +
             '</td>' +
             '<td>' +
-            '<a href="javascript:void(0)" class="button-wpadm" title="Restore" onclick="show_recovery_form(\'local\', \'' + data.name + '\')"><span class="pointer dashicons dashicons-backup"></span>Restore</a> &nbsp;' +
-            '<a href="javascript:void(0)" class="button-wpadm" title="Delete" onclick="delete_backup(\'' + data.name + '\', \'' + data.type + '\')"><span class="pointer dashicons dashicons-trash"></span>Delete</a> &nbsp;' +
+            '<a href="javascript:void(0)" class="button-wpadm" title="<?php langWPADM::get('Restore')?>" onclick="show_recovery_form(\'' + data.type + '\', \'' + data.name + '\')"><span class="pointer dashicons dashicons-backup"></span><?php langWPADM::get('Restore')?></a> &nbsp;' +
+            '<a href="javascript:void(0)" class="button-wpadm" title="<?php langWPADM::get('Delete')?>" onclick="delete_backup(\'' + data.name + '\', \'' + data.type + '\')"><span class="pointer dashicons dashicons-trash"></span><?php langWPADM::get('Delete')?></a> &nbsp;' +
             '</td>' +
             '</tr>'+
             '<tr id="' + data.md5_data + '" style="display: none;">'+
@@ -251,7 +251,7 @@
                 } else {
                     t = t + 1;
                 }
-                time = t + " sec.";
+                time = t + " <?php langWPADM::get('sec.'); ?>";
                 jQuery("#time_backup").html(time);
                 setTimeout(function() { showTime(t) }, 1000); 
             }
@@ -306,17 +306,25 @@
                         jQuery('.title-logs').css('display', 'none');
                         jQuery('.title-status').css({'display':'block', 'color':'green'});
                         if (type == 'local') {
-                            jQuery('.title-status').html('Local Backup(' + name + ') was restore is successfully');
+                            str = '<?php langWPADM::get('Local Backup (%s) was restored successfully'); ?>';
+                            str = str.replace('%s', name);
+                            jQuery('.title-status').html(str);
                         } else {
-                            jQuery('.title-status').html('Dropbox Backup(' + name + ') was restore is successfully');
+                            str = '<?php langWPADM::get('Dropbox Backup (%s) was restored successfully'); ?>';
+                            str = str.replace('%s', name);
+                            jQuery('.title-status').html(str);
                         }
                     } else {
                         jQuery('.title-logs').css('display', 'none');
                         jQuery('.title-status').css({'display':'block', 'color':'red'});
                         if (type == 'local') {
-                            jQuery('.title-status').html('Local Backup(' + name + ') wasn\'t restore');
+                            str = "<?php langWPADM::get('Local Backup (%s) wasn\'t restored'); ?>";
+                            str = str.replace("%s", name) ;
+                            jQuery('.title-status').html(str);
                         } else {
-                            jQuery('.title-status').html('Dropbox Backup(' + name + ') was restore is successfully');
+                            str = "<?php langWPADM::get('Dropbox Backup (%s) wasn\'t restored'); ?>";
+                            str = str.replace('%s', name);
+                            jQuery('.title-status').html(str);
                         }
                     }
                 },
@@ -417,7 +425,7 @@
                 if( dropboxWin ){
                     dropboxWin.focus();
                 }else{
-                    alert('Please, permit the pop-up windows.');
+                    alert('<?php langWPADM::get('Please, permit the pop-up windows.'); ?>');
                 }
             }else{
                 var form = dropboxBut.parents('form');
@@ -472,27 +480,27 @@
     }?>
     <div id="is-dropbox-auth" style="display: none; width: 380px; text-align: center; background: #fff; border: 2px solid #dde4ff; border-radius: 5px;">
         <div class="title-description" style="font-size: 20px; text-align: center;padding-top:45px; line-height: 30px;">
-            Please, add your Dropbox credentials:<br />
-            <strong>"App key"</strong> & <strong>"App secret"</strong> <br />
-            in the Setting Form
+            <?php langWPADM::get('Please, add your Dropbox credentials:'); ?><br />
+            <strong><?php langWPADM::get('"App key"'); ?></strong> & <strong><?php langWPADM::get('"App secret"'); ?></strong> <br />
+            <?php langWPADM::get('in the Setting Form'); ?>
         </div>
         <div class="button-description" style="padding:20px 0;padding-top:45px">
-            <input type="button" value="OK" onclick="jQuery('#is-dropbox-auth').arcticmodal('close');" style="text-align: center; width: 100px;" class="button-wpadm">
+            <input type="button" value="<?php langWPADM::get('OK'); ?>" onclick="jQuery('#is-dropbox-auth').arcticmodal('close');" style="text-align: center; width: 100px;" class="button-wpadm">
         </div>
     </div>
     <div id="helper-keys" style="display: none;width: 400px; text-align: center; background: #fff; border: 2px solid #dde4ff; border-radius: 5px;">
         <div class="title-description" style="font-size: 20px; text-align: center;padding-top:20px; line-height: 30px;">
-            Where can I find my app key and secret?
+             <?php langWPADM::get('Where can I find my app key and secret?'); ?>
         </div>
         <div class="button-description" style="padding:20px 10px;padding-top:20px; text-align: left;">
-            You can get an API app key and secret by creating an app on the
-            <a href="https://www.dropbox.com/developers/apps/create?app_type_checked=api" target="_blank">app creation page</a>
-            . Once you have an app created, the app key and secret will be available on the app's page on the
-            <a href="https://www.dropbox.com/developers/apps" target="_blank">App Console</a>
-            . Note that Drop-ins have app keys but no app secrets.
+            <?php langWPADM::get('You can get an API app key and secret by creating an app on the'); ?> 
+            <a href="https://www.dropbox.com/developers/apps/create?app_type_checked=api" target="_blank"><?php langWPADM::get('app creation page'); ?></a>.
+            <?php langWPADM::get('Once you have an app created, the app key and secret will be available on the app\'s page on the'); ?>
+            <a href="https://www.dropbox.com/developers/apps" target="_blank"><?php langWPADM::get('App Console'); ?></a>
+            . <?php langWPADM::get('Note that Drop-ins have app keys but no app secrets.'); ?>
         </div>
         <div class="button-description" style="padding:20px 0;padding-top:10px">
-            <input type="button" value="OK" onclick="jQuery('#helper-keys').arcticmodal('close');" style="text-align: center; width: 100px;" class="button-wpadm">
+            <input type="button" value="<?php langWPADM::get('OK'); ?>" onclick="jQuery('#helper-keys').arcticmodal('close');" style="text-align: center; width: 100px;" class="button-wpadm">
         </div>
     </div>
 
@@ -501,12 +509,12 @@
             <div class="log-dropbox" style="background-image: url(<?php echo plugins_url('/img/dropbox.png', dirname(__FILE__));?>);">
             </div>
             <div style="float: bottom; font-size: 40px; font-weight: bold; text-shadow: 1px 2px 2px #666; margin-left: 189px;">
-                Dropbox Full Backup <span style="font-size: 20px;">(files+database)</span>
+                <?php langWPADM::get('Dropbox Full Backup');?> <span style="font-size: 20px;"><?php langWPADM::get('(files+database)');?></span>
             </div>
             <?php if ($show) {?>
                 <div id="container-user" class="cfTabsContainer" style="width: 48%; padding-bottom: 0px; padding-top: 0px; float: left; margin-left: 20px;">
                     <div class="stat-wpadm-info-title" id="title-regisr" style="padding :20px 0px; margin-top:11px; line-height: 25px;">
-                        Free Sign Up <br />to backup more than one web page...
+                        <?php langWPADM::get('Free Sign Up'); ?> <br /><?php langWPADM::get('to backup more than one web page...'); ?>
                     </div>
                     <div id="cf_activate" class="cfContentContainer" style="display: none;">
                         <form method="post" id="dropbox_form" action="<?php echo admin_url( 'admin-post.php?action=wpadm_activate_plugin' )?>" >
@@ -515,7 +523,7 @@
                                     <tbody>
                                         <tr valign="top">
                                             <th scope="row">
-                                                <label for="email">E-mail</label>
+                                                <label for="email"><?php langWPADM::get('E-mail'); ?></label>
                                             </th>
                                             <td>
                                                 <input id="email" class="" type="text" name="email" value="">
@@ -523,7 +531,7 @@
                                         </tr>
                                         <tr valign="top">
                                             <th scope="row">
-                                                <label for="password">Password</label>
+                                                <label for="password"><?php langWPADM::get('Password'); ?></label>
                                             </th>
                                             <td>
                                                 <input id="password" class="" type="password" name="password" value="">
@@ -531,7 +539,7 @@
                                         </tr>
                                         <tr valign="top">
                                             <th scope="row">
-                                                <label for="password-confirm">Password confirm</label>
+                                                <label for="password-confirm"><?php langWPADM::get('Password confirm'); ?></label>
                                             </th>
                                             <td>
                                                 <input id="password-confirm" class="" type="password" name="password-confirm" value="">
@@ -541,21 +549,21 @@
                                             <th scope="row">
                                             </th>
                                             <td>
-                                                <input class="button-wpadm" type="submit" value="Register & Activate" name="send">
+                                                <input class="button-wpadm" type="submit" value="<?php langWPADM::get('Register & Activate'); ?>" name="send">
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <div class="stat-wpadm-info" id="registr-info" style="margin-bottom: 2px; margin-top: 30px;">
-                                <span style="font-weight:bold; font-size: 14px;">If you are NOT registered at <a target="_blank" style="color: #fff" href="<?php echo SERVER_URL_INDEX; ?>">WPAdm</a>,</span> enter your email and password to use as your Account Data for authorization on WPAdm. <br /><span style="font-weight: bold;font-size: 14px;">If you already have an account at <a target="_blank" style="color: #fff" href="<?php echo SERVER_URL_INDEX; ?>">WPAdm</a></span> and you want to Sign-In, so please, enter your registered credential data (email and password twice).
+                                <span style="font-weight:bold; font-size: 14px;"><?php langWPADM::get('If you are NOT registered at'); ?> <a target="_blank" style="color: #fff" href="<?php echo SERVER_URL_INDEX; ?>"><?php langWPADM::get('WPAdm'); ?></a>,</span> <?php langWPADM::get('enter your email and password to use as your Account Data for authorization on WPAdm.'); ?> <br /><span style="font-weight: bold;font-size: 14px;"><?php langWPADM::get('If you already have an account at'); ?> <a target="_blank" style="color: #fff" href="<?php echo SERVER_URL_INDEX; ?>"><?php langWPADM::get('WPAdm'); ?></a></span> <?php langWPADM::get('and you want to Sign-In, so please, enter your registered credential data (email and password twice).'); ?>
                             </div>
                         </form>
                     </div>
                     <div class="clear"></div> 
                     <div class="block-button-show" style="color: #fff;">
                         <div class="block-click" onclick="showRegistInfo(true);">
-                            <span id="registr-show" style="color: #fff;">Show</span>
+                            <span id="registr-show" style="color: #fff;"><?php langWPADM::get('Show'); ?></span>
                             <div id="registr-choice-icon" class="dashicons dashicons-arrow-down" style=""></div>
                         </div>
                     </div>
@@ -563,7 +571,7 @@
                 <?php } else { ?>
                 <div id="container-user" class="cfTabsContainer" style="width: 48%; padding-bottom: 0px; padding-top: 0px; float: left; margin-left: 20px;">
                     <div class="stat-wpadm-info-title" id="title-regisr" style="padding :10px 0px; margin-top:11px; line-height: 25px;">
-                        Sign In to backup more than one web page...
+                        <?php langWPADM::get('Sign In to backup more than one web page...'); ?>
                     </div>
                     <div>
                         <form method="post" id="auth" name="auth" action="<?php echo SERVER_URL_INDEX . "login-process" ; ?>" target="_blank">
@@ -572,10 +580,10 @@
                             </div>
                             <div style="padding: 5px; clear: both;">
                                 <div class="form-field">
-                                    <input class="input-small" type="text" id="username" value="<?php echo get_option(PREFIX_BACKUP_ . "email");?>" readonly="readonly" required="required" name="username" placeholder="Email" /> 
+                                    <input class="input-small" type="text" id="username" value="<?php echo get_option(PREFIX_BACKUP_ . "email");?>" readonly="readonly" required="required" name="username" placeholder="<?php langWPADM::get('Email'); ?>" /> 
                                 </div>
                                 <div class="form-field">
-                                    <input class="input-small" type="password" required="required" name="password" placeholder="Password" />
+                                    <input class="input-small" type="password" required="required" name="password" placeholder="<?php langWPADM::get('Password'); ?>" />
                                 </div>
                                 <div class="form-field">
                                     <input class="button-wpadm" type="button" value="Sign In" onclick="auth_form(this);" />
@@ -584,30 +592,29 @@
                             </div>
                             <div style="clear:both; padding: 5px; font-size: 11px; color: #fff;">
                                 <div class="form-field" style="margin-bottom: 10px;">
-                                    <input type="checkbox" onclick="setReadOnly('username')" style="margin: 0px;"> set new mail 
+                                    <input type="checkbox" onclick="setReadOnly('username')" style="margin: 0px;"> <?php langWPADM::get('set new mail'); ?> 
                                 </div>
                             </div>
                             <div style="clear:both;"></div>
-
                         </form>
                     </div>
                 </div>
                 <?php } ?>
             <div class="cfTabsContainer" style="width: 28%; float: left; margin-left: 10px; padding-bottom: 0px; padding-top: 0px;">
                 <div class="stat-wpadm-info-title" id="title-setting" style="padding :20px 0px; margin-top:11px; line-height: 50px;">
-                    Settings
+                    <?php langWPADM::get('Settings'); ?>
                 </div>
                 <div id="setting_active" class="cfContentContainer" style="display: none;">
                     <form method="post" action="" >
                         <div class="stat-wpadm-registr-info" style="width: auto; margin-bottom: 9px;">
                             <div  style="margin-bottom: 12px; margin-top: 20px; font-size: 15px;">
-                                Please, add your Dropbox credentials:
+                                <?php langWPADM::get('Please, add your Dropbox credentials:'); ?>
                             </div>
                             <table class="form-table stat-table-registr" style="margin-top:2px">
                                 <tbody>
                                     <tr valign="top">
                                         <th scope="row">
-                                            <label for="email">App key*</label>
+                                            <label for="email"><?php langWPADM::get('App key'); ?>*</label>
                                         </th>
                                         <td>
                                             <input id="app_key" class="" type="text" name="app_key" value="<?php echo isset($dropbox_options['app_key']) ? $dropbox_options['app_key'] : ''?>">
@@ -615,7 +622,7 @@
                                     </tr>
                                     <tr valign="top">
                                         <th scope="row">
-                                            <label for="password">App secret*</label>
+                                            <label for="password"><?php langWPADM::get('App secret'); ?>*</label>
                                         </th>
                                         <td>
                                             <input id="app_secret" class="" type="text" name="app_secret" value="<?php echo isset($dropbox_options['app_secret']) ? $dropbox_options['app_secret'] : ''?>">
@@ -626,16 +633,16 @@
                                         <th scope="row">
                                         </th>
                                         <td>
-                                            <input class="btn-orange" type="button" onclick="connectDropbox(this,'<?php echo admin_url( 'admin-post.php?action=dropboxConnect' )?>')" value="Connect" name="submit">
+                                            <input class="btn-orange" type="button" onclick="connectDropbox(this,'<?php echo admin_url( 'admin-post.php?action=dropboxConnect' )?>')" value="<?php langWPADM::get('Connect'); ?>" name="submit">
                                             <span id="dropbox_uid_text"><?php echo isset($dropbox_options['oauth_token']) && isset($dropbox_options['uid']) ? "UID " . $dropbox_options['uid'] : '';  ?></span>
-                                            <div class="desc-wpadm">Click to Connect your Dropbox</div>
+                                            <div class="desc-wpadm"><?php langWPADM::get('Click to Connect your Dropbox'); ?></div>
                                         </td>
                                     </tr>
                                 </tbody>
                                 <tr valign="top">
 
                                     <td colspan="2" align="right">
-                                        <a class="help-key-secret" href="javascript:getHelperDropbox();" >Where to get App key & App secret?</a>
+                                        <a class="help-key-secret" href="javascript:getHelperDropbox();" ><?php langWPADM::get('Where to get App key & App secret?'); ?></a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -646,7 +653,7 @@
                 <div class="clear"></div> 
                 <div class="block-button-show" style="color: #fff;">
                     <div class="block-click" onclick="showSetting(true);">
-                        <span id="setting-show" style="color: #fff;">Show</span>
+                        <span id="setting-show" style="color: #fff;"><?php langWPADM::get('Show'); ?></span>
                         <div id="setting-choice-icon" class="dashicons dashicons-arrow-down" style=""></div>
                     </div>
                 </div>
@@ -657,7 +664,7 @@
     <div class="block-content">
         <div class="" style="margin-top:10px;">
             <div id="logs-form" style="display: none; float:left; width: 70%;">
-                <div class="title-logs"><span style="font-size:16px;">Please wait... <span id="time_backup">0 sec.</span><img style="float: right;" src="<?php echo plugins_url('/img/wpadmload.gif', dirname(__FILE__))?>" alt=""></span></div>
+                <div class="title-logs"><span style="font-size:16px;"><?php langWPADM::get('Please wait...'); ?> <span id="time_backup">0 <?php langWPADM::get('sec.'); ?></span><img style="float: right;" src="<?php echo plugins_url('/img/wpadmload.gif', dirname(__FILE__))?>" alt=""></span></div>
                 <div class="title-status" style="font-size:16px; display: none;"></div>
                 <div style="border: 1px solid #ddd; text-align: left; background: #fff; padding: 2px;">
                     <div id="log-backup" style="overflow: auto; height: 60px; border: 5px solid #fff; "></div>
@@ -665,19 +672,19 @@
             </div>
 
             <div id="reviews-dropbox" class="pointer" onclick="window.open('https://wordpress.org/support/view/plugin-reviews/dropbox-backup?filter=5');">
-                <div class="title-reviews">++ Review ++</div>
-                <div class="desc-reviews">Your review is important for us</div>
+                <div class="title-reviews"><?php langWPADM::get('++ Review ++'); ?></div>
+                <div class="desc-reviews"><?php langWPADM::get('Your review is important for us'); ?></div>
                 <img src="<?php echo plugins_url('/img/stars-5.png', dirname(__FILE__));?>" alt=""></a>
             </div>
             <div id="support-button" style="float: right; margin-top: 130px; margin-right: 20px;">
-                <button onclick="window.open('<?php echo SERVER_URL_INDEX . 'support/'?>')" class="backup_button" style="padding: 5px 10px; margin-top: 10px; font-size: 15px;bottom: 0px;">Help</button> <br />
+                <button onclick="window.open('<?php echo SERVER_URL_INDEX . 'support/'?>')" class="backup_button" style="padding: 5px 10px; margin-top: 10px; font-size: 15px;bottom: 0px;"><?php langWPADM::get('Help'); ?></button> <br />
             </div>
             <div id="action-buttons" style="">
                 <div style="float: left;">
-                    <button onclick="start_dropbox_backup();" class="backup_button" style="">Create Dropbox Backup</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button onclick="start_dropbox_backup();" class="backup_button" style=""><?php langWPADM::get('Create Dropbox Backup'); ?></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </div>
                 <div style="float: left; margin-top: 2px;">
-                    <button onclick="start_local_backup()" class="backup_button" style="padding: 5px 10px; margin-top: 10px; font-size: 15px;bottom: 0px;">Create Local Backup</button> <br />
+                    <button onclick="start_local_backup()" class="backup_button" style="padding: 5px 10px; margin-top: 10px; font-size: 15px;bottom: 0px;"><?php langWPADM::get('Create Local Backup'); ?></button> <br />
                 </div>
                 <div style="clear: both;"></div>
             </div>
@@ -701,14 +708,14 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th align="left">Create, Date/Time</th>
-                        <th>Name of Backup</th>
-                        <th>Arhive Parts</th>
-                        <th>Status</th>
-                        <th>Type of Backup</th>
-                        <th>Size</th>
+                        <th align="left"><?php langWPADM::get('Create, Date/Time'); ?></th>
+                        <th><?php langWPADM::get('Name of Backup'); ?></th>
+                        <th><?php langWPADM::get('Arhive Parts'); ?></th>
+                        <th><?php langWPADM::get('Status'); ?></th>
+                        <th><?php langWPADM::get('Type of Backup'); ?></th>
+                        <th><?php langWPADM::get('Size'); ?></th>
                         <?php if(is_admin() || is_super_admin()) {?>
-                            <th>Action</th>
+                            <th><?php langWPADM::get('Action'); ?></th>
                             <?php
                             }
                         ?> 
@@ -735,14 +742,14 @@
                                 <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer"><?php echo isset($data['data'][$i]['count']) ? $data['data'][$i]['count'] : $f ;?></td>
                                 <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer" style="padding: 0px;">
                                     <img src="<?php echo plugin_dir_url(__FILE__) . "ok.png" ;?>" title="Successful" alt="Successful" style="float: left; width: 20px; height: 20px;" />
-                                    <div style="margin-top :1px;float: left;"><?php echo 'Successful';?></div>
+                                    <div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Successful', false);?></div>
                                 </td>
-                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer"><?php echo $data['data'][$i]['type'];?> backup</td>
-                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer"><?php echo $size . "Mb";?></td>
+                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer"><?php echo $data['data'][$i]['type'];?> <?php langWPADM::get('backup'); ?></td>
+                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer"><?php echo $size . langWPADM::get('Mb', false);?></td>
                                 <td> 
                                     <?php if(is_admin() || is_super_admin()) {?>
-                                        <a class="button-wpadm" href="javascript:void(0)" title="Restore" onclick="show_recovery_form('<?php echo isset($data['data'][$i]['name']) && $data['data'][$i]['type'] != 'local' ? $data['data'][$i]['name'] : 'local' ?>', '<?php echo $data['data'][$i]['name']?>')" style="color: #fff;"><span class="pointer dashicons dashicons-backup" style="margin-top:3px;"></span>Restore</a>&nbsp;
-                                        <a class="button-wpadm" href="javascript:void(0)" title="Delete" onclick="delete_backup('<?php echo $data['data'][$i]['name']; ?>', '<?php echo $data['data'][$i]['type'];?>')" style="color: #fff;"><span class="pointer dashicons dashicons-trash" style="margin-top:3px;"></span>Delete</a>&nbsp;
+                                        <a class="button-wpadm" href="javascript:void(0)" title="<?php langWPADM::get('Restore'); ?>" onclick="show_recovery_form('<?php echo isset($data['data'][$i]['name']) && $data['data'][$i]['type'] != 'local' ? $data['data'][$i]['name'] : 'local' ?>', '<?php echo $data['data'][$i]['name']?>')" style="color: #fff;"><span class="pointer dashicons dashicons-backup" style="margin-top:3px;"></span><?php langWPADM::get('Restore'); ?></a>&nbsp;
+                                        <a class="button-wpadm" href="javascript:void(0)" title="<?php langWPADM::get('Delete'); ?>" onclick="delete_backup('<?php echo $data['data'][$i]['name']; ?>', '<?php echo $data['data'][$i]['type'];?>')" style="color: #fff;"><span class="pointer dashicons dashicons-trash" style="margin-top:3px;"></span><?php langWPADM::get('Delete'); ?></a>&nbsp;
                                         <?php
                                         }
                                     ?>

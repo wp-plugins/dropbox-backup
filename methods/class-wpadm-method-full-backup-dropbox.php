@@ -71,10 +71,10 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
             $this->result->setResult(WPAdm_Result::WPADM_RESULT_SUCCESS);
             $this->result->setError('');
 
-            WPAdm_Core::log('Start backup');
+            WPAdm_Core::log( langWPADM::get('Start backup', false) );
 
             # create db dump
-            WPAdm_Core::log('Start create db dump');
+            WPAdm_Core::log( langWPADM::get('Start create db dump', false) );
             WPAdm_Core::mkdir(ABSPATH . 'wpadm_backup');
             $mysql_dump_file = ABSPATH . 'wpadm_backup/mysqldump.sql';
             if (file_exists($mysql_dump_file)) {
@@ -83,7 +83,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
             $wp_mysql_params = $this->getWpMysqlParams();
 
             if (isset($this->params['optimize']) && ($this->params['optimize']==1)) {
-                WPAdm_Core::log('Table optimization');
+                WPAdm_Core::log( langWPADM::get('Table optimization', false) );
                 $commandContext = new WPAdm_Command_Context();
                 $commandContext ->addParam('command','mysqloptimize')
                 ->addParam('host', $wp_mysql_params['host'])
@@ -107,26 +107,29 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
             ->save()
             ->execute();
             if (!$res) {
-                WPAdm_Core::log('Database dump was not created('.$this->queue->getError().')');
-                $errors[] = 'MySQL error: '.$this->queue->getError();
+                $log = str_replace('%s', $this->queue->getError(), langWPADM::get('Error: Dump of Database wasn\'t created (%s)', false) );
+                WPAdm_Core::log($log);
+                $errors[] = $log;
             } elseif (0 == (int)filesize($mysql_dump_file)) {
-                $errors[] = 'MySQL error: empty dump-file';
-                WPAdm_Core::log('Database dump was not created (empty file)');
+                $errors[] = langWPADM::get('MySQL Error: Database-Dump File is empty', false);
+                WPAdm_Core::log(langWPADM::get('Dump of Database wasn\'t created (File of Database-Dump is empty!)', false));
             } else {
-                WPAdm_Core::log('Database dump created('.filesize($mysql_dump_file).'b):' . $mysql_dump_file);
+                $size_dump = round( (filesize($mysql_dump_file) / 1024 / 1024) , 2);
+                $log = str_replace("%s", $size_dump , langWPADM::get('Database Dump was successfully created ( %s Mb) : ', false) ) ;
+                WPAdm_Core::log($log . $mysql_dump_file);
             }
             unset($commandContext);
 
 
             #ЗАРХИВИРУЕМ ФАЙЛЫ
-            WPAdm_Core::log('Create a list of files');
+            WPAdm_Core::log( langWPADM::get('Create a list of files for Backup', false) );
             $files = $this->createListFilesForArchive();
             if (file_exists($mysql_dump_file) && filesize($mysql_dump_file) > 0) {
                 $files[] = $mysql_dump_file;
             }
 
             if (empty($files)) {
-                $errors[] = 'Empty list files';
+                $errors[] = langWPADM::get('Error: the list of Backup files is empty', false);
             }
 
             // split the file list by 170kbayt lists, To break one big task into smaller
@@ -148,7 +151,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                 $files2[$i][] = $f;
             }
 
-            WPAdm_Core::log('List of files created');
+            WPAdm_Core::log( langWPADM::get('List of Backup-Files was successfully created', false) );
 
             $this->queue->clear();
 
@@ -163,10 +166,10 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                 $this->queue->add($commandContext);
                 unset($commandContext);
             }
-            WPAdm_Core::log('Start backing up files');
+            WPAdm_Core::log( langWPADM::get('Backup of Files was started', false)  );
             $this->queue->save()
             ->execute();
-            WPAdm_Core::log('End of backup files');
+            WPAdm_Core::log( langWPADM::get('End of File Backup', false) );
 
             $files = glob($this->dir . '/'.$this->name . '*');
             $urls = array();
@@ -183,7 +186,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
             if (isset($this->params['storage'])) {
                 foreach($this->params['storage'] as $storage) {
                     if ($storage['type'] == 'ftp') {
-                        WPAdm_Core::log('Begin copying files to FTP');
+                        WPAdm_Core::log( langWPADM::get('Begin copying files to FTP', false) );
                         $this->queue->clear();
                         $files = glob($this->dir . '/'.$this->name . '*');
                         //$this->getResult()->setData($files);
@@ -206,15 +209,16 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                         $res = $this->queue->save()
                         ->execute();
                         if (!$res) {
-                            WPAdm_Core::log('FTP: ' . $this->queue->getError());
-                            $errors[] = 'FTP: '.$this->queue->getError();
+                            $log = langWPADM::get('FTP: ' , false);
+                            WPAdm_Core::log($log . $this->queue->getError());
+                            $errors[] = $log . $this->queue->getError();
                         }
-                        WPAdm_Core::log('Finished copying files to FTP');
+                        WPAdm_Core::log( langWPADM::get('Finished copying files to FTP' , false) );
                         if (isset($storage['remove_from_server']) && $storage['remove_from_server'] == 1 ) {
                             $remove_from_server = $storage['remove_from_server'];
                         }
                     } elseif ($storage['type'] == 's3') {
-                        WPAdm_Core::log('Begin coping files to S3');
+                        WPAdm_Core::log( langWPADM::get('Begin coping files to S3' , false) );
                         $this->queue->clear();
                         $files = glob($this->dir . '/'.$this->name . '*');
                         //$this->getResult()->setData($files);
@@ -238,7 +242,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                             WPAdm_Core::log('S3: ' . $this->queue->getError());
                             $errors[] = 'S3: '.$this->queue->getError();
                         }
-                        WPAdm_Core::log('Finished copying files to S3');
+                        WPAdm_Core::log( langWPADM::get('Finished copying files to S3' , false) );
                         if (isset($storage['remove_from_server']) && $storage['remove_from_server'] == 1 ) {
                             $remove_from_server = $storage['remove_from_server'];
                         }
@@ -246,7 +250,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                 }
                 if ($remove_from_server) {
                     // удаляем файлы на сервере
-                    WPAdm_Core::log('Remove the backup server');
+                    WPAdm_Core::log( langWPADM::get('Remove the backup server' , false) );
                     WPAdm_Core::rmdir($this->dir);
                 }
 
@@ -255,7 +259,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                 $this->queue->clear();
                 $files = glob($this->dir . '/' . $this->name . '*');
                 $files = array_merge_recursive(array($mysql_dump_file), $files);
-                WPAdm_Core::log('files to google: ' . print_r($files, true));
+                WPAdm_Core::log( langWPADM::get('files to google: ' , false) . print_r($files, true));
                 $n = count($files);
                 for($i = 0; $i <$n; $i++) {
                     $commandContext = new WPAdm_Command_Context();
@@ -272,7 +276,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                 $res = $this->queue->save()
                 ->execute();
                 if (!$res) {
-                    WPAdm_Core::log('Google drive: ' . $this->queue->getError());
+                    WPAdm_Core::log( langWPADM::get('Google drive: ' , false) . $this->queue->getError());
                 }
                 //WPAdm_Core::log('google drive' . print_r($this->params, true));
             }
@@ -280,7 +284,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                 $this->queue->clear();
                 $files = glob($this->dir . '/' . $this->name . '*');
                 $files = array_merge_recursive(array($mysql_dump_file), $files);
-                WPAdm_Core::log('files to dropbox: ' . print_r($files, true));
+                WPAdm_Core::log( langWPADM::get('files to dropbox: ' , false) . print_r($files, true));
                 $n = count($files);
                 for($i = 0; $i <$n; $i++) {
                     $commandContext = new WPAdm_Command_Context();
@@ -297,15 +301,15 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                 $this->queue->save()
                 ->execute();
                 if (!$res) {
-                    WPAdm_Core::log('Dropbox: ' . $this->queue->getError());
+                    WPAdm_Core::log(langWPADM::get('Dropbox: ' , false) . $this->queue->getError());
                 }
             }
 
             #Removing TMP-files
-            WPAdm_Core::rmdir(ABSPATH.'wpadm_backup');
+            WPAdm_Core::rmdir(ABSPATH . 'wpadm_backup');
 
             #Removind old backups(if limit the number of stored backups)
-            WPAdm_Core::log('Start removing old backups');
+            WPAdm_Core::log( langWPADM::get('Start removing old backups' , false) );
             if ($this->params['limit'] != 0) {
                 $files = glob(ABSPATH . 'wpadm_backups/*');
                 if (count($files) > $this->params['limit']) {
@@ -326,9 +330,9 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                     }
                 }
             }
-            WPAdm_Core::log('Finished removing old backups');
+            WPAdm_Core::log( langWPADM::get('Finished removing old backups' , false) );
 
-            WPAdm_Core::log('Creating a backup is completed');
+            WPAdm_Core::log( langWPADM::get('Creating a backup is completed' , false) );
 
             wpadm_class::setBackup(2);
             if (!empty($errors)) {
@@ -381,7 +385,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                     $v = str_replace(ABSPATH  , '',  $v);
                     if (in_array($v, $minus_path)) {
                         unset($files[$k]);
-                        WPAdm_Core::log('Skip file ' . $v);
+                        WPAdm_Core::log( langWPADM::get('Skip file ' , false) . $v);
                     }
                 }
             }
@@ -475,7 +479,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                                 if (!in_array($f, $minus_path)) {
                                     $array_items[] = $ff;
                                 } else {
-                                    WPAdm_Core::log('Skip dir ' . $ff);
+                                    WPAdm_Core::log( langWPADM::get('Skip dir ' , false) . $ff);
                                 }
                             }
                         }
@@ -501,7 +505,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
             );
 
             $r = "/define\('(.*)', '(.*)'\)/";
-            preg_match_all($r, file_get_contents(ABSPATH . "wp-config.php"), $m);
+            preg_match_all($r, file_get_contents( ABSPATH . "wp-config.php"), $m);
             $params = array_combine($m[1], $m[2]);
             foreach($db_params as $k=>$p) {
                 $db_params[$k] = $params[$p];

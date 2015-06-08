@@ -25,7 +25,7 @@ if (!class_exists('WPAdm_Method_Local_Restore')) {
             if (file_exists($file_log)) {
                 unlink($file_log);
             }
-            WPAdm_Core::log('Create Unique Id '. $this->id);
+            WPAdm_Core::log(langWPADM::get('Create Unique Id ', false) . $this->id);
             if (count($this->files_resotre) > 0) {
                 $this->restore = true;
             }
@@ -50,8 +50,9 @@ if (!class_exists('WPAdm_Method_Local_Restore')) {
                     return true;
                 }
             } 
-            WPAdm_Core::log('Error: folder is not exist (' . $this->params['name_backup'] . ')');
-            $this->setError('Error: folder is not exist (' . $this->params['name_backup'] . ')');
+            $str = str_replace('%s', $this->params['name_backup'], langWPADM::get('Error: folder is not exist (%s)', false));
+            WPAdm_Core::log($str);
+            $this->setError($str);
             return false;
 
         }
@@ -72,7 +73,7 @@ if (!class_exists('WPAdm_Method_Local_Restore')) {
                 $this->result->setResult(WPAdm_Result::WPADM_RESULT_SUCCESS);
                 $this->result->setError('');
 
-                WPAdm_Core::log('Start Restore process');
+                WPAdm_Core::log(langWPADM::get('Start Restore process', false));
                 $n = count($this->md5_info);
                 if (in_array('db', $this->params['types'])) {
 
@@ -109,15 +110,16 @@ if (!class_exists('WPAdm_Method_Local_Restore')) {
                                 ->execute();
                                 unset($commandContext);
                             } else {
-                                $this->setError('File(' . $data[2] . ') not Exist');
-                                WPAdm_Core::log('File(' . $data[2] . ') not Exist');
+                                $log = str_replace("%s",  $data[2], langWPADM::get('File (%s) not Exist', false) );
+                                $this->setError($log);
+                                WPAdm_Core::log($log);
                                 break;
                             }
                         }
                     }
                 }
             } else {
-                WPAdm_Core::log('Files to restore is empty');
+                WPAdm_Core::log(langWPADM::get('Files to restore is empty', false));
             }
             return $this->result;
         }

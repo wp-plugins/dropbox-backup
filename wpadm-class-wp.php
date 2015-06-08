@@ -22,7 +22,7 @@
         add_action('admin_post_dropboxConnect', array('wpadm_wp_full_backup_dropbox', 'dropboxConnect') );
 
         add_action('admin_post_wpadm_download', array('wpadm_wp_full_backup_dropbox', 'download') );
-        add_action('init', array('wpadm_wp_full_backup_dropbox', 'init') );
+        add_action('init', array('wpadm_wp_full_backup_dropbox', 'init'), 10 );
 
         @set_time_limit(0);
 
@@ -32,6 +32,8 @@
             public static function init()
             {
                 parent::$plugin_name = 'dropbox-backup';
+                require_once  dirname(__FILE__) . '/class-wpadm-core.php';
+                WPAdm_Core::$pl_dir = dirname(__FILE__);
             }
 
             static function include_admins_script()
@@ -117,14 +119,14 @@
             {
                 require_once dirname(__FILE__) . "/class-wpadm-core.php";
                 @session_write_close();
-                $log = new WPAdm_Core(array('method' => "local"), 'full_backup_dropbox', dirname(__FILE__));
+                $log_class = new WPAdm_Core(array('method' => "local"), 'full_backup_dropbox', dirname(__FILE__));
                 if (file_exists(WPAdm_Core::getTmpDir() . "/logs2")) {
                     unlink(WPAdm_Core::getTmpDir() . "/logs2");
                 }
                 if (file_exists(WPAdm_Core::getTmpDir() . "/log.log")) {
                     unlink(WPAdm_Core::getTmpDir() . "/log.log");
                 }
-                WPAdm_Core::log("Start Restore from Dropbox cloud");
+                WPAdm_Core::log( langWPADM::get('Start Restore from Dropbox cloud' , false) );
                 $dropbox_options = get_option(PREFIX_BACKUP_ . 'dropbox-setting');
                 if ($dropbox_options) {
                     require_once dirname(__FILE__) . "/modules/dropbox.class.php";
@@ -141,9 +143,10 @@
                             for($i = 0; $i < $n; $i++) {
                                 $res = $dropbox->downloadFile("$folder_project/$name_backup/{$files['items'][$i]['name']}", "$dir_backup/{$files['items'][$i]['name']}");
                                 if ($res != "$dir_backup/{$files['items'][$i]['name']}" && isset($res['text'])) {
-                                    WPAdm_Core::log("Error: " . $res['text'] );
+                                    WPAdm_Core::log(langWPADM::get('Error: ' , false) . $res['text'] );
                                 } else {
-                                    WPAdm_Core::log("Download file({$files['items'][$i]['name']}) with Dropbox");
+                                    $log = str_replace('%s', $files['items'][$i]['name'], langWPADM::get('Download file (%s) with Dropbox' , false) );
+                                    WPAdm_Core::log($log);
                                 }
                             }
                             parent::$type = 'full'; 
@@ -152,10 +155,10 @@
                             WPAdm_Core::rmdir($dir_backup);
                         }
                     } else {
-                        WPAdm_Core::log("Error: Auth to Dropbox is empty, please repeat connection");
+                        WPAdm_Core::log( langWPADM::get('Error: Auth to Dropbox is empty, please repeat connection' , false) );
                     }
                 } else {
-                    WPAdm_Core::log("Error: Auth to Dropbox is not connections");
+                    WPAdm_Core::log( langWPADM::get('Error: Auth to Dropbox is not connections' , false) );
                 }
                 @session_start();
                 echo json_encode($res);
@@ -287,7 +290,7 @@
                         echo '<script>window.close();</script>';exit;
                     }
                 } else {
-                    echo 'Error App Key Or App Secret is empty';
+                    echo langWPADM::get('Error App Key Or App Secret is empty' , false);
                 }
                 exit;
             }
@@ -305,26 +308,25 @@
                 if ($dropbox_options) {
                     $dropbox_options = unserialize( base64_decode( $dropbox_options ) );
                     if (!isset($dropbox_options['app_key'])) {
-                        WPAdm_Core::log("Error: \"App Key\" is not exist. You cannot make Auth in Dropbox cloud without \"App Key\". Please, type your \"App Key\" in the Settings form. This data can be found at your Dropbox account.");
+                        WPAdm_Core::log( langWPADM::get('Error: "App Key" is not exist. You cannot make Auth in Dropbox cloud without "App Key". Please, type your "App Key" in the Settings form. This data can be found at your Dropbox account.' , false) );
                         $send_to_dropbox = false;
                     }
                     if (!isset($dropbox_options['app_secret'])) {
-                        WPAdm_Core::log("Error: \"App Secret\" is not exist. You cannot make Auth in Dropbox cloud without \"App Secret\". Please, type your \"App Secret\" in the Settings form. This data can be found at your Dropbox account.");
+                        WPAdm_Core::log( langWPADM::get('Error: "App Secret" is not exist. You cannot make Auth in Dropbox cloud without "App Secret". Please, type your "App Secret" in the Settings form. This data can be found at your Dropbox account.' , false) );
                         $send_to_dropbox = false;
                     }
                     if (!isset($dropbox_options['oauth_token'])) {
-                        WPAdm_Core::log("Error: \"Token\" is not exist. Files cannot be sent to Dropbox cloud. Please, test your connection within Settings form.");
+                        WPAdm_Core::log( langWPADM::get('Error: "Token" is not exist. Files cannot be sent to Dropbox cloud. Please, test your connection within Settings form.' , false) );
                         $send_to_dropbox = false;
                     }
                 } else {
-                    WPAdm_Core::log("Error: \"App Key\" && \"App Secret\" is not exist. ");
+                    WPAdm_Core::log(langWPADM::get('Error: "App Key" && "App Secret" is not exist. ' , false));
                     $res['type'] = 'local';
                     $send_to_dropbox = false;
                 }
 
                 if ($send_to_dropbox) {
                     parent::$type = 'full'; 
-
                     $backup = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'time' => @$_POST['time'], 'types' => array('db', 'files') )), 'full_backup_dropbox', dirname(__FILE__));
                     $res = $backup->getResult()->toArray();
                     $res['md5_data'] = md5( print_r($res, 1) );

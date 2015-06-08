@@ -12,21 +12,21 @@ if (!class_exists('WPAdm_Mysqldump')) {
 
         private function connect($db = '') {
             WPAdm_Core::log("----------------------------------------------------");
-            WPAdm_Core::log("Connecting to MySQL...");
+            WPAdm_Core::log( langWPADM::get('Connecting to MySQL...' , false) );
             if (! class_exists('wpdb')) {
                 require_once ABSPATH . '/' . WPINC . '/wp-db.php';
             }
             $this->dbh = new wpdb( $this->user, $this->password, $db, $this->host );
             $errors = $this->dbh->last_error;
             if ($errors) {
-                $this->setError('MySQL Connect failed: ' . $errors);
+                $this->setError( langWPADM::get('MySQL Connect failed: ' , false) . $errors);
             }
             return $this->dbh;
         }
 
         public function optimize($db) {
             $link = $this->connect($db);
-            WPAdm_Core::log("Optimize Database Tables was started");
+            WPAdm_Core::log( langWPADM::get('Optimize Database Tables was started' , false) );
             $n = $link->query('SHOW TABLES');
             $result = $link->last_result;
             if (!empty( $link->last_error ) && $n > 0) {
@@ -36,19 +36,21 @@ if (!class_exists('WPAdm_Mysqldump')) {
                     $res = array_values( get_object_vars( $result[$i] ) );
                     $link->query('OPTIMIZE TABLE '. $res[0]);
                     if (!empty( $link->last_error ) ) {
-                        WPAdm_Core::log("Error to Optimize Table `{$res[0]}`");
+                        $log = str_replace('%s', $res[0], langWPADM::get('Error to Optimize Table `%s`' , false) );
+                        WPAdm_Core::log($log);
                     } else {
-                        WPAdm_Core::log("Optimize Table `{$res[0]}` was successfully");
+                        $log = str_replace('%s', $res[0], langWPADM::get('Optimize Table `%s` was successfully' , false) );
+                        WPAdm_Core::log($log);
                     }
                 }
-                WPAdm_Core::log("Optimize Database Tables was Finished");
+                WPAdm_Core::log( langWPADM::get('Optimize Database Tables was Finished' , false) );
             }
 
         }
 
         public function mysqldump($db, $filename) {
             $link = $this->connect($db);
-            WPAdm_Core::log("MySQL of Dump was started");
+            WPAdm_Core::log( langWPADM::get('MySQL of Dump was started' , false) );
             $tables = array();
             $n = $link->query('SHOW TABLES');
             $result = $link->last_result;
@@ -63,13 +65,14 @@ if (!class_exists('WPAdm_Mysqldump')) {
             $return = '';
             foreach($tables as $table)
             {
-                WPAdm_Core::log("Add a table {$table} in the database dump");
+                $log = str_replace('%s', $table, langWPADM::get('Add a table "%s" in the database dump' , false) );
+                WPAdm_Core::log( $log );
                 $num_fields = $link->query('SELECT * FROM ' . $table);
                 $result = $link->last_result;
                 if (!empty( $link->last_error ) && $n > 0) {
                     $this->setError($link->last_error);
                 }
-                $return.= 'DROP TABLE '.$table.';';
+                $return.= 'DROP TABLE ' . $table.';';
 
                 $ress = $link->query('SHOW CREATE TABLE ' . $table);
                 $result2 = $link->last_result;
@@ -104,7 +107,7 @@ if (!class_exists('WPAdm_Mysqldump')) {
             $handle = fopen($filename,'w+');
             fwrite($handle,$return);
             fclose($handle);
-            WPAdm_Core::log("MySQL of Dump was finished"); 
+            WPAdm_Core::log( langWPADM::get('MySQL of Dump was finished' , false) ); 
             return true;
         }
 
@@ -116,11 +119,11 @@ if (!class_exists('WPAdm_Mysqldump')) {
         public function restore($db, $file)
         {
             $link = $this->connect($db);
-            WPAdm_Core::log("Restore Database was started");
+            WPAdm_Core::log( langWPADM::get('Restore Database was started' , false) );
             $fo = fopen($file, "r");
             if (!$fo) {
-                WPAdm_Core::log("Error in open file dump");
-                $this->setError("Error in open file dump");
+                WPAdm_Core::log( langWPADM::get('Error in open file dump' , false) );
+                $this->setError( langWPADM::get('Error in open file dump' , false) );
                 return false;
             }
             $sql = "";
@@ -134,14 +137,14 @@ if (!class_exists('WPAdm_Mysqldump')) {
                         $ress = $link->query($sql);
                         if (!empty( $link->last_error ) && $n > 0) {
                             $this->setError($link->last_error);
-                            WPAdm_Core::log("MySQL Error: " . $link->last_error);
+                            WPAdm_Core::log(langWPADM::get('MySQL Error: ' , false) . $link->last_error);
                             break;
                         };
                         $sql = "";
                     }
                 }
             }
-            WPAdm_Core::log("Restore Database was finished");  
+            WPAdm_Core::log(langWPADM::get('Restore Database was finished' , false));  
         }
     }
 }

@@ -18,7 +18,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
             if (file_exists($file_log)) {
                 unlink($file_log);
             }
-            WPAdm_Core::log('Create Unique Id '. $this->id);
+            WPAdm_Core::log(langWPADM::get('Create Unique Id ', false) . $this->id);
 
 
             $name = get_option('siteurl');
@@ -58,7 +58,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
         {
             if ($this->start === false) {
                 $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
-                $this->result->setError('Backup process was started, please, wait a few minutes...');
+                $this->result->setError(langWPADM::get('Backup process was started, please, wait a few minutes...', false));
                 return $this->result;
             }
             $errors = array();
@@ -66,11 +66,11 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
             $this->result->setResult(WPAdm_Result::WPADM_RESULT_SUCCESS);
             $this->result->setError('');
 
-            WPAdm_Core::log('Start Backup process...');
+            WPAdm_Core::log(langWPADM::get('Start Backup process...', false));
 
             # create db dump
             if (in_array('db', $this->params['types']) ) {
-                WPAdm_Core::log('Creating Database Dump');
+                WPAdm_Core::log(langWPADM::get('Creating Database Dump', false));
                 WPAdm_Core::mkdir(ABSPATH . 'wpadm_backup');
                 $mysql_dump_file = ABSPATH . 'wpadm_backup/mysqldump.sql';
                 if (file_exists($mysql_dump_file)) {
@@ -79,7 +79,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                 $wp_mysql_params = $this->getWpMysqlParams();
 
                 if (isset($this->params['optimize']) && ($this->params['optimize']==1)) {
-                    WPAdm_Core::log('Optimize Database Tables');
+                    WPAdm_Core::log(langWPADM::get('Optimize Database Tables', false));
                     $commandContext = new WPAdm_Command_Context();
                     $commandContext ->addParam('command','mysqloptimize')
                     ->addParam('host', $wp_mysql_params['host'])
@@ -103,14 +103,16 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                 ->save()
                 ->execute();
                 if (!$res) {
-                    WPAdm_Core::log('Error: Dump of Database wasn\'t created('.$this->queue->getError().')');
-                    $errors[] = 'MySQL Error: '.$this->queue->getError();
+                    $log = str_replace('%s', $this->queue->getError(), langWPADM::get('Error: Dump of Database wasn\'t created (%s)', false) );
+                    WPAdm_Core::log($log);
+                    $errors[] = $log;
                 } elseif (0 == (int)filesize($mysql_dump_file)) {
-                    $errors[] = 'MySQL Error: Database-Dump File is empty';
-                    WPAdm_Core::log('Dump of Database wasn\'t created (File of Database-Dump is empty!)');
+                    $errors[] = langWPADM::get('MySQL Error: Database-Dump File is empty', false);
+                    WPAdm_Core::log(langWPADM::get('Dump of Database wasn\'t created (File of Database-Dump is empty!)', false));
                 } else {
                     $size_dump = round( (filesize($mysql_dump_file) / 1024 / 1024) , 2);
-                    WPAdm_Core::log('Database Dump was successfully created(' . $size_dump . 'Mb):' . $mysql_dump_file);
+                    $log = str_replace("%s", $size_dump , langWPADM::get('Database Dump was successfully created ( %s Mb) : ', false) ) ;
+                    WPAdm_Core::log($log . $mysql_dump_file);
                 }
                 unset($commandContext);
             }
@@ -118,7 +120,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
 
             if (in_array('files', $this->params['types']) ) {
                 #ЗАРХИВИРУЕМ ФАЙЛЫ
-                WPAdm_Core::log('Create a list of files for Backup');
+                WPAdm_Core::log( langWPADM::get('Create a list of files for Backup', false) );
                 $files = $this->createListFilesForArchive();
             }
             if (isset($mysql_dump_file) && file_exists($mysql_dump_file) && filesize($mysql_dump_file) > 0) {
@@ -126,7 +128,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
             }
 
             if (empty($files)) {
-                $errors[] = 'Error: the list of Backup files is empty';
+                $errors[] = langWPADM::get('Error: the list of Backup files is empty', false);
             }
 
             // split the file list by 170kbayt lists, To break one big task into smaller
@@ -148,7 +150,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                 $files2[$i][] = $f;
             }
 
-            WPAdm_Core::log('List of Backup-Files was successfully created');
+            WPAdm_Core::log( langWPADM::get('List of Backup-Files was successfully created', false) );
 
             $this->queue->clear();
 
@@ -163,10 +165,10 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                 $this->queue->add($commandContext);
                 unset($commandContext);
             }
-            WPAdm_Core::log('Backup of Files was started');
+            WPAdm_Core::log( langWPADM::get('Backup of Files was started', false) );
             $this->queue->save()
             ->execute();
-            WPAdm_Core::log('End of File Backup');
+            WPAdm_Core::log( langWPADM::get('End of File Backup', false) );
 
             $files = glob($this->dir . '/'.$this->name . '*');
             $urls = array();
@@ -179,7 +181,8 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
             $this->result->setSize($totalSize);
             $size = $totalSize / 1024 / 1024; /// MByte
             $size = round($size, 2);
-            WPAdm_Core::log('Backup Size ' . $size . " Mb");
+            $log = str_replace("%s", $size , langWPADM::get('Backup Size %s Mb', false) ) ;
+            WPAdm_Core::log($log);
 
             $remove_from_server = 0;
             #Removing TMP-files
@@ -187,8 +190,8 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
 
             #Removind old backups(if limit the number of stored backups)
             if ($this->params['limit'] != 0) {
-                WPAdm_Core::log('Limits of Backups ' . $this->params['limit']); 
-                WPAdm_Core::log('Removing of old Backups was started');
+                WPAdm_Core::log( langWPADM::get('Limits of Backups ', false) . $this->params['limit'] ); 
+                WPAdm_Core::log( langWPADM::get('Removing of old Backups was started', false) );
                 $files = glob(ABSPATH . 'wpadm_backups/*');
                 if (count($files) > $this->params['limit']) {
                     $files2 = array();
@@ -207,7 +210,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                         WPAdm_Core::rmdir($d);
                     }
                 }
-                WPAdm_Core::log('Removing of old Backups was Finished'); 
+                WPAdm_Core::log( langWPADM::get('Removing of old Backups was Finished', false) ); 
             }
             wpadm_class::setBackup(1);
             if (!empty($errors)) {
@@ -217,7 +220,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                 wpadm_class::setErrors( implode(", ", $errors) );
             } else {
                 wpadm_class::setStatus(1);
-                WPAdm_Core::log('Backup creating is completed successfully!');
+                WPAdm_Core::log( langWPADM::get('Backup creating is completed successfully!', false) );
             }
             wpadm_class::backupSend();
 
@@ -258,7 +261,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                     $v = str_replace(ABSPATH  , '',  $v);
                     if (in_array($v, $minus_path)) {
                         unset($files[$k]);
-                        WPAdm_Core::log('Skip of File ' . $v);
+                        WPAdm_Core::log( langWPADM::get('Skip of File ', false) . $v);
                     }
                 }
             }
@@ -309,7 +312,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
             if (isset($this->params['minus-path'])) {
                 $minus_path = explode(",", $this->params['minus-path']);
                 if (in_array($d, $minus_path) ) {
-                    WPAdm_Core::log('Skip of Folder ' . $directory);
+                    WPAdm_Core::log(langWPADM::get('Skip of Folder ', false) . $directory);
                     return array();
                 }
             } else {
@@ -322,7 +325,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
             unset($tmp[0]);
             $d2 = mb_strtolower(implode('/', $tmp));
             if (strpos($d2, 'cache') !== false && isset($tmp[0])&& !in_array($tmp[0], array('plugins', 'themes')) ) {
-                WPAdm_Core::log('Skip of Cache-Folder ' . $directory);
+                WPAdm_Core::log(langWPADM::get('Skip of Cache-Folder ', false) . $directory);
                 return array();
             }
 
@@ -342,7 +345,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                                 if (!in_array($f, $minus_path)) {
                                     $array_items[] = $ff;
                                 } else {
-                                    WPAdm_Core::log('Skip of File ' . $ff);
+                                    WPAdm_Core::log(langWPADM::get('Skip of File ', false) . $ff);
                                 }
                             }
                         } else {
@@ -354,7 +357,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
                                 if (!in_array($f, $minus_path)) {
                                     $array_items[] = $ff;
                                 } else {
-                                    WPAdm_Core::log('Skip of Folder ' . $ff);
+                                    WPAdm_Core::log( langWPADM::get('Skip of Folder ', false) . $ff);
                                 }
                             }
                         }
