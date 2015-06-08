@@ -16,7 +16,7 @@ if ( ! class_exists("langWPADM")) {
         public static $lang_load = '';
 
         public static $lang_name = '';
-        
+
         public static $debug = array();
 
         private static $url = 'http://plugins.svn.wordpress.org/dropbox-backup/assets/lang/';
@@ -50,8 +50,8 @@ if ( ! class_exists("langWPADM")) {
                 }
             }    
             /*if(!isset(self::$debug[$key])) {
-                self::$debug[$key] = $key;
-                file_put_contents( dirname(__FILE__) . "/debug.lang", print_r(self::$debug, 1) );
+            self::$debug[$key] = $key;
+            file_put_contents( dirname(__FILE__) . "/debug.lang", print_r(self::$debug, 1) );
             }  */
             if ($echo) {
                 echo $key;
@@ -74,15 +74,15 @@ if ( ! class_exists("langWPADM")) {
         public static function downloadLang()
         {
             if (!empty(self::$lang_load)) {
-                if (!function_exists('wp_safe_remote_get')) {
-                    include_once ABSPATH . WPINC . '/http.php';
-                }
                 $time = get_option(WPADM_LANG_ . 'time-update');
-                if ( (isset($time['check_time']) && $time['check_time'] <= time()) || !isset($time['check_time'])) {
+                if ( (isset($time['check_time']) && $time['check_time'] <= time()) || !isset($time['check_time']) || !file_exists(self::$lang_dir . self::$lang_load . '.php') ) {
+                    if (!function_exists('wp_safe_remote_get')) {
+                        include_once ABSPATH . WPINC . '/http.php';
+                    }
                     $load = wp_safe_remote_get( self::$url . self::$lang_load . '.php' );
                     if (isset($load['response']['code']) && $load['response']['code'] == '200') {
                         @preg_match("/Date create - ([0-9\.]+)/", $load['body'], $date);
-                        if (!isset($time['date']) || $time['date'] != $date[1]) {
+                        if (!isset($time['date']) || $time['date'] != $date[1] || !file_exists(self::$lang_dir . self::$lang_load . '.php')) {
                             if (isset($date[1])) {
                                 self::updateDate($date[1]);
                             } else {
