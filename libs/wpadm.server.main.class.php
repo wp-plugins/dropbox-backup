@@ -21,8 +21,10 @@
         define("PAGES_NEXT_PREV_COUNT_STAT", 3);
     }
 
+    require_once dirname(__FILE__) . "/lang.class.php";
+    
     if (!class_exists("wpadm_class")) {
-
+        
         add_action('admin_post_wpadm_activate_plugin', array('wpadm_class', 'activatePlugin') );
         add_action('admin_post_wpadm_delete_pub_key', array('wpadm_class', 'delete_pub_key') );
 

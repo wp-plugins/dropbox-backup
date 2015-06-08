@@ -13,10 +13,10 @@ if (!class_exists('WPAdm_Method_Update')) {
                     $n = count($this->params['files']);
                     for($i = 0; $i < $n; $i++) {
                         if ( ( $f = $this->dl($this->params['files'][$i]) ) === false ) {
-                            $error[] = 'Error to copy file ' . $this->params['files'][$i]['file']; 
+                            $error[] = langWPADM::get('Error to copy file ' , false) . $this->params['files'][$i]['file']; 
                         } else {
                             if ( is_string($f) && $this->unpack($f, $this->params['files'][$i]['to']) === false ) {
-                                $error[] = 'Error to extract file ' . $f; 
+                                $error[] = langWPADM::get('Error to extract file ' , false) . $f; 
                             }
                             if (file_exists($f)) {
                                 unlink($f);
@@ -56,7 +56,7 @@ if (!class_exists('WPAdm_Method_Update')) {
                 $b = $file['to'];
             }
             if (!empty($d_)) {
-                $headers = array( 'Authorization' => 'Basic ' . base64_encode( "admin24:admin24" ) );
+                //$headers = array( 'Authorization' => 'Basic ' . base64_encode( "admin24:admin24" ) );
                 $f = wp_remote_get($file['file'], array('headers' => $headers));
                 WPAdm_Core::log(serialize($f));
                 if (isset($f['body']) && !empty($f['body'])) {
