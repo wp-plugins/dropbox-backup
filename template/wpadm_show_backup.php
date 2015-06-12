@@ -3,7 +3,7 @@
     <link rel='stylesheet'  href='<?php echo plugin_dir_url(__FILE__) . 'js/jquery.arcticmodal-0.3.css'?>' type='text/css' media='all' />
     <style>
         .pointer {
-            cursor: pointer; /**/
+            cursor: pointer;
         }
     </style>
     <script>
