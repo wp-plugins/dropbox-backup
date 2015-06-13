@@ -1,5 +1,5 @@
-=== Dropbox Backup ===
-Plugin Name: Dropbox Backup
+=== Dropbox Backup & Restore ===
+Plugin Name: Dropbox Backup & Restore
 Version: 1.2.6
 Donate link: http://www.wpadm.com/donate
 URI: http://www.wpadm.com/dropbox-backup
@@ -12,7 +12,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Author: WPAdm.com
 Contributors: WPAdm.com
 
-Dropbox Backup Plugin to create Dropbox Full Backup (Files + Database) of your Web Page
+Dropbox Backup & Restore Plugin to create Dropbox Full Backup (Files + Database) of your Web Page
 
 == Description ==
 
