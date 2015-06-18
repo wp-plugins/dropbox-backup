@@ -22,6 +22,7 @@ Supports WordPress Backup and Restore to/from Local Storage or upload Backups to
 * Dropbox Backup: create the Full Backup (Files + Database) of Web Page at Local Storage and upload this to Dropbox;
 * Local Restore: restoration from Local backup at your web page;
 * Dropbox Restore: restoration from Dropbox backup;
+* With "dropbox backup & restore" plugin you can backup and restore WooCommerce shop inkl. Database with products;
 * Administrate ALL of Backups for ALL of your sites from one place – WPAdm-account (FULLY FREE);
 
 
