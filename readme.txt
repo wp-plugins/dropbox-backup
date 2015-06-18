@@ -20,8 +20,8 @@ Supports WordPress Backup and Restore to/from Local Storage or upload Backups to
 
 * Local Backup: create the Full Backup of Web Page (Files + Database) and store this at Local Storage of the Site;
 * Dropbox Backup: create the Full Backup (Files + Database) of Web Page at Local Storage and upload this to Dropbox;
-* Local Restore
-* Dropbox Restore
+* Local Restore: restoration from Local backup at your web page;
+* Dropbox Restore: restoration from Dropbox backup;
 * Administrate ALL of Backups for ALL of your sites from one place – WPAdm-account (FULLY FREE);
 
 
