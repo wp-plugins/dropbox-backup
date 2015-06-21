@@ -88,9 +88,9 @@
                 $log = WPAdm_Core::getLog();
                 $log2 = WPAdm_Core::getTmpDir() . "/logs2";
                 if (file_exists($log2)) {
-                    $text = file_get_contents($log2);
-                    $log = str_replace($text, "", $log);
+                    $text = @file_get_contents($log2);
                     file_put_contents($log2, $log); 
+                    $log = str_replace($text, "", $log);
                 } else {
                     file_put_contents($log2, $log);
                 }
@@ -327,11 +327,11 @@
 
                 if ($send_to_dropbox) {
                     parent::$type = 'full'; 
-                    $backup = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'time' => @$_POST['time'], 'types' => array('db', 'files') )), 'full_backup_dropbox', dirname(__FILE__));
-                    $res = $backup->getResult()->toArray();
+                    $backup_local = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'time' => @$_POST['time'], 'types' => array('db', 'files') )), 'full_backup_dropbox', dirname(__FILE__));
+                    $res = $backup_local->getResult()->toArray();
                     $res['md5_data'] = md5( print_r($res, 1) );
-                    $res['name'] = $backup->name;
-                    $res['time'] = $backup->time;
+                    $res['name'] = $backup_local->name;
+                    $res['time'] = $backup_local->time;
                     $res['type'] = 'dropbox';
                     $res['counts'] = count($res['data']);
                     unset($backup);
@@ -345,8 +345,15 @@
                     'folder' => $folder_project),
                     )
                     ),
-
                     'full_backup_dropbox', dirname(__FILE__)) ;
+                    $result_send = $backup->getResult()->toArray();
+                    if ($result_send['result'] == 'error') {
+                        $res = array();
+                        $res['error'] = $result_send['error'];
+                        $res['result'] = 'error';
+                        @rename(WPAdm_Core::getTmpDir() . "/logs2", WPAdm_Core::getTmpDir() . "/logs_error_" . $backup_local->time);
+                    }
+                    
                     WPAdm_Core::rmdir( ABSPATH . "wpadm_backups/{$res['name']}");
                 }
                 @session_start();
@@ -400,8 +407,9 @@
                 $show = !get_option('wpadm_pub_key') && is_super_admin();
                 $error = parent::getError(true);
                 $msg = parent::getMessage(true); 
+                $base_path = dirname(__FILE__) ;
                 ob_start();
-                require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "template/wpadm_show_backup.php";
+                require_once $base_path . DIRECTORY_SEPARATOR . "template" . DIRECTORY_SEPARATOR . "wpadm_show_backup.php";
                 echo ob_get_clean();
             }
 

@@ -474,6 +474,23 @@ h3.plugins-title {
     width: 70%;
     border: 0;
 }
+ input[type="text"]{
+    padding: 0px;
+    border: 1px solid #999;
+    box-shadow:0px;
+    font-size: 12px;
+    height: 24px;
+    width: 250px;
+}
+.form-help-send-error .label-help {
+    float:left; width: 100px;
+    padding-top: 8px;
+}
+.border-shadow-bottom {
+    -webkit-box-shadow: 0 2px 7px -2px rgba(50, 50, 50, 0.5);
+    -moz-box-shadow:    0 2px 7px -2px rgba(50, 50, 50, 0.5);
+    box-shadow:         0 2px 7px -2px rgba(50, 50, 50, 0.5);
+}
 .info tr {
     border-style: hidden;
 }

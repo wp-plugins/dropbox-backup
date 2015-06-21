@@ -36,7 +36,7 @@ if (!class_exists('WPadm_Command_Send_To_Dropbox')) {
             $toFile = str_replace('//', '/', $folder_project . $context->get('folder') . '/' . $file_name);
             $res = $dropbox->uploadFile($fromFile, $toFile);
             if (isset($res['error']) && isset($res['text']) && $res['error'] == 1) {
-                $context->setError( langWPADM::get('Dropbox error: ' , false) . $res['text']);
+                $context->setError( langWPADM::get('Error: ' , false) . '"' . $res['text'] . '"');
                 return false;
             }
             if (isset($res['size']) && isset($res['client_mtime'])) {

@@ -70,14 +70,14 @@ if (!class_exists('WPAdm_Method_Queue_Controller')) {
                 $com = $context->get('command');
                 $cmd = WPAdm_Command_Factory::getCommand($com);
                 if ($cmd === null) {
-                    $this->result->setError('Command error:' . $com . ': '. 'Command not found: ' . $com);
+                    $this->result->setError('Command error: ' . $com . ' : '. 'Command not found: ' . $com);
                     $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
                     array_unshift($this->contexts, $context);
                     $this->done();
                     return $this->result;
                 } elseif (!$cmd->execute($context)) {
                     //произошла какая то ошибка
-                    $this->result->setError('Command error:' . $com . ': '. $context->getError());
+                    $this->result->setError('Command error: ' . $com . ' : '. $context->getError());
                     $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
                     array_unshift($this->contexts, $context);
                     $this->done();

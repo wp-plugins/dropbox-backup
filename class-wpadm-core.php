@@ -127,23 +127,23 @@ if (!class_exists('WPAdm_Core')) {
         }
 
         private function connect() {
-            
+
             add_option('wpadm_pub_key', $this->pub_key);
             $this->result->setResult(WPAdm_Result::WPADM_RESULT_SUCCESS);
-            
+
             $sendData['system_data'] = get_system_data();
             $data['actApi'] = 'setStats';
             $data['site'] = get_option('siteurl');
             $data['data'] = wpadm_pack($sendData);
             if (!class_exists('WP_Http')) {
-                include_once ABSPATH.WPINC.'/class-http.php';
+                include_once ABSPATH . WPINC . '/class-http.php';
             }
 
             $remote            = array();
             $remote['body']    = $data;
             $remote['timeout'] = 20;
 
-            $result = wp_remote_post(WPADM_URL_BASE, $remote);
+            $result = wp_remote_post(WPADM_URL_BASE . "/api/", $remote);
         }
         public static function setPluginDIr($dir)
         {
@@ -255,7 +255,9 @@ if (!class_exists('WPAdm_Core')) {
                     if (is_dir($f)) {
                         self::rmdir($f);
                     }
-                    unlink($f);
+                    if (file_exists($f)) {
+                        @unlink($f);
+                    }
                 }
                 @rmdir($dir);
             }

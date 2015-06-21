@@ -7,20 +7,26 @@ function showTab (elem, type)
 }
 
 var shows_id = ""
-function shows(id)
+var shows_t = ""
+function shows(id, t)
 {
     if(document.getElementById(id).style.display == "none") {
         document.getElementById(id).style.display = "table-row";
+        jQuery(t).parent("tr").addClass('border-shadow-bottom');
         if (shows_id == "") {
             shows_id = id;
+            shows_t = t;
         } else {
             if(shows_id != id) {
                 document.getElementById(shows_id).style.display = "none";
+                jQuery(shows_t).parent("tr").removeClass('border-shadow-bottom');
             }
             shows_id = id;
+            shows_t  = t;
         }
     } else if(document.getElementById(id).style.display == "table-row") {
         document.getElementById(id).style.display = "none";
+        jQuery(t).parent("tr").removeClass('border-shadow-bottom');
     }
 }
 var bl = false;

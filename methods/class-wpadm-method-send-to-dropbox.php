@@ -47,8 +47,8 @@ if (!class_exists('WPadm_Method_Send_To_Dropbox')) {
             $res = $this->queue->save()
                 ->execute();
             if (!$res) {
-                WPAdm_Core::log(langWPADM::get('Dropbox: ' , false) . $this->queue->getError());
-                $errors[] = langWPADM::get('Dropbox: ' , false) . $this->queue->getError();
+                WPAdm_Core::log(langWPADM::get('Answer from Dropbox ' , false) . $this->queue->getError());
+                $errors[] = langWPADM::get('Answer from Dropbox ' , false) . $this->queue->getError();
             }
             WPAdm_Core::log( langWPADM::get('End Copy Files to Dropbox' , false) );
             if (count($errors) > 0) {

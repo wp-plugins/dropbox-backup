@@ -7,7 +7,6 @@
         }
     </style>
     <script>
-        var global={};
         function blickForm(id, t)
         {
             if(t.checked == true) {
@@ -134,7 +133,7 @@
                         } else {
                             jQuery('.title-logs').css('display', 'none');
                             jQuery('.title-status').css({'display':'block', 'color':'red'});
-                            jQuery('.title-status').html("<?php langWPADM::get('Dropbox Backup wasn\'t created: '); ?>" + data.error);
+                            jQuery('.title-status').html("<?php langWPADM::get('Dropbox Backup wasn\'t created. '); ?>" + data.error);
                         }
                         showData(data);
                         jQuery('.table').css('display', 'table');
@@ -163,6 +162,17 @@
         function showData(data)
         {
             size_backup = data.size / 1024 / 1024;
+            if (data.size != 0) {
+                var img_table = 
+                '<img src="<?php echo plugin_dir_url(__FILE__) . "ok.png" ;?>" title="Successful" alt="Successful" style="float: left; width: 20px; height: 20px;" />' +
+                '<div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Successful', false);?></div>';
+                name_backup = data.name;
+            } else {
+                var img_table =
+                '<img src="<?php echo plugin_dir_url(__FILE__) . "not-ok.png" ;?>" title="fail" alt="fail" style="float: left; width: 20px; height: 20px;" />' +
+                '<div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Fail', false);?></div>';
+                name_backup = '<?php echo langWPADM::get('Not available', false);?>';
+            }
             info = "";
             for(i = 0; i < data.data.length; i++) {
                 e = data.data[i].split('/');
@@ -174,29 +184,28 @@
             co = jQuery('.number-backup').length + 1;
             jQuery('.table > tbody:last').after(
             '<tr>'+
-            '<td class="number-backup" onclick="shows(\'' + data.md5_data + '\')">' +
+            '<td class="number-backup" onclick="shows(\'' + data.md5_data + '\', this)">' +
             co + 
             '</td>' +
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')" style="text-align: left; padding-left: 7px;" >' +
+            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)" style="text-align: left; padding-left: 7px;" >' +
             data.time + 
             '</td>' +
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')">' +
-            data.name +
+            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)">' +
+            name_backup +
             '</td>' +
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')">' +
+            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\',this)">' +
             data.counts +
             '</td>' +
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')">' +
-            '<img src="<?php echo plugin_dir_url(__FILE__) . "/ok.png" ;?>" title="<?php echo langWPADM::get('Successful', false);?>" alt="<?php echo langWPADM::get('Successful', false);?>" style="float: left; width:20px; hight:20px;" />'+
-            '<div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Successful', false);?></div>' +
+            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)">' +
+            img_table +
             '</td>' +
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')">' +
+            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)">' +
             data.type + ' <?php langWPADM::get('backup')?>' +
             '</td>' +
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\')">' +
+            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)">' +
             size_backup.toFixed(2) + "<?php langWPADM::get('Mb')?>" +
             '</td>' +
-            '<td>' +
+            '<td>' + 
             '<a href="javascript:void(0)" class="button-wpadm" title="<?php langWPADM::get('Restore')?>" onclick="show_recovery_form(\'' + data.type + '\', \'' + data.name + '\')"><span class="pointer dashicons dashicons-backup"></span><?php langWPADM::get('Restore')?></a> &nbsp;' +
             '<a href="javascript:void(0)" class="button-wpadm" title="<?php langWPADM::get('Delete')?>" onclick="delete_backup(\'' + data.name + '\', \'' + data.type + '\')"><span class="pointer dashicons dashicons-trash"></span><?php langWPADM::get('Delete')?></a> &nbsp;' +
             '</td>' +
@@ -446,7 +455,6 @@
             jQuery('#helper-keys').arcticmodal({
                 beforeOpen: function(data, el) {
                     jQuery('#helper-keys').css('display','block');
-
                 },
                 afterClose: function(data, el) {
                     jQuery('#helper-keys').css('display','none');
@@ -465,6 +473,17 @@
 
             }
         }
+        function InludesSetting()
+        {
+            jQuery('#inludes-setting').arcticmodal({
+                beforeOpen: function(data, el) {
+                    jQuery('#inludes-setting').css('display','block');
+                },
+                afterClose: function(data, el) {
+                    jQuery('#inludes-setting').css('display','none');
+                }
+            });
+        }
     </script>
     <?php if (!empty($error)) {
             echo '<div class="error" style="text-align: center; color: red; font-weight:bold;">
@@ -473,7 +492,7 @@
             </p></div>'; 
     }?>
     <?php if (!empty($msg)) {
-            echo '<div class="updated" style="text-align: center; color: red; font-weight:bold;">
+            echo '<div class="updated" style="text-align: center; font-weight:bold;">
             <p style="font-size: 16px;">
             ' . $msg . '
             </p></div>'; 
@@ -490,7 +509,7 @@
     </div>
     <div id="helper-keys" style="display: none;width: 400px; text-align: center; background: #fff; border: 2px solid #dde4ff; border-radius: 5px;">
         <div class="title-description" style="font-size: 20px; text-align: center;padding-top:20px; line-height: 30px;">
-             <?php langWPADM::get('Where can I find my app key and secret?'); ?>
+            <?php langWPADM::get('Where can I find my app key and secret?'); ?>
         </div>
         <div class="button-description" style="padding:20px 10px;padding-top:20px; text-align: left;">
             <?php langWPADM::get('You can get an API app key and secret by creating an app on the'); ?> 
@@ -503,6 +522,22 @@
             <input type="button" value="<?php langWPADM::get('OK'); ?>" onclick="jQuery('#helper-keys').arcticmodal('close');" style="text-align: center; width: 100px;" class="button-wpadm">
         </div>
     </div>
+    <!-- <div id="inludes-setting" class="" style="display: none; width: 380px; text-align: center; background: #fff; border: 2px solid #dde4ff; border-radius: 5px;">
+    <div>
+    <div class="title-description" style="font-size: 20px; text-align: center;padding-top:20px; line-height: 30px;">
+    <?php langWPADM::get('Includes path in backup'); ?>
+    </div>
+    <div class="button-description" style="padding:20px 10px;padding-top:20px; text-align: left;">
+    <div>
+    <label for=""></label>
+    </div>
+    </div>
+    <div class="button-description" style="padding:20px 0;padding-top:10px">
+    <input type="button" value="<?php langWPADM::get('OK'); ?>" onclick="" style="text-align: center; width: 100px;" class="button-wpadm">
+    <input type="button" value="<?php langWPADM::get('Cancel'); ?>" onclick="jQuery('#button-description').arcticmodal('close');" style="text-align: center; width: 100px;" class="button-wpadm">
+    </div>
+    </div>
+    </div>   -->
 
     <div class="block-content" style="margin-top:20px;">
         <div style="min-height : 215px; padding: 5px; padding-top: 10px;">
@@ -640,7 +675,6 @@
                                     </tr>
                                 </tbody>
                                 <tr valign="top">
-
                                     <td colspan="2" align="right">
                                         <a class="help-key-secret" href="javascript:getHelperDropbox();" ><?php langWPADM::get('Where to get App key & App secret?'); ?></a>
                                     </td>
@@ -686,6 +720,9 @@
                 <div style="float: left; margin-top: 2px;">
                     <button onclick="start_local_backup()" class="backup_button" style="padding: 5px 10px; margin-top: 10px; font-size: 15px;bottom: 0px;"><?php langWPADM::get('Create Local Backup'); ?></button> <br />
                 </div>
+                <!--  <div style="float: left; margin-top: 2px;margin-left: 20px;">
+                <button onclick="InludesSetting();" class="backup_button" style="padding: 5px 10px; margin-top: 10px; font-size: 15px;bottom: 0px;"><?php langWPADM::get('Folders & files'); ?></button> <br />
+                </div> -->
                 <div style="clear: both;"></div>
             </div>
         </div>
@@ -731,21 +768,27 @@
                             ?>
                             <tr>
                                 <td class="number-backup"><?php echo ($i + 1);?></td>
-                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer" style="text-align: left; padding-left: 7px;"><?php echo $data['data'][$i]['dt'];?></td>
-                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer">
-                                    <?php echo $data['data'][$i]['name'];?>
+                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>', this)" class="pointer" style="text-align: left; padding-left: 7px;"><?php echo $data['data'][$i]['dt'];?></td>
+                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>', this)" class="pointer">
+                                    <?php echo ($data['data'][$i]['size'] != 0) ? $data['data'][$i]['name'] : "<strong style=\"color:red;\">". langWPADM::get('Not available', false) . "</strong>&nbsp;&nbsp;(<a style=\"text-decoration:underline;\">".langWPADM::get('Why?', false)."</a>)";?>
                                     <script type="text/javascript">
                                         backup_name = '<?php echo $data['data'][$i]['name']?>';
-                                        global[backup_name] = {};
                                     </script>
                                 </td>
-                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer"><?php echo isset($data['data'][$i]['count']) ? $data['data'][$i]['count'] : $f ;?></td>
-                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer" style="padding: 0px;">
-                                    <img src="<?php echo plugin_dir_url(__FILE__) . "ok.png" ;?>" title="Successful" alt="Successful" style="float: left; width: 20px; height: 20px;" />
-                                    <div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Successful', false);?></div>
+                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>', this)" class="pointer"><?php echo isset($data['data'][$i]['count']) ? $data['data'][$i]['count'] : $f ;?></td>
+                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>', this)" class="pointer" style="padding: 0px;">
+                                    <?php if ($data['data'][$i]['size'] != 0) { ?>
+                                        <img src="<?php echo plugin_dir_url(__FILE__) . "ok.png" ;?>" title="Successful" alt="Successful" style="float: left; width: 20px; height: 20px;" />
+                                        <div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Successful', false);?></div>
+                                        <?php } else {
+                                        ?>
+                                        <img src="<?php echo plugin_dir_url(__FILE__) . "not-ok.png" ;?>" title="Successful" alt="Successful" style="float: left; width: 20px; height: 20px;margin-left: 21px;" />
+                                        <div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Fail', false);?></div>
+                                        <?php 
+                                    }?>
                                 </td>
-                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer"><?php echo $data['data'][$i]['type'];?> <?php langWPADM::get('backup'); ?></td>
-                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>')" class="pointer"><?php echo $size . langWPADM::get('Mb', false);?></td>
+                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>', this)" class="pointer"><?php echo $data['data'][$i]['type'];?> <?php langWPADM::get('backup'); ?></td>
+                                <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>', this)" class="pointer"><?php echo $size . langWPADM::get('Mb', false);?></td>
                                 <td> 
                                     <?php if(is_admin() || is_super_admin()) {?>
                                         <a class="button-wpadm" href="javascript:void(0)" title="<?php langWPADM::get('Restore'); ?>" onclick="show_recovery_form('<?php echo isset($data['data'][$i]['name']) && $data['data'][$i]['type'] != 'local' ? $data['data'][$i]['name'] : 'local' ?>', '<?php echo $data['data'][$i]['name']?>')" style="color: #fff;"><span class="pointer dashicons dashicons-backup" style="margin-top:3px;"></span><?php langWPADM::get('Restore'); ?></a>&nbsp;
@@ -756,44 +799,117 @@
                                 </td> 
                             </tr>
                             <tr id="<?php echo md5( print_r($data['data'][$i], 1) );?>" style="display:none; ">
-                                <td colspan="2">
-                                </td>
-                                <td align="center" style="padding: 0px; width: 350px;">
-                                    <div style="overflow: auto; max-height: 150px;">
-                                        <?php 
-                                            if ($f > 0) {  ?>
-                                            <table border="0" align="center" class="info-path"> <?php
-                                                    for($j = 0; $j < $f; $j++) {
-                                                        if (!empty($files[$j])) {
-                                                        ?>
-                                                        <tr style="border: 0;">
-                                                            <td style="border: 0;">
-                                                                <?php if ($data['data'][$i]['type'] == 'local') {?>
-                                                                    <a href="<?php echo get_option('siteurl') . "/wpadm_backups/{$data['data'][$i]['name']}/{$files[$j]}"?>">
-                                                                        <?php echo $files[$j]; ?>
-                                                                    </a>
-                                                                    <?php 
-                                                                    } else { 
-                                                                        echo $files[$j]; 
-                                                                    } 
-                                                                ?>
-                                                            </td>
-                                                        </tr>
-                                                        <?php
+                                <?php if ($data['data'][$i]['size'] != 0) {?>
+                                    <td colspan="2">
+                                    </td>
+                                    <td align="center" style="padding: 0px; width: 350px;">
+                                        <div style="overflow: auto; max-height: 150px;">
+                                            <?php 
+                                                if ($f > 0) {  ?>
+                                                <table border="0" align="center" class="info-path"> <?php
+                                                        for($j = 0; $j < $f; $j++) {
+                                                            if (!empty($files[$j])) {
+                                                            ?>
+                                                            <tr style="border: 0;">
+                                                                <td style="border: 0;">
+                                                                    <?php if ($data['data'][$i]['type'] == 'local') {?>
+                                                                        <a href="<?php echo get_option('siteurl') . "/wpadm_backups/{$data['data'][$i]['name']}/{$files[$j]}"?>">
+                                                                            <?php echo $files[$j]; ?>
+                                                                        </a>
+                                                                        <?php 
+                                                                        } else { 
+                                                                            echo $files[$j]; 
+                                                                        } 
+                                                                    ?>
+                                                                </td>
+                                                            </tr>
+                                                            <?php
+                                                            }
                                                         }
-                                                    }
-                                                ?>
-                                            </table>
-                                            <?php
-                                            } 
-                                        ?>
-                                    </div>
-                                </td>
-                                <td colspan="6"></td>
+                                                    ?>
+                                                </table>
+                                                <?php
+                                                } 
+                                            ?>
+                                        </div>
+                                    </td>
+                                    <td colspan="6"></td> 
+                                    <?php 
+                                    } else { ?>
+                                    <td colspan="2">
+                                    </td>
+                                    <td colspan="4" style="background: #ddecf9;">
+                                        <div style="padding-left: 10px; padding-right: 10px;">
+                                            <div style="font-size: 12px; text-align: left;">
+                                                <?php 
+                                                    $time_log = str_replace(array(':', '-', " "), "_", $data['data'][$i]['dt']); 
+                                                    if ( file_exists( $base_path . "/tmp/logs_error_" . $time_log ) ) {
+                                                        $log_ = file_get_contents( $base_path . "/tmp/logs_error_" . $time_log );
+                                                        $pos = stripos($log_, "error");
+                                                        if ($pos !== false) {
+                                                            for($p = $pos; ; $p--) {
+                                                                if ($log_{$p} == "\n") {
+                                                                    $pos_new = $p + 1;
+                                                                    break;
+                                                                }
+                                                            }
+                                                            $error =substr($log_, $pos_new);
+                                                            echo str_replace("\n", "<br />", $error);
+                                                        }
+                                                    } else {
+                                                        langWPADM::get('Error log wasn\'t Found');
+                                                }?> 
+                                            </div>
+
+                                            <form action="<?php echo admin_url( 'admin-post.php?action=error_logs_check' )?>" method="post" style=" text-align: left;">
+                                                <div style="margin-top: 10px; font-size: 16px; font-weight: bold; margin-bottom: 10px;">
+                                                    <?php langWPADM::get('Please, provide your FTP access to resolve this issue quickly:');?>
+                                                </div>
+                                                <div class="form-help-send-error" >
+                                                    <div style="margin-top: 3px;">
+                                                        <div class="label-help" style="">
+                                                            <label for=""><?php langWPADM::get('FTP Host'); ?></label>
+                                                        </div>  
+                                                        <div style="float:left; ">
+                                                            <input type="text" value="<?php echo str_ireplace(array('http://', 'https://'), '', home_url()) ;?>" name="ftp_host" >
+                                                        </div>
+                                                    </div>
+                                                    <div class="clear"></div>
+                                                    <div style="margin-top: 3px;">
+                                                        <div class="label-help" > 
+                                                            <label><?php langWPADM::get('FTP User'); ?></label>
+                                                        </div>
+                                                        <div style="float:left; ">
+                                                            <input type="text" value="" name="ftp_user">
+                                                        </div>
+                                                    </div>
+                                                    <div class="clear"></div>
+                                                    <div style="margin-top: 3px;">
+                                                        <div class="label-help" > 
+                                                            <label><?php langWPADM::get('FTP Password'); ?></label>
+                                                        </div>
+                                                        <div style="float:left; ">
+                                                            <input type="text" value="" name="ftp_pass">
+                                                        </div>
+                                                    </div>
+                                                    <div class="clear"></div>
+                                                </div>
+                                                <div style="text-align: left; margin-left: 100px; margin-top: 10px;">
+                                                    <input value="<?php echo $time_log; ?>" type="hidden" name="time_pars">
+                                                    <input class="backup_button" style="font-size: 14px;font-weight: normal;padding: 3px;text-shadow: 0px;" type="submit" value="<?php langWPADM::get('Send request to support'); ?>">
+                                                </div>                                                                      
+                                            </form>
+
+                                        </div>
+                                    </td>
+                                    <td colspan="3">
+                                    </td>
+                                    <?php 
+                                    }
+                                ?>
                             </tr>
                             <?php 
                         } ?>
-
                         <?php } ?>
                 </tbody>
             </table>
