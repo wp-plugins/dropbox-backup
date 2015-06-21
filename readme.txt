@@ -43,7 +43,7 @@ If you need help with the plugin or you want to report a bug please refer to htt
 
 == Other ==
 
-* Very easy and secure Dropbox Backup and Restoration (web page restore from backup)
+Very easy and secure Dropbox Backup and Restoration (web page restore from backup)
 
 Usefull additional functions can be found at www.wpadm.com in the User profile.
 DropBox Backup is a new plugin, so we tryed have to provide a bug-free plugin/widget. We are maintain this project.
