@@ -791,7 +791,9 @@
                                 <td onclick="shows('<?php echo md5( print_r($data['data'][$i], 1) );?>', this)" class="pointer"><?php echo $size . langWPADM::get('Mb', false);?></td>
                                 <td> 
                                     <?php if(is_admin() || is_super_admin()) {?>
-                                        <a class="button-wpadm" href="javascript:void(0)" title="<?php langWPADM::get('Restore'); ?>" onclick="show_recovery_form('<?php echo isset($data['data'][$i]['name']) && $data['data'][$i]['type'] != 'local' ? $data['data'][$i]['name'] : 'local' ?>', '<?php echo $data['data'][$i]['name']?>')" style="color: #fff;"><span class="pointer dashicons dashicons-backup" style="margin-top:3px;"></span><?php langWPADM::get('Restore'); ?></a>&nbsp;
+                                        <?php if ($data['data'][$i]['size'] > 0) { ?>
+                                            <a class="button-wpadm" href="javascript:void(0)" title="<?php langWPADM::get('Restore'); ?>" onclick="show_recovery_form('<?php echo isset($data['data'][$i]['name']) && $data['data'][$i]['type'] != 'local' ? $data['data'][$i]['name'] : 'local' ?>', '<?php echo $data['data'][$i]['name']?>')" style="color: #fff;"><span class="pointer dashicons dashicons-backup" style="margin-top:3px;"></span><?php langWPADM::get('Restore'); ?></a>&nbsp;
+                                            <?php } ?>
                                         <a class="button-wpadm" href="javascript:void(0)" title="<?php langWPADM::get('Delete'); ?>" onclick="delete_backup('<?php echo $data['data'][$i]['name']; ?>', '<?php echo $data['data'][$i]['type'];?>')" style="color: #fff;"><span class="pointer dashicons dashicons-trash" style="margin-top:3px;"></span><?php langWPADM::get('Delete'); ?></a>&nbsp;
                                         <?php
                                         }
