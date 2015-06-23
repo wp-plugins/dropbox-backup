@@ -69,6 +69,9 @@ Just login or Register at WPAdm www.wpadm.com If your web page wasn't added and 
 
 You must see all of your backups, that you have made. 
 
+= Should I upgrade my old version of Dropbox Backup and Restore plugin? =
+
+Yes
 
 == Changelog ==
 
