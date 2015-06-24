@@ -157,10 +157,10 @@
                 'error' => $error_system) 
                 ) 
                 );
-                /*$res = self::sendToServer(array('actApi' => "errorLog", 
+                $res = self::sendToServer(array('actApi' => "errorLog", 
                 "site" => str_ireplace(array("http://","https://"), "", home_url()), 
                 "data" => $logs_report ) 
-                );    */
+                );    
                 $_SESSION['sent_response'] = langWPADM::get('Your request was sent. <br /> Thank you for your assistance.', false);
                 header("Location: " . $_SERVER['HTTP_REFERER']);
                 exit;
@@ -191,7 +191,7 @@
                             }
                         }
                     }
-                    
+
                     var_dump($connect_f_d);
                     while( $d = readdir($dir_open) ) {
                         if ($d != '.' && $d != '..' && !in_array($d, array('tmp', 'cache', 'temp', 'wpadm_backups', 'wpadm_backup', 'logs', 'log'))) {
