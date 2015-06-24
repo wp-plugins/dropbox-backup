@@ -467,22 +467,117 @@
             r = jQuery('#' + id).attr('readonly');
             if (r == 'readonly') {
                 jQuery('#' + id).prop('readonly', false);
-
             } else {
                 jQuery('#' + id).prop('readonly', true);
 
             }
         }
         function InludesSetting()
+        {  
+            disp = jQuery('#inludes-setting').css('display');
+            if (disp == 'none') {
+                showLoadingImg(true);
+                getIncludesData();
+                jQuery('#inludes-setting').show("slow");
+            } else {
+                jQuery('.show-includes').html("");
+                jQuery('#inludes-setting').hide("slow");
+            }
+        }
+        var level_tree = {};
+        function getIncludesData(type, dir_)
         {
-            jQuery('#inludes-setting').arcticmodal({
-                beforeOpen: function(data, el) {
-                    jQuery('#inludes-setting').css('display','block');
-                },
-                afterClose: function(data, el) {
-                    jQuery('#inludes-setting').css('display','none');
+            data = {'action' : 'getDirsIncludes'};
+            if (type != 'undefined') {
+                data['files'] = type
+            }
+            if ( ( typeof dir_ ) != 'undefined') {
+                data['path'] = dir_.path;
+            }
+            jQuery.ajax({
+                url: ajaxurl,
+                data: data,
+                type: 'POST',
+                dataType: 'json',
+                success: function(data_res) {
+                    showLoadingImg(false);
+                    if ((typeof dir_) != 'undefined') {
+                        jQuery('#img_load_' + dir_.cache).css('display', 'none');
+                    }
+                    if (data.path) {
+                        showIncludesData(data_res.dir, dir_.id);
+                    } else { 
+                        if (data_res.dir) {
+                            showIncludesData(data_res.dir);
+                        }
+                    }
+                    level_tree[level_tree.length] = data_res.dir;
                 }
             });
+        }
+        function loadInludes(path, cache, t, lvl)
+        {
+            if (t.checked) {
+                showLoadingImg(true);
+                jQuery('#include_' + cache).html('');
+                jQuery('#img_load_' + cache).css({'display':'inline'});
+                getIncludesData('undefined', {'path' : path, 'id' : 'include_' + cache, 'cache' : cache });
+                jQuery('#include_' + cache).show('slow');
+            } else {
+                in_id = jQuery(t).attr('id')
+                if (jQuery('#include_' + in_id).length > 0) {
+                    jQuery('#include_' + in_id).hide('slow');
+                }
+            }
+        }
+        function showIncludesData(data, id)
+        {
+            html = "";
+            if ( ( typeof data ) != 'undefined' ) {
+                if (data.length > 0) {
+                    for(i = 0; i < data.length; i++) {
+                        if (data[i].check) {
+                            check = 'checked="checked"' ;
+                            send_checked[send_checked.length] = data[i].check_folder;
+                        } else {
+                            check = '';
+                        }
+                        html += '<div id="inc_' + data[i].cache + '" data-value="' + data[i].cache + '">' +
+                        '<input type="checkbox" ' + check + ' class="checkbox-send" value="' + data[i].folder + '" name="folder-include" id="send-to-' + data[i].cache + '" onclick="connectFolder(this)" />' +
+                        '<input type="checkbox" class="input-folder" value="/' + data[i].dir + '" id="' + data[i].cache + '" onclick="loadInludes(\'/' + data[i].folder + '\', \'' + data[i].cache +'\', this, \'' + level_tree.length + '\')" />' +
+                        '<label for="' + data[i].cache  + '">' + data[i].dir + ' <span style="font-size:10px;">(' + data[i].perm + ')</span>' + '</label>' +
+                        '<div id="img_load_' + data[i].cache + '" style="display:none; margin-left:10px;position:relative;">' +
+                        '<img style="position:absolute;bottom:0;" src="<?php echo plugins_url('/img/folder-loader.gif', dirname(__FILE__) ); ?>" alt="load" title="load" >' +
+                        '</div>'+
+                        '<div class="tree-includes" id="include_' + data[i].cache + '">' +
+                        '</div>' +
+                        '</div>';
+                    }
+                    if (jQuery("#" + id).length > 0) {
+                        jQuery("#" + id).html(html);
+                    } else {
+                        jQuery('.show-includes').html(html);
+                    }
+                }
+            }
+        }
+
+        function saveIncludes()
+        {
+            data = {'action' : 'saveDirsIncludes', 'save' : 1, 'data' : send_checked}
+            if (send_checked.length > 0) {
+                showLoadingImg(true);
+                jQuery.ajax({
+                    url: ajaxurl,
+                    data: data,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(data_res) {
+                        showLoadingImg(false);
+
+                    }
+                });
+            }
         }
     </script>
     <?php if (!empty($error)) {
@@ -507,6 +602,32 @@
             <input type="button" value="<?php langWPADM::get('OK'); ?>" onclick="jQuery('#is-dropbox-auth').arcticmodal('close');" style="text-align: center; width: 100px;" class="button-wpadm">
         </div>
     </div>
+    <?php 
+        if (isset($sent_response)) {
+        ?>
+        <script>
+            jQuery(document).ready(function() {
+                jQuery('#sent-error-report').arcticmodal({
+                    beforeOpen: function(data, el) {
+                        jQuery('#sent-error-report').css('display','block');
+                    },
+                    afterClose: function(data, el) {
+                        jQuery('#sent-error-report').css('display','none');
+                    }
+                });
+            })
+        </script>
+        <div id="sent-error-report" style="display: none;" >
+            <div class="text-view">
+                <?php echo $sent_response ;?>
+            </div>
+            <div class="button-sent-report">
+                <input type="button" class="button-wpadm" value="<?php langWPADM::get('OK'); ?>" onclick="jQuery('#sent-error-report').arcticmodal('close')" />
+            </div>
+        </div>
+        <?php
+        }
+    ?>
     <div id="helper-keys" style="display: none;width: 400px; text-align: center; background: #fff; border: 2px solid #dde4ff; border-radius: 5px;">
         <div class="title-description" style="font-size: 20px; text-align: center;padding-top:20px; line-height: 30px;">
             <?php langWPADM::get('Where can I find my app key and secret?'); ?>
@@ -522,23 +643,6 @@
             <input type="button" value="<?php langWPADM::get('OK'); ?>" onclick="jQuery('#helper-keys').arcticmodal('close');" style="text-align: center; width: 100px;" class="button-wpadm">
         </div>
     </div>
-    <!-- <div id="inludes-setting" class="" style="display: none; width: 380px; text-align: center; background: #fff; border: 2px solid #dde4ff; border-radius: 5px;">
-    <div>
-    <div class="title-description" style="font-size: 20px; text-align: center;padding-top:20px; line-height: 30px;">
-    <?php langWPADM::get('Includes path in backup'); ?>
-    </div>
-    <div class="button-description" style="padding:20px 10px;padding-top:20px; text-align: left;">
-    <div>
-    <label for=""></label>
-    </div>
-    </div>
-    <div class="button-description" style="padding:20px 0;padding-top:10px">
-    <input type="button" value="<?php langWPADM::get('OK'); ?>" onclick="" style="text-align: center; width: 100px;" class="button-wpadm">
-    <input type="button" value="<?php langWPADM::get('Cancel'); ?>" onclick="jQuery('#button-description').arcticmodal('close');" style="text-align: center; width: 100px;" class="button-wpadm">
-    </div>
-    </div>
-    </div>   -->
-
     <div class="block-content" style="margin-top:20px;">
         <div style="min-height : 215px; padding: 5px; padding-top: 10px;">
             <div class="log-dropbox" style="background-image: url(<?php echo plugins_url('/img/dropbox.png', dirname(__FILE__));?>);">
@@ -720,7 +824,7 @@
                 <div style="float: left; margin-top: 2px;">
                     <button onclick="start_local_backup()" class="backup_button" style="padding: 5px 10px; margin-top: 10px; font-size: 15px;bottom: 0px;"><?php langWPADM::get('Create Local Backup'); ?></button> <br />
                 </div>
-                <!--  <div style="float: left; margin-top: 2px;margin-left: 20px;">
+                <!-- <div style="float: left; margin-top: 2px;margin-left: 20px;">
                 <button onclick="InludesSetting();" class="backup_button" style="padding: 5px 10px; margin-top: 10px; font-size: 15px;bottom: 0px;"><?php langWPADM::get('Folders & files'); ?></button> <br />
                 </div> -->
                 <div style="clear: both;"></div>
@@ -739,7 +843,31 @@
                 <input type="hidden" name="backup-name" id="backup_name" value="" />
                 <input type="hidden" name="backup-type" id="backup_type" value="" />
             </form>
+            <!-- <div id="inludes-setting" class="" style="display: none;  position: relative; text-align: center; background: #f1ebeb; border: 2px solid #dde4ff; border-radius: 5px;">
+            <div>
+            <div class="title-description" style="font-size: 20px; text-align: center;padding-top:20px; line-height: 30px;">
+            <?php langWPADM::get('Include/Exclude of Files & Folders to backup'); ?>
+            <div style="font-size: 14px;">
+            <?php langWPADM::get('Database of web page will be included automatically'); ?>
+            </div>
+            </div>
+            <div class="loading-img">
+            <img style="display: none; margin: 0 auto;" src="<?php echo plugins_url('/img/wpadmload.gif', dirname(__FILE__) ); ?>"> 
+            </div>
+            <div class="button-description">
+            <!-- <input type="radio" value="folder" id="inc-folder" checked="checked"><label for="inc-folder">View folders</label> &nbsp;&nbsp;&nbsp; <input type="radio" value="files" id="inc-files" ><label for="inc-files">View Folders & Files</label>   
+            <div class="show-includes">
 
+            </div>
+            </div>
+            <div class="clear"></div>
+            <div class="button-description" style="padding:20px 0; width: 100%;">
+            <input type="button" value="<?php langWPADM::get('OK'); ?>" onclick="saveIncludes();" style="text-align: center; width: 100px;" class="button-wpadm">
+            <input type="button" value="<?php langWPADM::get('Cancel'); ?>" onclick="InludesSetting();" style="text-align: center; width: 100px;" class="button-wpadm">
+            </div>
+            </div>
+
+            </div>   -->
 
             <table class="table" style="margin-top: 5px; display: <?php echo isset($data['md5']) && ($n = count($data['data'])) && is_array($data['data'][0]) ? 'table' : 'none'?>;">
                 <thead>
@@ -870,36 +998,48 @@
                                                 <div class="form-help-send-error" >
                                                     <div style="margin-top: 3px;">
                                                         <div class="label-help" style="">
-                                                            <label for=""><?php langWPADM::get('FTP Host'); ?></label>
+                                                            <label for="ftp-host"><?php langWPADM::get('FTP Host'); ?></label>
                                                         </div>  
                                                         <div style="float:left; ">
-                                                            <input type="text" value="<?php echo str_ireplace(array('http://', 'https://'), '', home_url()) ;?>" name="ftp_host" >
+                                                            <input type="text" id="ftp-host" value="<?php echo str_ireplace(array('http://', 'https://'), '', home_url()) ;?>" name="ftp_host" >
                                                         </div>
                                                     </div>
                                                     <div class="clear"></div>
                                                     <div style="margin-top: 3px;">
                                                         <div class="label-help" > 
-                                                            <label><?php langWPADM::get('FTP User'); ?></label>
+                                                            <label for="ftp-user"><?php langWPADM::get('FTP User'); ?></label>
                                                         </div>
                                                         <div style="float:left; ">
-                                                            <input type="text" value="" name="ftp_user">
+                                                            <input type="text" id="ftp-user" value="" name="ftp_user">
                                                         </div>
                                                     </div>
                                                     <div class="clear"></div>
                                                     <div style="margin-top: 3px;">
                                                         <div class="label-help" > 
-                                                            <label><?php langWPADM::get('FTP Password'); ?></label>
+                                                            <label for="ftp-pass"><?php langWPADM::get('FTP Password'); ?></label>
                                                         </div>
                                                         <div style="float:left; ">
-                                                            <input type="text" value="" name="ftp_pass">
+                                                            <input type="text" id="ftp-pass" value="" name="ftp_pass">
                                                         </div>
                                                     </div>
                                                     <div class="clear"></div>
+
                                                 </div>
+                                                <div class="form-help-mail-response">
+                                                    <div style="padding: 20px; border:1px solid #fff; margin-top: 3px;">
+                                                        <div class="label-help" > 
+                                                            <label for="email-resp"><?php langWPADM::get('Response Email:'); ?></label>
+                                                        </div>
+                                                        <div style=" ">
+                                                            <input type="text" id="email-resp" value="<?php echo get_option('admin_email');?>" style="padding-left:3px;" name="mail_response">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="clear"></div>
                                                 <div style="text-align: left; margin-left: 100px; margin-top: 10px;">
                                                     <input value="<?php echo $time_log; ?>" type="hidden" name="time_pars">
                                                     <input class="backup_button" style="font-size: 14px;font-weight: normal;padding: 3px;text-shadow: 0px;" type="submit" value="<?php langWPADM::get('Send request to support'); ?>">
-                                                </div>                                                                      
+                                                </div>
                                             </form>
 
                                         </div>

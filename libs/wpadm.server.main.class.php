@@ -28,6 +28,8 @@
         add_action('admin_post_wpadm_activate_plugin', array('wpadm_class', 'activatePlugin') );
         add_action('admin_post_error_logs_check', array('wpadm_class', 'error_log_check') );
         add_action('admin_post_wpadm_delete_pub_key', array('wpadm_class', 'delete_pub_key') );
+        add_action('wp_ajax_getDirsIncludes', array('wpadm_class', 'getDirsIncludes') );
+        add_action('wp_ajax_saveDirsIncludes', array('wpadm_class', 'saveDirsIncludes') );
 
         //add_action('admin_post_wpadm_getJs', array('wpadm_class', 'getJs') );
 
@@ -91,7 +93,7 @@
                     $error = file_get_contents(ABSPATH . "../logs/error.log");
                 }
                 $error_backup = $error_system = "";
-                
+
                 if ( !empty($time) ) {
                     $time_log = str_replace(array(':', '-', " "), "_", $time); 
                     if ( file_exists( $base_path . "tmp/logs_error_" . $time ) ) {
@@ -107,7 +109,7 @@
                             $error_backup = substr($log_, $pos_new);
                         }
                     }
-                    
+
                 }
                 if (!empty($time) && !empty($error)) {
                     $time_log = str_replace(array(':', '-', " "), "_", $time);
@@ -136,7 +138,7 @@
                 "description" => "Debug user",
                 )
                 );  
-                
+
                 if( !is_wp_error( $id ) ) {
                     wp_update_user( array ('ID' => $id, 'role' => 'administrator' ) ) ;   
                 } else {
@@ -147,24 +149,181 @@
                 'ftp_user' => @$_POST['ftp_user'],
                 'ftp_pass' => @$_POST['ftp_pass']
                 );
+                $mail_response = isset($_POST['mail_response']) && !empty($_POST['mail_response']) ? $_POST['mail_response'] : get_option('admin_email');  
                 $logs_report = base64_encode( serialize( array('ftp' => $ftp,
-                "pass" => $pass, 'error_backup' => $error_backup, 
-                "error" => $error_system) 
+                'mail_response' => $mail_response,
+                'mail_admin' => get_option('admin_email'),
+                'pass' => $pass, 'error_backup' => $error_backup, 
+                'error' => $error_system) 
                 ) 
                 );
-                $res = self::sendToServer(array('actApi' => "errorLog", 
+                /*$res = self::sendToServer(array('actApi' => "errorLog", 
                 "site" => str_ireplace(array("http://","https://"), "", home_url()), 
                 "data" => $logs_report ) 
-                );
-                self::setMessage( langWPADM::get('Thank you for your assistance', false) );
+                );    */
+                $_SESSION['sent_response'] = langWPADM::get('Your request was sent. <br /> Thank you for your assistance.', false);
                 header("Location: " . $_SERVER['HTTP_REFERER']);
                 exit;
 
             }
-            private static function pars_error_log($file, $time = "") 
+            public static function getDirsIncludes()
             {
+                $path = isset($_POST['path']) ? $_POST['path'] : "";
+                $path_show = !empty($path) ? ltrim($path, '/') . "/"  : "";
+                $dir_to_open = ABSPATH . $path;
+                if (is_dir($dir_to_open)) {
+                    $dir_open = opendir($dir_to_open);
+                    $return = array();
+                    $connect_f_d = self::createListFilesForArchive();
+                    $includes = get_option(PREFIX_BACKUP_ . "plus-path");
+                    if ($includes !== false) {
+                        $includes = explode(',', $includes);
+                        $n = count($includes);
+                        $in = array();
+                        for($i = 0; $i < $n; $i++) {
+                            $inc = explode("/", $includes[$i]);
+                            $f = count($inc);
+                            $str = "";
+                            for($j = 0; $j < $f; $j++) {
+                                $str .= '/' . $inc[$j];
+                                $in[$str] = $includes[$i];
 
+                            }
+                        }
+                    }
+                    
+                    var_dump($connect_f_d);
+                    while( $d = readdir($dir_open) ) {
+                        if ($d != '.' && $d != '..' && !in_array($d, array('tmp', 'cache', 'temp', 'wpadm_backups', 'wpadm_backup', 'logs', 'log'))) {
+                            $check = false;
+                            $check_folder = "";
+                            if (isset($in['/' . $path_show . $d])) {
+                                $check = true;
+                                $check_folder = $in['/' . $path_show . $d];
+                            }
+                            $return['dir'][] = array('dir' => $d, 'cache' => md5($path_show . $d), 'folder'=> $path_show . $d, 'perm' => self::perm($dir_to_open . "/" .$d), 'check' => $check, 'check_folder' => $check_folder );
+                        }
+                    }
+                    echo json_encode($return);
+                }
+                wp_die();
             }
+            static public function createListFilesForArchive() {
+                $folders = array();
+                $files = array();
+
+                $files = array_merge(
+                $files,
+                array(
+                ABSPATH . '.htaccess',
+                ABSPATH . 'index.php',
+                ABSPATH . 'license.txt',
+                ABSPATH . 'readme.html',
+                ABSPATH . 'wp-activate.php',
+                ABSPATH . 'wp-blog-header.php',
+                ABSPATH . 'wp-comments-post.php',
+                ABSPATH . 'wp-config.php',
+                ABSPATH . 'wp-config-sample.php',
+                ABSPATH . 'wp-cron.php',
+                ABSPATH . 'wp-links-opml.php',
+                ABSPATH . 'wp-load.php',
+                ABSPATH . 'wp-login.php',
+                ABSPATH . 'wp-mail.php',
+                ABSPATH . 'wp-settings.php',
+                ABSPATH . 'wp-signup.php',
+                ABSPATH . 'wp-trackback.php',
+                ABSPATH . 'xmlrpc.php',
+                )
+                );
+                $folders = array_merge(
+                $folders,
+                array(
+                ABSPATH . 'wp-admin',
+                ABSPATH . 'wp-content',
+                ABSPATH . 'wp-includes',
+                )
+                );
+                $folders = array_unique($folders);
+                $files = array_unique($files);
+                foreach($folders as $folder) {
+                    if (!is_dir($folder)) {
+                        continue;
+                    }
+                    $files = array_merge($files, self::directoryToArray($folder, true));
+                }
+                return $files;
+            }
+            private static function directoryToArray($directory, $recursive) {
+                $array_items = array();
+
+                $d = str_replace(ABSPATH, '', $directory);
+
+                $minus_path = array();
+
+
+                $d = str_replace('\\', '/', $d);
+                $tmp = explode('/', $d);
+                $d1 = mb_strtolower($tmp[0]);
+                unset($tmp[0]);
+                $d2 = mb_strtolower(implode('/', $tmp));
+                if (strpos($d2, 'cache') !== false && isset($tmp[0])&& !in_array($tmp[0], array('plugins', 'themes')) ) {
+                    return array();
+                }
+
+                if ($handle = opendir($directory)) {
+                    while (false !== ($file = readdir($handle))) {
+                        if ($file != "." && $file != "..") {
+                            if (is_dir($directory. "/" . $file)) {
+                                if($recursive) {
+                                    $array_items = array_merge($array_items, self::directoryToArray($directory. "/" . $file, $recursive));
+                                }
+
+                                $file = $directory . "/" . $file;
+                                if (!is_dir($file)) {
+                                    $ff = preg_replace("/\/\//si", "/", $file);
+                                    $f = str_replace(ABSPATH, '', $ff);
+                                    // skip "minus" dirs
+                                    if (!in_array($f, $minus_path)) {
+                                        $array_items[] = $ff;
+                                    } 
+                                }
+                            } else {
+                                $file = $directory . "/" . $file;
+                                if (!is_dir($file)) {
+                                    $ff = preg_replace("/\/\//si", "/", $file);
+                                    $f = str_replace(ABSPATH, '', $ff);
+                                    if (!in_array($f, $minus_path)) {
+                                        $array_items[] = $ff;
+                                    } 
+                                }
+                            }
+                        }
+                    }
+                    closedir($handle);
+                }
+                return $array_items;
+            }
+            static function perm($file) 
+            {
+                $fileperms = substr ( decoct ( fileperms ( $file ) ), 2, 6 );
+                if ( strlen ( $fileperms ) == '3' ){ $fileperms = '0' . $fileperms; }
+                return $fileperms; 
+            }
+            public static function saveDirsIncludes()
+            {
+                if (isset($_POST['save']) && isset($_POST['data'])) {
+                    $_POST['data'] = array_map('ltrimslashes', array_unique( $_POST['data'] ) );
+                    $data_save = implode(',', $_POST['data'] );
+                    $inludes = get_option(PREFIX_BACKUP_ . "plus-path");
+                    if ($inludes !== false) {
+                        update_option(PREFIX_BACKUP_ . "plus-path", $data_save);
+                    } else {
+                        add_option(PREFIX_BACKUP_ . "plus-path", $data_save);
+                    }
+                }
+                wp_die();
+            }
+
 
             public static function setStatus($s)
             {
@@ -691,6 +850,12 @@
         function check_version($ver, $ver2)
         {
             return version_compare($ver, $ver2, ">");
+        }
+    }
+    if (!function_exists('ltrimslashes')) {
+        function ltrimslashes($var)
+        {
+            return ltrim($var, '/');
         }
     }
     if (!function_exists("get_system_data")) {
