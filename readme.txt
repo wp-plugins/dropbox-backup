@@ -3,7 +3,7 @@ Plugin Name: Dropbox Backup & Restore
 Version: 1.2.8
 Donate link: http://www.wpadm.com/donate
 URI: http://www.wpadm.com/dropbox-backup
-Tags: dropbox, backup, dropbox backup, database, file, full backup, manage, sicherung, database backup, file backup, page backup, page, web, web backup, web page, synchronize, clone, duplicate, move, web page backup, site, site backup, back up, cloud, Cloud Files, cloud backup, db backup, dump, german, migrate, multisite, Russian, schedule, storage, time, upload, data bank, zip, archive, backups, restore, db
+Tags: dropbox, backup, dropbox backup, database, file, full backup, manage, sicherung, database backup, file backup, page backup, page, web, web backup, web page, synchronize, clone, duplicate, move, web page backup, site, site backup, back up, cloud, Cloud Files, cloud backup, db backup, dump, german, migrate, multisite, Russian, schedule, storage, time, upload, data bank, zip, archive, backups, restore, db, recover
 Requires at least: 3.9
 Tested up to: 4.2.2
 Stable tag: trunk
@@ -62,23 +62,33 @@ But in most cases it isn’t needed to make full backup. With help of our servic
 
 = Special functions =
 
-To the special functions of our webpage backup doesn’t belong the migration, scheduler backup, cron backup, wpmu backup, shop backup or encryption. It is all normal functions of our service. The most of this tools are free of charge, especially if you do it manually.  But inside our tools are other addons and functions. This addons you can add inside our service if you want.  But for some of this function it is required to register on www.webpage-backup.com. For cron and scheduled dropbox backup as for full restoration of you woocommerce shop, webpage or multisite as well as for migration to register it is must. It is not possible to do full restoration of webpage from dropbox backup without the WordPress site self. 
+To the special functions of our webpage backup doesn’t belong the migration, scheduler backup, cron backup, wpmu backup, shop backup and encryption by cloning, if you make some clone of your website or multisite clone. It is all normal functions of our plugin or service at our webpage www.webpage-backup.com. The most of this tools are free of charge, especially if you do it manually. But inside our multisite tools are other addons and functions. Addons for your pages or multisite (WPMU) peges you can add inside of your service account if you want.  But for some of this function it is required to register on www.webpage-backup.com. For manage of multisites or just for one page menaging, for cron and scheduled dropbox backup as for full restoration of you WooCommerce shop, webpage or multisite as well as for migration - to register it is must. It is not possible to do full restoration of webpage from dropbox backup without the WordPress site self. 
 
 = Easy backup =
 
-By draw up of our dropbox backup tools we try to do the backup or restoring ever for not experts, but with the same tools how for experts. For experts we have Buckup explorer where the expert can select or to do exclusion of files and webpages. As the register user you can use multiple dropbox account or other buckup drive clouds, how FTP or you can do the local backup on the site of your host. All automatically functions are inside of our service. To automatically tools belong: cron and scheduler, migrator and remote. Scheduled jobs for dropbox you can set in our calendar, it gives overview. 
+By draw up of our dropbox backup tools we try to do the backup or restoring ever for not experts and multisites owners, but with the same tools how for experts. For experts we have Buckup explorer where the expert can select or to do exclusion of files and webpages. As the register user you can use multiple dropbox account or create other multisite buckup drive clouds, how FTP or you can do the local backup on the site of your host. All automatically functions are inside of our service. To automatically tools belong: cron and scheduler, migrator and remote. Scheduled jobs for dropbox you can set in our calendar, it gives overview. 
 
-= Cloning, duplicate or migrate. =
+= Cloning, duplicate or migrate of websites =
 
-Cloning, duplicate or migrate in principal all the function a same. It gives you the possibility quickly to create site clone with as “templates” for multiple site.  This toll is very useful if you have more than one webpage. With your full backup of your old site or woocommerce shop you can clon/duplicate and create new shop or webpage with one click. All multisite backups functions are available from one dashboard, how multisite backup as well as wpmu backup in the same cloud or in several cloud storages. From same dashboard available restorations functions separate or in bundle, depend of your multisite backup settings. If your do so much settings you can remove not needed settings or backup. The settings must be removed separately ever for multisite. The backup dropbox storages must be removed separately too. Although it seems complicated to do automatic backup with our plugin you can make it without expert knowledge. These add-ons allow your easy backup.
+Cloning, duplicate or migrate in principal all the function a same. It gives you the possibility quickly to create site clone with as “templates” for multiple site.  This clone tool is very useful, if you have more than one webpage or, if you want to clone or duplicate your web page. With full backup of your old site or WooCommerce shop you can clone or duplicate, and create new clone of webshop or webpage with one click. All multisite backups functions are available from one dashboard of cloning tool, how multisite backup, as well as WPMU backup in the same cloud or in several cloud storages of hosting provider or just server. From same dashboard available clone restorations functions separate or in bundle, depend of your multisite backup settings. If your do so much settings you can remove not needed settings or clone of backup. The settings must be removed separately ever for multisite or clone. The backup dropbox storages must be removed separately too. Although it seems complicated to do automatic backup. With our backup plugin for backup, clone or migrate - you can make it without expert knowledge. Clone add-ons allow your easy backup or migrate your website or WPMU (multisite). "Dropbox backup" is just ultimate tool for WordPress that can worst your productivity by cloning of web pages, allowing you to do efficiently manage of cloned pages due clone or multisite installations.
 
 = Easy data restoring =
 
-For restoring your webpage selected files from the dashboard and then select files to restore. In backup list you see the type, date and size. From the list you can remove and select appropriate restoring file. In settings your can add or remove the cloud storage.  In case of cloning you must restore your old webpage backup on other webpage. Cloning is the same how resorting but in more steps. The same bee meant for migrating of multisite and shops and there restore. With our file explorer you can match every file separately for restoration. In case of restoration only this files will be restore.  You can restore one file than the next, but it easy to make restoring in bundle or directly to recover whole full backup. The restoration time depend from your hosting and upload rate as well as restoration depend from the file size witch must be restore. Scheduled restoring and recovering isn’t possible, unless somebody have special inquiry on our service to do scheduled recovering.  The recover from the Dropbox cloud storage take time, depend from the web site size and right permissions of the folders of your hosting provider. 
+For restoring your webpage (or multisite webpage) selected files from the dashboard and then select files to restore. In backup list you see the type, date and size. From the list you can remove and select appropriate restoring file. In settings your can add or remove the cloud storage.  In case of cloning you must restore your old webpage backup on other webpage. Cloning is the same how resorting but in more steps. The same bee meant for migrating of multisite and shops and there restore. With our file explorer you can match every file separately for restoration. In case of restoration only this files will be restore. You can restore one file than the next, but it easy to make restoring in bundle or directly to recover whole full backup. The restoration time depend from your hosting and upload rate as well as restoration depend from the file size witch must be restore. Scheduled restoring and recovering isn’t possible, unless somebody have special inquiry on our service to do scheduled recovering. The recover from the Dropbox cloud storage take time, depend from the web site size and right permissions of the folders of your hosting provider. 
 
 = What to do if recovering failed? =
 
-First of all check the data spelling. It is most common mistake. Other common mistakes by recovering are: 1.) wrong cloud storage 2.) You done alone database backup – not full and you can’t see the recover sites 3.) By recovering process there was internet interruption 4.) In your database are file exclusions. Large file and bid size databases need more time to recover. It can take from 30 min until two hours depend from the size of your database, but for our recovery service it doesn’t matter for uploading of large files or small files. The difference between recover the large files and small is the time. After check all this figures please write a letter on our support team http://www.webpage-backup.com and we will try to answer as soon as possible and to give you’re the best solution how easy to recover your site.
+First of all check the data spelling. It is most common mistake. Other common mistakes by recovering are: 
+* to recover from wrong cloud storage
+* if done alone database back up – not full and you can’t see the recover sites 
+* by recovering process there was internet interruption 
+* In your database are file exclusions
+* your database back up was not consistent
+* file archive of back up with a broken checksum 
+* back up or restore from damaged cloud storage
+* misspelled back up due user failed restore
+
+Large file and big size databases need more time to recover. It can take from 30 min until two hours or more, depend from the size of your back up database, but for our recovery service it doesn’t matter for uploading of large files or small files. The difference between recover the large files and small is the time. After check all this figures please write a letter on our support team http://www.webpage-backup.com and we will try to answer as soon as possible and to give you’re the best solution how easy to recover your site.
 
 
 == Frequently Asked Questions ==
@@ -99,7 +109,29 @@ You must see all of your backups, that you have made.
 
 = Should I upgrade my old version of Dropbox Backup and Restore plugin? =
 
-Yes
+Yes. We recommended to update or upgrade to a newest versions.
+
+= How can I manage my backups? =
+
+Manage of multiple back ups is possible from your account on webpage-backup.com
+
+= I use multisite WordPress and I would like to manage my backups from one place. How can I do that? =
+
+Multisite WP can be supported too, but you have to login in your account at webpage-backup.com
+
+= Can I use the Dropbox Backup and Restore plugin to clone my website? =
+
+Yes. If you have some back up, created with our Dropbox Backup and Restore plugin, then you can use it for migration or doing some clone to another place (server / web hosting).
+
+= I didn't see my back up at my Dropbox. Why? How can I find it at my Dropbox? =
+
+Simple check your app key and app secret, that you use it from a correct app do you created before you start make a backup.
+
+= Is it possible to migrate my website with your Dropbox back up tool? =
+
+Many people stay us this question and our answer is - YES! It' good possibility to use our back up plugin specially for migration of webpages. Also you can migrate your website locally. If you make a local backup, then you can download it to your PC, upload to another place and 
+
+
 
 == Changelog ==
 
