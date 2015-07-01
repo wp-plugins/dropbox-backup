@@ -129,8 +129,11 @@ Simple check your app key and app secret, that you use it from a correct app do 
 
 = Is it possible to migrate my website with your Dropbox back up tool? =
 
-Many people stay us this question and our answer is - YES! It' good possibility to use our back up plugin specially for migration of webpages. Also you can migrate your website locally. If you make a local backup, then you can download it to your PC, upload to another place and 
+Many people stay us this question and our answer is - YES! It' good possibility to use our back up plugin specially for migration of webpages. Also you can migrate your website locally. If you make a local backup, then you can download it to your PC, upload to another place and make recovery there.
 
+= How to make a recovery of my webpage? =
+
+Dropbox Backup and Restore plugin work autonomously. In case, if your page not available, you may use www.webpage-backup.com to recovery your webpage from backup.
 
 
 == Changelog ==
