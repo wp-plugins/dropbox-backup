@@ -135,6 +135,14 @@ Many people stay us this question and our answer is - YES! It' good possibility 
 
 Dropbox Backup and Restore plugin work autonomously. In case, if your page not available, you may use www.webpage-backup.com to recovery your webpage from backup.
 
+= I want schedule backup. How can I schedule backup of my webpage? =
+
+To schedule backup of your webpage, you may use an account at www.webpage-backup.com to schedule backup.
+
+= Can I make a schedule backup of my multisite WordPress? =
+
+Please, see the previous question "I want schedule backup. How can I schedule backup of my webpage?".
+Generally - YES, you can create a scheduled backup, but you may sign in to account at www.webpage-backup.com to make a scheduled backup.
 
 == Changelog ==
 
