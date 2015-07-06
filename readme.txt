@@ -144,7 +144,7 @@ To schedule backup of your webpage, you may use an account at www.webpage-backup
 Please, see the previous question "I want schedule backup. How can I schedule backup of my webpage?".
 Generally - YES, you can create a scheduled backup, but you may sign in to account at www.webpage-backup.com to make a scheduled backup.
 
-= Should I register at wpadm.com to make a back up of my site? =
+= Should I register to make a back up of my site? =
 
 Our plugin for back up is completely autonomous plugin for back up, so you don't need to register to make a back up of your site.
 
