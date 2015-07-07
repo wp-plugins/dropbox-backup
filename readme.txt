@@ -12,7 +12,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Author: WPAdm.com
 Contributors: WPAdm.com
 
-Dropbox Backup & Restore Plugin to create Dropbox Full Backup (Files + Database) or Restore of your Web Page
+Dropbox Backup & Restore Plugin to create Dropbox Full Backup (Files + Database) or Restore of your Web Page / Duplicate, clone
 
 == Description ==
 
