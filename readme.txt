@@ -12,7 +12,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Author: WPAdm.com
 Contributors: WPAdm.com
 
-Dropbox Backup & Restore Plugin to create Dropbox Full Backup (Files + Database) or Restore of your Web Page / Duplicate, clone
+Dropbox Backup & Restore Plugin to create Dropbox Full Backup (Files + Database) or Restore, Migrate, Duplicate, Clone a Web Page
 
 == Description ==
 
@@ -151,8 +151,8 @@ Our plugin for back up is completely autonomous plugin for back up, so you don't
 = How can I manually restore my website from one place to another? =
 
 You can restore your website on another place with two ways: 
-* manually website restoration
-* automatically website restoration
+* manually website restoration<br />
+* automatically website restoration<br />
 
 For automatically website restoration you may need an account at webpage-backup.com
 
