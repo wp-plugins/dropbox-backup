@@ -148,6 +148,14 @@ Generally - YES, you can create a scheduled backup, but you may sign in to accou
 
 Our plugin for back up is completely autonomous plugin for back up, so you don't need to register to make a back up of your site.
 
+= How can I manually restore my website from one place to another? =
+
+You can restore your website on another place with two ways: 
+* manually website restoration
+* automatically website restoration
+
+For automatically website restoration you may need an account at webpage-backup.com
+
 
 
 == Changelog ==
