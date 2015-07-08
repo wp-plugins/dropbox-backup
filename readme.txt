@@ -163,6 +163,16 @@ If you want to duplicate your website, you may backup it first at some storage (
 
 = Duplicate and clone is the same thing? =
 
+It has distinction in each of the duplicate and clone plugins. In both cases, as with duplicate and also with clone, this is in fact a website copy.
+
+= How can I manage or coordinate my duplicate website? =
+
+To managing your duplicate website you need to have an account at webpage-backup.com. So, you will see all of target (original) and source (duplicate) websites. At your account on webpage-backup.com you have a possibility to make one duplicate from another duplicate website, that was duplicated before.
+
+= What does make your "duplicate" plugin, which doesn't make another (e.g. Duplicator plugin)? =
+
+Duplicating is a very complex process. We will explain the website duplicate in the next our explanations about "duplicate website".
+
 
 == Changelog ==
 
