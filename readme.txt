@@ -161,6 +161,7 @@ For automatically website restoration you may need an account at webpage-backup.
 Backups & Restoring plugin can Duplicate more simply as Duplicator.<br />
 If you want to duplicate your website, you may backup it first at some storage (for example Dropbox or Amazon, or just on your FTP). You can start duplicate website if the backup process was finished successfully. If isn't - don't try to duplicate, because wrong or incorrect backup can crash your website during duplicating.
 
+= Duplicate and clone is the same thing? =
 
 
 == Changelog ==
