@@ -173,6 +173,8 @@ To managing your duplicate website you need to have an account at webpage-backup
 
 Duplicating is a very complex process. We will explain the website duplicate in the next our explanations about "duplicate website".
 
+= Is it possible to make an Incremental Backup with Dropbox Backup & Restore plugin? =
+
 
 == Changelog ==
 
