@@ -79,19 +79,21 @@ if ( ! class_exists("langWPADM")) {
                     if (!function_exists('wp_safe_remote_get')) {
                         include_once ABSPATH . WPINC . '/http.php';
                     }
-                    $load = wp_safe_remote_get( self::$url . self::$lang_load . '.php' );
-                    if ( is_wp_error( $load ) ) {
-                        return false;
-                    }
-                    if (isset($load['response']['code']) && $load['response']['code'] == '200') {
-                        @preg_match("/Date create - ([0-9\.]+)/", $load['body'], $date);
-                        if (!isset($time['date']) || $time['date'] != $date[1] || !file_exists(self::$lang_dir . self::$lang_load . '.php')) {
-                            if (isset($date[1])) {
-                                self::updateDate($date[1]);
-                            } else {
-                                self::updateDate(date('d.m.Y'));
+                    if (function_exists('wp_safe_remote_get')) {
+                        $load = wp_safe_remote_get( self::$url . self::$lang_load . '.php' );
+                        if ( is_wp_error( $load ) ) {
+                            return false;
+                        }
+                        if (isset($load['response']['code']) && $load['response']['code'] == '200') {
+                            @preg_match("/Date create - ([0-9\.]+)/", $load['body'], $date);
+                            if (!isset($time['date']) || $time['date'] != $date[1] || !file_exists(self::$lang_dir . self::$lang_load . '.php')) {
+                                if (isset($date[1])) {
+                                    self::updateDate($date[1]);
+                                } else {
+                                    self::updateDate(date('d.m.Y'));
+                                }
+                                file_put_contents(self::$lang_dir . self::$lang_load . '.php', $load['body']);
                             }
-                            file_put_contents(self::$lang_dir . self::$lang_load . '.php', $load['body']);
                         }
                     }
                 }
