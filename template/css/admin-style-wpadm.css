@@ -474,7 +474,7 @@ h3.plugins-title {
     width: 70%;
     border: 0;
 }
-input[type="text"]{
+.form-help-send-error input[type="text"], .form-help-send-error input[type="text"] {
     padding: 0px;
     border: 1px solid #999;
     box-shadow:0px;
@@ -482,6 +482,7 @@ input[type="text"]{
     height: 24px;
     width: 250px;
 }
+
 .form-help-send-error, .form-help-mail-response {
     float:left;
 }

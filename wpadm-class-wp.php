@@ -17,6 +17,8 @@
         add_action('wp_ajax_wpadm_local_backup', array('wpadm_wp_full_backup_dropbox', 'local_backup') );
         add_action('wp_ajax_wpadm_dropbox_create', array('wpadm_wp_full_backup_dropbox', 'dropbox_backup_create') );
         add_action('wp_ajax_set_user_mail', array('wpadm_wp_full_backup_dropbox', 'setUserMail') );
+        add_action('wp_ajax_saveSetting', array('wpadm_wp_full_backup_dropbox', 'saveSetting') );
+
 
         add_action('admin_post_wpadm_delete_backup', array('wpadm_wp_full_backup_dropbox', 'delete_backup') );
         add_action('admin_post_dropboxConnect', array('wpadm_wp_full_backup_dropbox', 'dropboxConnect') );
@@ -56,6 +58,17 @@
                 } 
                 echo 'true';
                 wp_die();
+            }
+            public static function saveSetting()
+            {
+                if (isset($_POST['is_admin'])) {
+                    $dropbox_options = get_option(PREFIX_BACKUP_ . 'dropbox-setting');
+                    if ($dropbox_options) {
+                        $dropbox_options = unserialize( base64_decode( $dropbox_options ) );
+                    }
+                    $dropbox_options['is_admin'] = (int) $_POST['is_admin'];
+                    update_option(PREFIX_BACKUP_ . 'dropbox-setting', base64_encode( serialize( $dropbox_options ) ) );
+                }
             }
 
             public static function local_backup()
@@ -353,7 +366,7 @@
                         $res['result'] = 'error';
                         @rename(WPAdm_Core::getTmpDir() . "/logs2", WPAdm_Core::getTmpDir() . "/logs_error_" . $backup_local->time);
                     }
-                    
+
                     WPAdm_Core::rmdir( ABSPATH . "wpadm_backups/{$res['name']}");
                 }
                 @session_start();
@@ -416,46 +429,58 @@
 
             public static function draw_menu()
             {
-                $menu_position = '1.9998887771'; 
-                if(self::checkInstallWpadmPlugins()) {
-                    $page = add_menu_page(
-                    'WPAdm', 
-                    'WPAdm', 
-                    "read", 
-                    'wpadm_plugins', 
-                    'wpadm_plugins',
-                    plugins_url('/wpadm-logo.png', __FILE__),
-                    $menu_position     
-                    );
-                    add_submenu_page(
-                    'wpadm_plugins', 
-                    "Dropbox Full Backup",
-                    "Dropbox Full Backup",
-                    'read',
-                    'wpadm_wp_full_backup_dropbox',
-                    array('wpadm_wp_full_backup_dropbox', 'wpadm_show_backup')
-                    );
-                } else {
-                    $page = add_menu_page(
-                    'Dropbox Full Backup', 
-                    'Dropbox Full Backup', 
-                    "read", 
-                    'wpadm_wp_full_backup_dropbox', 
-                    array('wpadm_wp_full_backup_dropbox', 'wpadm_show_backup'),
-                    plugins_url('/wpadm-logo.png', __FILE__),
-                    $menu_position     
-                    );
-
-                    add_submenu_page(
-                    'wpadm_wp_full_backup_dropbox', 
-                    "WPAdm",
-                    "WPAdm",
-                    'read',
-                    'wpadm_plugins',
-                    'wpadm_plugins'
-                    );
+                $show = true;
+                $dropbox_options = get_option(PREFIX_BACKUP_ . 'dropbox-setting');
+                if ($dropbox_options) {
+                    $dropbox_options = unserialize( base64_decode( $dropbox_options ) );
                 }
+                if ( ( isset($dropbox_options['is_admin']) && $dropbox_options['is_admin'] == 1 ) || !isset($dropbox_options['is_admin']) ) {
+                    if (!is_admin() || !is_super_admin()) {
+                        $show = false;
+                    }
+                }
+                if ($show) {
+                    $menu_position = '1.9998887771'; 
+                    if(self::checkInstallWpadmPlugins()) {
+                        $page = add_menu_page(
+                        'WPAdm', 
+                        'WPAdm', 
+                        "read", 
+                        'wpadm_plugins', 
+                        'wpadm_plugins',
+                        plugins_url('/wpadm-logo.png', __FILE__),
+                        $menu_position     
+                        );
+                        add_submenu_page(
+                        'wpadm_plugins', 
+                        "Dropbox Full Backup",
+                        "Dropbox Full Backup",
+                        'read',
+                        'wpadm_wp_full_backup_dropbox',
+                        array('wpadm_wp_full_backup_dropbox', 'wpadm_show_backup')
+                        );
+                    } else {
+                        $page = add_menu_page(
+                        'Dropbox Full Backup', 
+                        'Dropbox Full Backup', 
+                        "read", 
+                        'wpadm_wp_full_backup_dropbox', 
+                        array('wpadm_wp_full_backup_dropbox', 'wpadm_show_backup'),
+                        plugins_url('/wpadm-logo.png', __FILE__),
+                        $menu_position     
+                        );
 
+                        add_submenu_page(
+                        'wpadm_wp_full_backup_dropbox', 
+                        "WPAdm",
+                        "WPAdm",
+                        'read',
+                        'wpadm_plugins',
+                        'wpadm_plugins'
+                        );
+                    }
+
+                }
             }
         }
     }

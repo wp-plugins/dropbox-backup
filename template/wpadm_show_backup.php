@@ -579,6 +579,26 @@
                 });
             }
         }
+        function saveSetting()
+        {
+            is_admin = 0;
+            if(document.getElementById('is_admin').checked) {
+                is_admin = 1;
+            } 
+
+            data = {'action' : 'saveSetting', 'is_admin' : is_admin}
+            jQuery.ajax({
+                url: ajaxurl,
+                data: data,
+                type: 'POST',
+                dataType: 'json',
+                success: function(data_res) {
+                }, 
+                error: function(){ 
+                    alert('Save Error');
+                }
+            });
+        }
     </script>
     <?php if (!empty($error)) {
             echo '<div class="error" style="text-align: center; color: red; font-weight:bold;">
@@ -657,7 +677,7 @@
                     </div>
                     <div id="cf_activate" class="cfContentContainer" style="display: none;">
                         <form method="post" id="dropbox_form" action="<?php echo admin_url( 'admin-post.php?action=wpadm_activate_plugin' )?>" >
-                            <div class="stat-wpadm-registr-info" style="margin-bottom: 23px; margin-top: 10px;">
+                            <div class="stat-wpadm-registr-info" style="margin-bottom: 40px; margin-top: 17px;">
                                 <table class="form-table stat-table-registr" style="">
                                     <tbody>
                                         <tr valign="top">
@@ -766,8 +786,7 @@
                                         <td>
                                             <input id="app_secret" class="" type="text" name="app_secret" value="<?php echo isset($dropbox_options['app_secret']) ? $dropbox_options['app_secret'] : ''?>">
                                         </td>
-                                    </tr>
-
+                                    </tr>        
                                     <tr valign="top">
                                         <th scope="row">
                                         </th>
@@ -777,14 +796,18 @@
                                             <div class="desc-wpadm"><?php langWPADM::get('Click to Connect your Dropbox'); ?></div>
                                         </td>
                                     </tr>
-                                </tbody>
-                                <tr valign="top">
-                                    <td colspan="2" align="right">
-                                        <a class="help-key-secret" href="javascript:getHelperDropbox();" ><?php langWPADM::get('Where to get App key & App secret?'); ?></a>
-                                    </td>
-                                </tr>
+                                    <tr valign="top">
+                                        <td colspan="2" align="right">
+                                            <a class="help-key-secret" href="javascript:getHelperDropbox();" ><?php langWPADM::get('Where to get App key & App secret?'); ?></a><br />
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
+                            <?php if ( is_super_admin() ) { ?>
+                                <div style="padding-left: 5px;margin-top: 5px;">
+                                    <input type="checkbox" <?php echo isset($dropbox_options['is_admin']) && $dropbox_options['is_admin'] == 1 ? 'checked="checked"' : ''; ?> name="is_admin" value="1" id="is_admin" onclick="saveSetting()" /><label for="is_admin" style="font-size: 13px;"><?php langWPADM::get('Appear in menu for admins only'); ?></label>
+                                </div>
+                                <?php } ?>
                         </div>
                     </form>
                 </div>
@@ -814,8 +837,8 @@
                 <div class="desc-reviews"><?php langWPADM::get('Your review is important for us'); ?></div>
                 <img src="<?php echo plugins_url('/img/stars-5.png', dirname(__FILE__));?>" alt=""></a>
             </div>
-            <div id="support-button" style="float: right; margin-top: 130px; margin-right: 20px;">
-                <button onclick="window.open('<?php echo SERVER_URL_INDEX . 'support/'?>')" class="backup_button" style="padding: 5px 10px; margin-top: 10px; font-size: 15px;bottom: 0px;"><?php langWPADM::get('Help'); ?></button> <br />
+            <div id="support-button" style="float: right; margin-top: 130px; margin-right: 20px;">  
+                <button onclick="window.open('<?php echo SERVER_URL_INDEX . 'support/?pl=dbp'?>')" class="backup_button" style="padding: 5px 10px; margin-top: 10px; font-size: 15px;bottom: 0px;"><?php langWPADM::get('Help'); ?></button> <br />
             </div>
             <div id="action-buttons" style="">
                 <div style="float: left;">
@@ -875,7 +898,7 @@
                         <th>#</th>
                         <th align="left"><?php langWPADM::get('Create, Date/Time'); ?></th>
                         <th><?php langWPADM::get('Name of Backup'); ?></th>
-                        <th><?php langWPADM::get('Arhive Parts'); ?></th>
+                        <th><?php langWPADM::get('Archive Parts'); ?></th>
                         <th><?php langWPADM::get('Status'); ?></th>
                         <th><?php langWPADM::get('Type of Backup'); ?></th>
                         <th><?php langWPADM::get('Size'); ?></th>
