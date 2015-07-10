@@ -175,6 +175,15 @@ Duplicating is a very complex process. We will explain the website duplicate in 
 
 = Is it possible to make an Incremental Backup with Dropbox Backup & Restore plugin? =
 
+Incremental backup expect many of our users. Incremental backup can help solve many problems for the implementation of the backup in complex systems. Create an incremental backup, that's what we're working. In the next versions it will be also possible to create incremental backups for websites.<br /><br />
+
+(PS: Autor german language)<br />
+Inkrementelle Sicherung (Incremental backup) erwarten viele unser Nutzer. Inkrementelle Sicherung (Incremental backup) kann helfen viele Probleme für die Durchführung der Sicherung in komplexen Systemen zu lösen. Erstellung eines inkrementelles Backup, das ist, was wir eben noch planen zu implementieren in der Dropbox Backup & Restore Plugin. In den Zukünftigen Versionen wird es auch möglich, inkrementelle Backups zu erstellen.<br /><br />
+
+We must understand that when you use incremental backups perform operations such as website clone (clons creating), multisite clone, migrate of websites or website duplicate will be difficult, but possible.
+
+
+
 
 == Changelog ==
 
