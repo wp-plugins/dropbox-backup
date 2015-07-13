@@ -1,6 +1,6 @@
 === Dropbox Backup & Restore ===
 Plugin Name: Dropbox Backup & Restore
-Version: 1.2.9
+Version: 1.2.8
 Donate link: http://www.wpadm.com/donate
 URI: http://www.wpadm.com/dropbox-backup
 Tags: dropbox, backup, dropbox backup, database, file, full backup, manage, sicherung, database backup, file backup, page backup, page, web, web backup, web page, synchronize, clone, duplicate, move, web page backup, site, site backup, back up, cloud, Cloud Files, cloud backup, db backup, dump, german, migrate, multisite, Russian, schedule, storage, time, upload, data bank, zip, archive, backups, restore, db, recover, recovery
@@ -176,11 +176,19 @@ Duplicating is a very complex process. We will explain the website duplicate in 
 = Is it possible to make an Incremental Backup with Dropbox Backup & Restore plugin? =
 
 Incremental backup expect many of our users. Incremental backup can help solve many problems for the implementation of the backup in complex systems. Create an incremental backup, that's what we're working. In the next versions it will be also possible to create incremental backups for websites.<br /><br />
-
 (PS: Autor german language)<br />
 Inkrementelle Sicherung (Incremental backup) erwarten viele unser Nutzer. Inkrementelle Sicherung (Incremental backup) kann helfen viele Probleme für die Durchführung der Sicherung in komplexen Systemen zu lösen. Erstellung eines inkrementelles Backup, das ist, was wir eben noch planen zu implementieren in der Dropbox Backup & Restore Plugin. In den Zukünftigen Versionen wird es auch möglich, inkrementelle Backups zu erstellen.<br /><br />
 
 We must understand that when you use incremental backups perform operations such as website clone (clons creating), multisite clone, migrate of websites or website duplicate will be difficult, but possible.
+
+= Just to do a MySQL backup. How to do that? =
+
+In this version of plugin supported a MySQL backup (database backup or simple "db backup") together with a filesystem backup. To do a mysql backup, you can do it with a file system or just use another version of our plugin.<br />
+The version for mysql backup (DB Backup) is available due control panel at http://www.webpage-backup.com
+
+= We want to make an SCP Backup from our rackspace (Full Rackspace Backup). For this operation we would like to use your Dropbox plugin. =
+
+Ok, if you want to use an SCP Backup, please, wait for some versions of this plugin over their, and we will make an scp backup for you.
 
 
 
