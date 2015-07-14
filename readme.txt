@@ -190,6 +190,8 @@ The version for mysql backup (DB Backup) is available due control panel at http:
 
 Ok, if you want to use an SCP Backup, please, wait for some versions of this plugin over their, and we will make an scp backup for you.
 
+= FTP Backup? =
+
 
 
 
