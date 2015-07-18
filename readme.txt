@@ -205,6 +205,7 @@ Upgrade Notice
 
 == Screenshots ==
 
+= Step-by-step & HOWTOs in Dropbox Backup and Restore plugin =
 
 1. Screen1
 2. Screen2
@@ -215,5 +216,6 @@ Upgrade Notice
 7. Screen7
 8. Screen8
 9. Screen9
+10. Screen10
 
 
