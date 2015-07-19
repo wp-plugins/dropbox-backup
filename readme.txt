@@ -207,8 +207,8 @@ Upgrade Notice
 
 = Step-by-step & HOWTOs in Dropbox Backup and Restore plugin =
 
-1. Screen1
-2. Screen2
+1. **Main window of Dropbox Full Backup plugin.** Dropbox Backup and Restore plugin window after installation and activation.
+2. To open the main window of the plug-in, click on the item "**Dropbox Full Backup**" in main menu of your WordPress installation. WordPress menu in admin area.
 3. Screen3
 4. Screen4
 5. Screen5
