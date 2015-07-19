@@ -209,8 +209,10 @@ Upgrade Notice
 
 1. **Main window of Dropbox Full Backup plugin.** Dropbox Backup and Restore plugin window after installation and activation.
 2. To open the main window of the plug-in, click on the item "**Dropbox Full Backup**" in main menu of your WordPress installation. WordPress menu in admin area.
-3. For local backups with Dropbox Full Backup plugin (saving of backups on server or shared hosting of your site), you do not need to make a connection to dropbox. Therefore, for a local backup is unnecessary to make any settings changes.
-4. Screen4
+3. For **local backups** with Dropbox Full Backup plugin (saving of backups locally on server or shared hosting of your site), you do not need to make a connection to dropbox. Therefore, for a local backup is unnecessary to make any settings changes. The Local backup will work.
+4. The **Settings block of Dropbox Backup and Restore** plugin. Fill out App key and App secret to get the dropbox plugin connected with your dropbox account.<br />
+Don't forget to click the "Connect" button to get the dropbox plugin connected with your dropbox account.
+* Make sure, you use the right App key and App secret pair and this pair correspond to your right dropbox application.
 5. Screen5
 6. Screen6
 7. Screen7
