@@ -212,9 +212,9 @@ Upgrade Notice
 3. For **local backups** with Dropbox Full Backup plugin (saving of backups locally on server or shared hosting of your site), you do not need to make a connection to dropbox. Therefore, for a local backup is unnecessary to make any settings changes. The Local backup will work.
 4. The **Settings block of Dropbox Backup and Restore** plugin. Fill out App key and App secret to get the dropbox plugin connected with your dropbox account.<br />
 **Make sure**, you use the right App key and App secret pair and this pair correspond to your right dropbox application.<br />
-**This is one of the most common mistakes our users!**
-5. **Don't forget** to click the **"Connect"** button to get the dropbox plugin connected with your dropbox account.
-6. Screen6
+**This is one of the most common mistakes of our users!**
+5. **Don't forget** to click on **"Connect"** button to get the dropbox plugin connected with your dropbox account.
+6. Click **"Create Dropbox Backup"** to create backup and upload this to your dropbox account using your pair of App key and App secret.
 7. Screen7
 8. Screen8
 9. Screen9
