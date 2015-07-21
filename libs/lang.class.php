@@ -27,7 +27,7 @@ if ( ! class_exists("langWPADM")) {
             $plugin_dir = WPAdm_Core::getPluginDir();
             self::$lang_dir = $plugin_dir . '/libs/lang/'; 
             if (isset($lang_wp)) {
-                self::downloadLang();
+                //self::downloadLang();
                 if (file_exists(self::$lang_dir . $lang_wp . '.php')) {
                     require_once self::$lang_dir . $lang_wp . '.php';
                     self::$lang[$lang_wp] = $languag;
@@ -73,31 +73,31 @@ if ( ! class_exists("langWPADM")) {
         }
         public static function downloadLang()
         {
-            if (!empty(self::$lang_load)) {
-                $time = get_option(WPADM_LANG_ . 'time-update');
-                if ( (isset($time['check_time']) && $time['check_time'] <= time()) || !isset($time['check_time']) || !file_exists(self::$lang_dir . self::$lang_load . '.php') ) {
-                    if (!function_exists('wp_safe_remote_get')) {
-                        include_once ABSPATH . WPINC . '/http.php';
-                    }
-                    if (function_exists('wp_safe_remote_get')) {
-                        $load = wp_safe_remote_get( self::$url . self::$lang_load . '.php' );
-                        if ( is_wp_error( $load ) ) {
-                            return false;
-                        }
-                        if (isset($load['response']['code']) && $load['response']['code'] == '200') {
-                            @preg_match("/Date create - ([0-9\.]+)/", $load['body'], $date);
-                            if (!isset($time['date']) || $time['date'] != $date[1] || !file_exists(self::$lang_dir . self::$lang_load . '.php')) {
-                                if (isset($date[1])) {
-                                    self::updateDate($date[1]);
-                                } else {
-                                    self::updateDate(date('d.m.Y'));
-                                }
-                                file_put_contents(self::$lang_dir . self::$lang_load . '.php', $load['body']);
-                            }
-                        }
-                    }
-                }
+            /*if (!empty(self::$lang_load)) {
+            $time = get_option(WPADM_LANG_ . 'time-update');
+            if ( (isset($time['check_time']) && $time['check_time'] <= time()) || !isset($time['check_time']) || !file_exists(self::$lang_dir . self::$lang_load . '.php') ) {
+            if (!function_exists('wp_safe_remote_get')) {
+            include_once ABSPATH . WPINC . '/http.php';
             }
+            if (function_exists('wp_safe_remote_get')) {
+            $load = wp_safe_remote_get( self::$url . self::$lang_load . '.php' );
+            if ( is_wp_error( $load ) ) {
+            return false;
+            }
+            if (isset($load['response']['code']) && $load['response']['code'] == '200') {
+            @preg_match("/Date create - ([0-9\.]+)/", $load['body'], $date);
+            if (!isset($time['date']) || $time['date'] != $date[1] || !file_exists(self::$lang_dir . self::$lang_load . '.php')) {
+            if (isset($date[1])) {
+            self::updateDate($date[1]);
+            } else {
+            self::updateDate(date('d.m.Y'));
+            }
+            file_put_contents(self::$lang_dir . self::$lang_load . '.php', $load['body']);
+            }
+            }
+            }
+            } 
+            }     */
         }
         private static function updateDate($date_update)
         {
