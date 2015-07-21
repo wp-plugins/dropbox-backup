@@ -216,7 +216,7 @@ Upgrade Notice
 5. **Don't forget** to click on **"Connect"** button to get the dropbox plugin connected with your dropbox account.
 6. Click **"Create Dropbox Backup"** to create backup and upload this to your dropbox account using your pair of App key and App secret.
 7. Click **"Create Local Backup"** to create local backup. The local backup will be saved locally at your shared hosting / server.
-8. Table **list of backups** (local backups and dropbox backups) that was created with Dropbox Full Backup and Restore plugin.
+8. Table **list of backups** (local backups and dropbox backups) that was created with Dropbox Full Backup and Restore plugin. 
 9. Screen9
 10. Screen10
 
