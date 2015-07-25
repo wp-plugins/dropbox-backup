@@ -196,6 +196,8 @@ The name of this plugin is "Dropbox" Backup and Restore. From control panel at h
 
 = Is dropbox backup and restoration plugin really free? =
 
+yes, it's free!
+
 
 == Changelog ==
 
