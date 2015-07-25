@@ -194,6 +194,8 @@ Ok, if you want to use an SCP Backup, please, wait for some versions of this plu
 
 The name of this plugin is "Dropbox" Backup and Restore. From control panel at http://www.webpage-backup.com you can do also an FTP Backup. Please, checkout an FTP Backup so.
 
+= Is dropbox backup and restoration plugin really free? =
+
 
 == Changelog ==
 
