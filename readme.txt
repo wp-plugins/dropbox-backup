@@ -198,6 +198,9 @@ The name of this plugin is "Dropbox" Backup and Restore. From control panel at h
 
 yes, it's free!
 
+= Whether I need to create an account on the wpadm.com ? =
+
+You shouldn't, but you are able to do it since further it can help you at restoration of the site.
 
 == Changelog ==
 
