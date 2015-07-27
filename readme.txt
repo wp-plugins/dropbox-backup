@@ -202,6 +202,9 @@ Yes, dropbox backup and dropbox restoration are free with plugin "Dropbox Backup
 
 You shouldn't create an account on the www.wpadm.com, but you are able to do it since further it can really help you at restoration time of your site.
 
+= Whether there are wordpress templates of my web site in a full backup archive? =
+
+
 
 == Changelog ==
 
