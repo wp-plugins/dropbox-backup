@@ -204,6 +204,9 @@ You shouldn't create an account on the www.wpadm.com, but you are able to do it 
 
 = Whether there are wordpress templates of my web site in a full backup archive? =
 
+Full backup include tamplates of your site.
+
+
 
 
 == Changelog ==
