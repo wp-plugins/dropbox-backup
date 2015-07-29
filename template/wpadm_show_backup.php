@@ -93,6 +93,7 @@
                 },
                 error: function(){
                     processStop();
+                    alert('Error in Ajax request')
                 },
                 dataType: 'json'
             });
@@ -141,6 +142,7 @@
                     },
                     error: function(){
                         processStop();
+                        alert('Error in Ajax request')
                     },
                     dataType: 'json'
                 });
@@ -170,7 +172,7 @@
             } else {
                 var img_table =
                 '<img src="<?php echo plugin_dir_url(__FILE__) . "not-ok.png" ;?>" title="fail" alt="fail" style="float: left; width: 20px; height: 20px;" />' +
-                '<div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Fail', false);?></div>';
+                '<div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Fail', false);?>&nbsp;&nbsp;(<a style="text-decoration:underline;"><?php echo langWPADM::get('Show Details', false);?></a>)</div>';
                 name_backup = '<?php echo langWPADM::get('Not available', false);?>';
             }
             info = "";
@@ -248,6 +250,7 @@
                 },
                 error: function(){
                     processStop();
+                    alert('Error in Ajax request')
                 },
             });
         }
@@ -339,6 +342,7 @@
                 },
                 error: function(){
                     processStop();
+                    alert('Error in Ajax request')
                 },
                 dataType: 'json'
             });
@@ -934,7 +938,7 @@
                                         <?php } else {
                                         ?>
                                         <img src="<?php echo plugin_dir_url(__FILE__) . "not-ok.png" ;?>" title="Successful" alt="Successful" style="float: left; width: 20px; height: 20px;margin-left: 21px;" />
-                                        <div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Fail', false);?></div>
+                                        <div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Fail', false);?>&nbsp;&nbsp;(<a style="text-decoration:underline;"><?php echo langWPADM::get('Show Details', false);?></a>)</div>
                                         <?php 
                                     }?>
                                 </td>
