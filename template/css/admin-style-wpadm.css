@@ -923,7 +923,7 @@ height: 20px;
 vertical tablet computer
 */
 .drbbackup-info-detail {
-    
+    margin-top:10px
 }
 }
 @media only screen and (max-width: 524px) {
