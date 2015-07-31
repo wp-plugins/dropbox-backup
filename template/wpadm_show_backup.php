@@ -796,7 +796,7 @@
                                             <label for="email"><?php langWPADM::get('App key'); ?>*</label>
                                         </th>
                                         <td>
-                                            <input id="app_key" class="" type="text" name="app_key" value="<?php echo isset($dropbox_options['app_key']) ? $dropbox_options['app_key'] : ''?>">
+                                            <input id="app_key" class="" type="text" name="app_key" value="<?php echo isset($dropbox_options['app_key']) && $dropbox_options['app_key'] != WPADM_APP_KEY ? $dropbox_options['app_key'] : ''?>">
                                         </td>
                                     </tr>
                                     <tr valign="top" id="dropbox-app-secret" style="display: <?php echo $show_fields  ? 'table-row' : 'none'?>;">
@@ -804,7 +804,7 @@
                                             <label for="password"><?php langWPADM::get('App secret'); ?>*</label>
                                         </th>
                                         <td>
-                                            <input id="app_secret" class="" type="text" name="app_secret" value="<?php echo isset($dropbox_options['app_secret']) ? $dropbox_options['app_secret'] : ''?>">
+                                            <input id="app_secret" class="" type="text" name="app_secret" value="<?php echo isset($dropbox_options['app_secret']) && $dropbox_options['app_secret'] != WPADM_APP_SECRET ? $dropbox_options['app_secret'] : ''?>">
                                         </td>
                                     </tr>        
                                     <tr valign="top">
