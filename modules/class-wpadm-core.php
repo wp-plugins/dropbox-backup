@@ -1,9 +1,9 @@
 <?php
-require_once dirname(__FILE__) . '/class-wpadm-result.php';
-require_once dirname(__FILE__) . '/class-wpadm-command.php';
-require_once dirname(__FILE__) . '/modules/class-wpadm-command-context.php';
-require_once dirname(__FILE__) . '/modules/class-wpadm-queue.php';
-require_once dirname(__FILE__) . '/modules/class-wpadm-command-factory.php';
+require_once DRBBACKUP_BASE_DIR . '/modules/class-wpadm-result.php';
+require_once DRBBACKUP_BASE_DIR . '/modules/class-wpadm-command.php';
+require_once DRBBACKUP_BASE_DIR . '/modules/class-wpadm-command-context.php';
+require_once DRBBACKUP_BASE_DIR . '/modules/class-wpadm-queue.php';
+require_once DRBBACKUP_BASE_DIR . '/modules/class-wpadm-command-factory.php';
 
 
 if (!class_exists('WPAdm_Core')) {
@@ -96,7 +96,7 @@ if (!class_exists('WPAdm_Core')) {
             $method = mb_strtolower($method);
 
             $class_file = self::$pl_dir . "/methods/class-wpadm-method-" . str_replace('_', '-', $method) . ".php";
-
+            WPAdm_Core::log($class_file);
             if (file_exists($class_file)) {
                 require_once $class_file;
                 $tmp = explode('_', str_replace('-', '_', $method));

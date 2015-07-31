@@ -474,6 +474,9 @@ h3.plugins-title {
     width: 70%;
     border: 0;
 }
+.setting-checkbox {
+    padding-left: 5px;margin-top: 5px;
+}
 .form-help-send-error input[type="text"], .form-help-send-error input[type="text"] {
     padding: 0px;
     border: 1px solid #999;
@@ -922,15 +925,7 @@ height: 20px;
 /*
 vertical tablet computer
 */
-.drbbackup-info-detail {
-    margin-top:10px;
-    padding:5px;
-}
 }
 @media only screen and (max-width: 524px) {
 /*phone*/
-.drbbackup-info-detail {
-        margin-top:3px;
-        padding:2px;
-    }
 }

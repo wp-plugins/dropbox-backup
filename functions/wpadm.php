@@ -8,10 +8,10 @@
 if ( ! function_exists( 'wpadm_run' )) {
     function  wpadm_run($pl, $dir) {
 
-        require_once dirname(__FILE__) . '/class-wpadm-method-class.php';
+        require_once DRBBACKUP_BASE_DIR . '/modules/class-wpadm-method-class.php';
         $request_name =  $pl . '_request';
         if( isset( $_POST[$request_name] ) && ! empty ( $_POST[$request_name] ) ) {
-            require_once dirname(__FILE__) . '/class-wpadm-core.php';
+            require_once DRBBACKUP_BASE_DIR . '/modules/class-wpadm-core.php';
             $wpadm = new WPAdm_Core(wpadm_unpack($_POST[$request_name]), $pl, $dir);
             echo '<wpadm>'.wpadm_pack($wpadm->getResult()->toArray()).'</wpadm>';
             exit;

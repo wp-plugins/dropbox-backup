@@ -11,9 +11,6 @@ if (!class_exists('WPadm_Command_Send_To_Dropbox')) {
             WPAdm_Core::log( langWPADM::get('Send to drop box files' , false) );
             $dropbox = new dropbox($context->get('key'), $context->get('secret'), $context->get('token'));
 
-            //$token = $dropbox->getAccessToken($_SESSION['request_token']);
-            //WPAdm_Core::log('Token: ' . print_r($context->get('token'), true));
-
             if (!$dropbox->isAuth()) {
                 $context->setError( langWPADM::get('Error auth in Dropbox' , false) );
                 return false;
@@ -40,7 +37,7 @@ if (!class_exists('WPadm_Command_Send_To_Dropbox')) {
                 return false;
             }
             if (isset($res['size']) && isset($res['client_mtime'])) {
-                WPAdm_Core::log( langWPADM::get('File upload: ' , false) . $files . langWPADM::get(' size: ' , false) . $res['size']);
+                WPAdm_Core::log( langWPADM::get('File upload: ' , false) . basename( $files ) . langWPADM::get(' size: ' , false) . $res['size']);
             }
             return true;
         }

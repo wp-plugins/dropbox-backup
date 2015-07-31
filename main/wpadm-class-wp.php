@@ -2,13 +2,19 @@
     if (! defined("WPADM_URL_BASE")) {
         define("WPADM_URL_BASE", 'http://secure.webpage-backup.com/');
     }
+    if (! defined("WPADM_APP_KEY")) {
+        define("WPADM_APP_KEY", 'nv751n84w2nif6j');
+    }
+    if (! defined("WPADM_APP_SECRET")) {
+        define("WPADM_APP_SECRET", 'qllasd4tbnqh4oi');
+    }
 
     if(session_id() == '') {
         session_start();
     }
 
-    require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "libs/error.class.php";
-    require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "libs/wpadm.server.main.class.php";
+    require_once DRBBACKUP_BASE_DIR . "/libs/error.class.php";
+    require_once DRBBACKUP_BASE_DIR . "/libs/wpadm.server.main.class.php";
     if (! class_exists("wpadm_wp_full_backup_dropbox") ) {
 
         add_action('wp_ajax_wpadm_local_restore', array('wpadm_wp_full_backup_dropbox', 'restore_backup') );
@@ -34,14 +40,14 @@
             public static function init()
             {
                 parent::$plugin_name = 'dropbox-backup';
-                require_once  dirname(__FILE__) . '/class-wpadm-core.php';
-                WPAdm_Core::$pl_dir = dirname(__FILE__);
+                require_once  DRBBACKUP_BASE_DIR . '/modules/class-wpadm-core.php';
+                WPAdm_Core::$pl_dir = DRBBACKUP_BASE_DIR ;
             }
 
             static function include_admins_script()
             {
-                wp_enqueue_style('css-admin-wpadm', plugins_url( "/template/css/admin-style-wpadm.css", __FILE__) );
-                wp_enqueue_script( 'js-admin-wpadm', plugins_url( "/template/js/admin-wpadm.js",  __FILE__ ) );
+                wp_enqueue_style('css-admin-wpadm', plugins_url( "/template/css/admin-style-wpadm.css", dirname( __FILE__ )) );
+                wp_enqueue_script( 'js-admin-wpadm', plugins_url( "/template/js/admin-wpadm.js",  dirname( __FILE__ ) ) );
                 wp_enqueue_script( 'postbox' );
             }
 
@@ -73,13 +79,13 @@
 
             public static function local_backup()
             {
-                require_once dirname(__FILE__) . "/class-wpadm-core.php";
+                require_once DRBBACKUP_BASE_DIR. "/modules/class-wpadm-core.php";
                 @session_write_close();
                 parent::$type = 'full'; 
                 if (file_exists(WPAdm_Core::getTmpDir() . "/logs2")) {
                     unlink(WPAdm_Core::getTmpDir() . "/logs2");
                 }
-                $backup = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'time' => @$_POST['time'], 'types' => array('db', 'files') )), 'full_backup_dropbox', dirname(__FILE__));
+                $backup = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'time' => @$_POST['time'], 'types' => array('db', 'files') )), 'full_backup_dropbox', WPAdm_Core::$pl_dir);
                 $res = $backup->getResult()->toArray();
                 $res['md5_data'] = md5( print_r($res, 1) );
                 $res['name'] = $backup->name;
@@ -96,8 +102,8 @@
             {   
                 @session_write_close();
                 @session_start();
-                require_once dirname(__FILE__) . "/class-wpadm-core.php";
-                $backup = new WPAdm_Core(array('method' => "local"), 'full_backup_dropbox', dirname(__FILE__));
+                require_once DRBBACKUP_BASE_DIR . "/modules/class-wpadm-core.php";
+                $backup = new WPAdm_Core(array('method' => "local"), 'full_backup_dropbox', WPAdm_Core::$pl_dir);
                 $log = WPAdm_Core::getLog();
                 $log2 = WPAdm_Core::getTmpDir() . "/logs2";
                 if (file_exists($log2)) {
@@ -115,14 +121,14 @@
             }
             public static function restore_backup()
             {
-                require_once dirname(__FILE__) . "/class-wpadm-core.php";
+                require_once DRBBACKUP_BASE_DIR . "/modules/class-wpadm-core.php";
                 @session_write_close();
                 parent::$type = 'full'; 
                 if (file_exists(WPAdm_Core::getTmpDir() . "/logs2")) {
                     unlink(WPAdm_Core::getTmpDir() . "/logs2");
                 }
                 $name_backup = isset($_POST['name']) ? trim($_POST['name']) : "";
-                $backup = new WPAdm_Core(array('method' => "local_restore", 'params' => array('types' => array('files', 'db'), 'name_backup' => $name_backup )), 'full_backup_dropbox', dirname(__FILE__));
+                $backup = new WPAdm_Core(array('method' => "local_restore", 'params' => array('types' => array('files', 'db'), 'name_backup' => $name_backup )), 'full_backup_dropbox', WPAdm_Core::$pl_dir);
                 $res = $backup->getResult()->toArray();
                 @session_start();
                 echo json_encode($res);
@@ -130,9 +136,9 @@
             }
             public static function wpadm_restore_dropbox()
             {
-                require_once dirname(__FILE__) . "/class-wpadm-core.php";
+                require_once DRBBACKUP_BASE_DIR . "/modules/class-wpadm-core.php";
                 @session_write_close();
-                $log_class = new WPAdm_Core(array('method' => "local"), 'full_backup_dropbox', dirname(__FILE__));
+                $log_class = new WPAdm_Core(array('method' => "local"), 'full_backup_dropbox', WPAdm_Core::$pl_dir);
                 if (file_exists(WPAdm_Core::getTmpDir() . "/logs2")) {
                     unlink(WPAdm_Core::getTmpDir() . "/logs2");
                 }
@@ -142,7 +148,7 @@
                 WPAdm_Core::log( langWPADM::get('Start Restore from Dropbox cloud' , false) );
                 $dropbox_options = get_option(PREFIX_BACKUP_ . 'dropbox-setting');
                 if ($dropbox_options) {
-                    require_once dirname(__FILE__) . "/modules/dropbox.class.php";
+                    require_once DRBBACKUP_BASE_DIR. "/modules/dropbox.class.php";
                     $dropbox_options = unserialize( base64_decode( $dropbox_options ) ); 
                     $folder_project = self::getNameProject();
                     $dropbox = new dropbox($dropbox_options['app_key'], $dropbox_options['app_secret'], $dropbox_options['auth_token_secret']);
@@ -163,7 +169,7 @@
                                 }
                             }
                             parent::$type = 'full'; 
-                            $backup = new WPAdm_Core(array('method' => "local_restore", 'params' => array('types' => array('files', 'db'), 'name_backup' => $name_backup )), 'full_backup_dropbox', dirname(__FILE__));
+                            $backup = new WPAdm_Core(array('method' => "local_restore", 'params' => array('types' => array('files', 'db'), 'name_backup' => $name_backup )), 'full_backup_dropbox', WPAdm_Core::$pl_dir);
                             $res = $backup->getResult()->toArray();
                             WPAdm_Core::rmdir($dir_backup);
                         }
@@ -180,9 +186,9 @@
             public static function download()
             {
                 if (isset($_REQUEST['backup'])) {
-                    require_once dirname(__FILE__) . "/class-wpadm-core.php"; 
-                    require_once dirname(__FILE__) . '/modules/pclzip.lib.php';
-                    $backup = new WPAdm_Core(array('method' => "local"), 'full_backup_dropbox', dirname(__FILE__));
+                    require_once DRBBACKUP_BASE_DIR . "/class-wpadm-core.php"; 
+                    require_once DRBBACKUP_BASE_DIR . '/modules/pclzip.lib.php';
+                    $backup = new WPAdm_Core(array('method' => "local"), 'full_backup_dropbox', WPAdm_Core::$pl_dir);
                     $filename = $_REQUEST['backup'] . ".zip";
                     $file = WPAdm_Core::getTmpDir() . "/" . $filename;
                     if (file_exists($file)) {
@@ -231,13 +237,13 @@
             {
                 if (isset($_POST['backup-type']) ) {
                     if ($_POST['backup-type'] == 'local') {
-                        require_once dirname(__FILE__) . "/class-wpadm-core.php";
+                        require_once DRBBACKUP_BASE_DIR . "/modules/class-wpadm-core.php";
                         $dir = ABSPATH . 'wpadm_backups/' . $_POST['backup-name'] ;
                         if (is_dir($dir)) {
                             WPAdm_Core::rmdir($dir);
                         }
                     } elseif ($_POST['backup-type'] == 'dropbox') {
-                        require_once dirname(__FILE__) . "/modules/dropbox.class.php";
+                        require_once DRBBACKUP_BASE_DIR . "/modules/dropbox.class.php";
                         $dropbox_options = get_option(PREFIX_BACKUP_ . 'dropbox-setting');
                         if ($dropbox_options) {
                             $dropbox_options = unserialize( base64_decode( $dropbox_options ) ); 
@@ -266,9 +272,12 @@
 
             public static function dropboxConnect()
             {
-                require_once dirname(__FILE__) . "/modules/dropbox.class.php";
+                require_once DRBBACKUP_BASE_DIR . "/modules/dropbox.class.php";
                 if (isset($_GET['app_key']) && isset($_GET['app_secret'])) {
-
+                    if (empty($_GET['app_key']) && empty($_GET['app_secret'])) {
+                        $_GET['app_key'] = WPADM_APP_KEY;
+                        $_GET['app_secret'] = WPADM_APP_SECRET;
+                    }
                     $dropbox = new dropbox($_GET['app_key'], $_GET['app_secret']);
                     $_SESSION['dropbox_key'] = $_GET['app_key']; 
                     $_SESSION['dropbox_secret'] = $_GET['app_secret']; 
@@ -310,9 +319,9 @@
 
             public static function dropbox_backup_create()
             {      
-                require_once dirname(__FILE__) . "/class-wpadm-core.php";
+                require_once DRBBACKUP_BASE_DIR . "/modules/class-wpadm-core.php";
                 @session_write_close();
-                $log = new WPAdm_Core(array('method' => "local"), 'full_backup_dropbox', dirname(__FILE__));
+                $log = new WPAdm_Core(array('method' => "local"), 'full_backup_dropbox', WPAdm_Core::$pl_dir);
                 if (file_exists(WPAdm_Core::getTmpDir() . "/logs2")) {
                     unlink(WPAdm_Core::getTmpDir() . "/logs2");
                 }
@@ -340,7 +349,7 @@
 
                 if ($send_to_dropbox) {
                     parent::$type = 'full'; 
-                    $backup_local = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'time' => @$_POST['time'], 'types' => array('db', 'files') )), 'full_backup_dropbox', dirname(__FILE__));
+                    $backup_local = new WPAdm_Core(array('method' => "local_backup", 'params' => array('optimize' => 1, 'limit' => 0, 'time' => @$_POST['time'], 'types' => array('db', 'files') )), 'full_backup_dropbox', WPAdm_Core::$pl_dir);
                     $res = $backup_local->getResult()->toArray();
                     $res['md5_data'] = md5( print_r($res, 1) );
                     $res['name'] = $backup_local->name;
@@ -358,7 +367,7 @@
                     'folder' => $folder_project),
                     )
                     ),
-                    'full_backup_dropbox', dirname(__FILE__)) ;
+                    'full_backup_dropbox', WPAdm_Core::$pl_dir) ;
                     $result_send = $backup->getResult()->toArray();
                     if ($result_send['result'] == 'error') {
                         $res = array();
@@ -384,7 +393,7 @@
             public static function wpadm_show_backup()
             {
 
-                require_once dirname(__FILE__) . "/modules/dropbox.class.php";
+                require_once DRBBACKUP_BASE_DIR. "/modules/dropbox.class.php";
                 parent::$type = 'full';
                 $dropbox_options = get_option(PREFIX_BACKUP_ . 'dropbox-setting');
                 if ($dropbox_options) {
@@ -420,7 +429,7 @@
                 $show = !get_option('wpadm_pub_key') && is_super_admin();
                 $error = parent::getError(true);
                 $msg = parent::getMessage(true); 
-                $base_path = dirname(__FILE__) ;
+                $base_path = DRBBACKUP_BASE_DIR ;
                 ob_start();
                 require_once $base_path . DIRECTORY_SEPARATOR . "template" . DIRECTORY_SEPARATOR . "wpadm_show_backup.php";
                 echo ob_get_clean();
@@ -448,7 +457,7 @@
                         "read", 
                         'wpadm_plugins', 
                         'wpadm_plugins',
-                        plugins_url('/wpadm-logo.png', __FILE__),
+                        plugins_url('/img/wpadm-logo.png', dirname( __FILE__ )),
                         $menu_position     
                         );
                         add_submenu_page(
@@ -466,7 +475,7 @@
                         "read", 
                         'wpadm_wp_full_backup_dropbox', 
                         array('wpadm_wp_full_backup_dropbox', 'wpadm_show_backup'),
-                        plugins_url('/wpadm-logo.png', __FILE__),
+                        plugins_url('/img/wpadm-logo.png', dirname( __FILE__ ) ),
                         $menu_position     
                         );
 

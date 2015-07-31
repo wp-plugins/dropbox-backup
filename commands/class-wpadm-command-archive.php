@@ -37,8 +37,8 @@ class WPadm_Command_Archive extends WPAdm_Сommand{
 
     private function getNextArchiveName($name)
     {
-        $arhives = glob("{$name}-*.zip");
-        $n = 1 + count($arhives);
+        $archives = glob("{$name}-*.zip");
+        $n = 1 + count($archives);
         $a = "{$name}-{$n}.zip";
         return $a;
     }

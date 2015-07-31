@@ -429,10 +429,10 @@
                 var form = dropboxBut.parents('form');
                 var url = href;
 
-                if (jQuery.trim(jQuery('#app_key').val()) != '' || jQuery.trim(jQuery('#app_secret').val()) != '') {
+               // if (jQuery.trim(jQuery('#app_key').val()) != '' || jQuery.trim(jQuery('#app_secret').val()) != '') {
                     url += '&app_key='+jQuery('#app_key').val();
                     url += '&app_secret='+jQuery('#app_secret').val();
-                }
+               // }
 
                 dropboxWin = window.open(url, "Dropbox", winParams);
                 if( dropboxWin ){
@@ -602,6 +602,17 @@
                     alert('Save Error');
                 }
             });
+        }
+        function showApp()
+        {
+            disp = jQuery('#dropbox-app-key').css('display');
+            if (disp == 'none') {
+                jQuery('#dropbox-app-key').show('slow');
+                jQuery('#dropbox-app-secret').show('slow');
+            } else {
+                jQuery('#dropbox-app-key').hide('slow');
+                jQuery('#dropbox-app-secret').hide('slow');
+            }
         }
     </script>
     <?php if (!empty($error)) {
@@ -773,9 +784,14 @@
                             <div  style="margin-bottom: 12px; margin-top: 20px; font-size: 15px;">
                                 <?php langWPADM::get('Please, add your Dropbox credentials:'); ?>
                             </div>
+                            <?php $show_fields =  isset($dropbox_options['app_key']) && !empty($dropbox_options['app_key']) && isset($dropbox_options['app_secret']) && !empty($dropbox_options['app_secret']) && $dropbox_options['app_key'] != WPADM_APP_KEY && $dropbox_options['app_secret'] != WPADM_APP_SECRET ; ?>
+                            <div class="setting-checkbox">
+                                <input type="checkbox" onclick="showApp();" <?php echo $show_fields ? 'cheched="checked"' : ''?> /><label><?php langWPADM::get('Connection to your dropbox app');?></label>
+                            </div>
+
                             <table class="form-table stat-table-registr" style="margin-top:2px">
                                 <tbody>
-                                    <tr valign="top">
+                                    <tr valign="top" id="dropbox-app-key" style="display: <?php echo $show_fields  ? 'table-row' : 'none'?>;">
                                         <th scope="row">
                                             <label for="email"><?php langWPADM::get('App key'); ?>*</label>
                                         </th>
@@ -783,7 +799,7 @@
                                             <input id="app_key" class="" type="text" name="app_key" value="<?php echo isset($dropbox_options['app_key']) ? $dropbox_options['app_key'] : ''?>">
                                         </td>
                                     </tr>
-                                    <tr valign="top">
+                                    <tr valign="top" id="dropbox-app-secret" style="display: <?php echo $show_fields  ? 'table-row' : 'none'?>;">
                                         <th scope="row">
                                             <label for="password"><?php langWPADM::get('App secret'); ?>*</label>
                                         </th>
@@ -794,7 +810,7 @@
                                     <tr valign="top">
                                         <th scope="row">
                                         </th>
-                                        <td>
+                                        <td style="width: 292px;">
                                             <input class="btn-orange" type="button" onclick="connectDropbox(this,'<?php echo admin_url( 'admin-post.php?action=dropboxConnect' )?>')" value="<?php langWPADM::get('Connect'); ?>" name="submit">
                                             <span id="dropbox_uid_text"><?php echo isset($dropbox_options['oauth_token']) && isset($dropbox_options['uid']) ? "UID " . $dropbox_options['uid'] : '';  ?></span>
                                             <div class="desc-wpadm"><?php langWPADM::get('Click to Connect your Dropbox'); ?></div>
@@ -807,8 +823,9 @@
                                     </tr>
                                 </tbody>
                             </table>
+
                             <?php if ( is_super_admin() ) { ?>
-                                <div style="padding-left: 5px;margin-top: 5px;">
+                                <div class="setting-checkbox">
                                     <input type="checkbox" <?php echo isset($dropbox_options['is_admin']) && $dropbox_options['is_admin'] == 1 ? 'checked="checked"' : ''; ?> name="is_admin" value="1" id="is_admin" onclick="saveSetting()" /><label for="is_admin" style="font-size: 13px;"><?php langWPADM::get('Appear in menu for admins only'); ?></label>
                                 </div>
                                 <?php } ?>
