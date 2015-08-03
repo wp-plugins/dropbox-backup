@@ -32,17 +32,19 @@ if (!class_exists('WPadm_Method_Send_To_Dropbox')) {
 
             $dir = (isset($ad['dir'])) ? $ad['dir'] : '/';
             //$dir = trim($dir, '/') . '/' . $this->name;
-            foreach($files as $file) {
-                $commandContext = new WPAdm_Command_Context();
-                $commandContext->addParam('command', 'send_to_dropbox')
-                    ->addParam('key', $ad['key'])
-                    ->addParam('secret', $ad['secret'])
-                    ->addParam('token', $ad['token'])
-                    ->addParam('folder_project',$ad['folder'])
-                    ->addParam('folder', $dir)
-                    ->addParam('files', ABSPATH . $file);
-                $this->queue->add($commandContext);
-                unset($commandContext);
+            if (is_array($files)) {
+                foreach($files as $file) {
+                    $commandContext = new WPAdm_Command_Context();
+                    $commandContext->addParam('command', 'send_to_dropbox')
+                        ->addParam('key', $ad['key'])
+                        ->addParam('secret', $ad['secret'])
+                        ->addParam('token', $ad['token'])
+                        ->addParam('folder_project',$ad['folder'])
+                        ->addParam('folder', $dir)
+                        ->addParam('files', ABSPATH . $file);
+                    $this->queue->add($commandContext);
+                    unset($commandContext);
+                }
             }
             $res = $this->queue->save()
                 ->execute();

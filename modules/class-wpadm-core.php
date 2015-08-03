@@ -28,8 +28,13 @@ if (!class_exists('WPAdm_Core')) {
         private $result;
 
         private $plugin;
+        
+        public $name = '',
+        $time = '';
 
         public static $pl_dir;
+
+        public static $error = '';
 
         public static $plugin_name;
 
@@ -50,13 +55,17 @@ if (!class_exists('WPAdm_Core')) {
             } elseif ('local' == $request['method']){
 
             } elseif($obj = $this->getObject($request['method'], $request['params'])) {
-                if (isset($obj->name)) {
-                    $this->name = $obj->name;
+                if ($obj->isError()) {
+                    $this->result = $obj->get_results();
+                } else {
+                    if (isset($obj->name)) {
+                        $this->name = $obj->name;
+                    }
+                    if (isset($obj->time)) {
+                        $this->time = $obj->time;
+                    }
+                    $this->result = $obj->getResult();
                 }
-                if (isset($obj->time)) {
-                    $this->time = $obj->time;
-                }
-                $this->result = $obj->getResult();
             } else {
                 $this->result->setError('Unknown method "' . $request['method'] . '"');
             }
@@ -96,7 +105,6 @@ if (!class_exists('WPAdm_Core')) {
             $method = mb_strtolower($method);
 
             $class_file = self::$pl_dir . "/methods/class-wpadm-method-" . str_replace('_', '-', $method) . ".php";
-            WPAdm_Core::log($class_file);
             if (file_exists($class_file)) {
                 require_once $class_file;
                 $tmp = explode('_', str_replace('-', '_', $method));
@@ -196,10 +204,14 @@ if (!class_exists('WPAdm_Core')) {
         */
         static public function mkdir($dir) {
             if(!file_exists($dir)) {
-                mkdir($dir, 0755);
+                @mkdir($dir, 0755);
                 //todo: права доступа
-                file_put_contents($dir . '/index.php', '');
+                @file_put_contents($dir . '/index.php', '<?php echo "Hello World!"; ');
+                if ( !is_writable($dir . '/index.php') ) {
+                    self::$error = langWPADM::get('Failed to create a file, please check the permissions on the folders "wpadm_backup" and "wpadm_backups".', false);
+                }
             }
+            return self::$error;
         }
 
         /**

@@ -65,8 +65,16 @@ if (!class_exists('WPadm_Method_Backup')) {
     
             // папка для бэкапа
             $this->dir = ABSPATH . '/wpadm_backups/' . $this->name;
-            WPAdm_Core::mkdir(ABSPATH . '/wpadm_backups/');
-            WPAdm_Core::mkdir($this->dir);
+            $error = WPAdm_Core::mkdir(ABSPATH . '/wpadm_backups/');
+            if (!empty($error)) {
+                $this->result->setError($error);
+                $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
+            }
+            $error = WPAdm_Core::mkdir($this->dir);
+            if (!empty($error)) {
+                $this->result->setError($error);
+                $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
+            }
         }
     
         public function getResult()
@@ -79,15 +87,17 @@ if (!class_exists('WPadm_Method_Backup')) {
     
             #ОТЛАДКА, нужно удалить
             //todo: удалить
-            unlink(dirname(__FILE__) . '/../tmp/log.log');
+            @unlink(dirname(__FILE__) . '/../tmp/log.log');
             #конец отладки
     
-            WPAdm_Core::log('Начинаем бэкап');
-    
-            # СОЗДАДИМ ДАМП БД
-            WPAdm_Core::log('Начинаем создание дампа БД');
-            // добавим в очередь создание бэкапа БД и выполним
-            WPAdm_Core::mkdir(ABSPATH . '/wpadm_backup');
+            WPAdm_Core::log('Start backup create');
+            WPAdm_Core::log('Create dump Data Base');
+            $error = WPAdm_Core::mkdir(ABSPATH . '/wpadm_backup');
+            if (!empty($error)) {
+                $this->result->setError($error);
+                $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
+                return $this->result;
+            }
             $mysql_dump_file = ABSPATH . '/wpadm_backup/mysqldump.sql';
             if (file_exists($mysql_dump_file)) {
                 unlink($mysql_dump_file);
@@ -95,7 +105,7 @@ if (!class_exists('WPadm_Method_Backup')) {
             $wp_mysql_params = $this->getWpMysqlParams();
     
             if (isset($this->params['optimize']) && ($this->params['optimize']==1)) {
-                WPAdm_Core::log('Оптимизцация таблиц БД');
+                WPAdm_Core::log('optimization Database');
                 $commandContext = new WPAdm_Command_Context();
                 $commandContext ->addParam('command','mysqloptimize')
                     ->addParam('host', $wp_mysql_params['host'])

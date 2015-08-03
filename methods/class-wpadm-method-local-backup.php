@@ -41,8 +41,16 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
             if (($f = $this->checkBackup()) !== false) {
                 $this->dir = ABSPATH . 'wpadm_backups/' . $f;
             }
-            WPAdm_Core::mkdir(ABSPATH . 'wpadm_backups/');
-            WPAdm_Core::mkdir($this->dir);
+            $error = WPAdm_Core::mkdir(ABSPATH . '/wpadm_backups/');
+            if (!empty($error)) {
+                $this->result->setError($error);
+                $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
+            }
+            $error = WPAdm_Core::mkdir($this->dir);
+            if (!empty($error)) {
+                $this->result->setError($error);
+                $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
+            }
         }
         public function checkBackup()
         {
@@ -71,7 +79,12 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
             # create db dump
             if (in_array('db', $this->params['types']) ) {
                 WPAdm_Core::log(langWPADM::get('Creating Database Dump', false));
-                WPAdm_Core::mkdir(ABSPATH . 'wpadm_backup');
+                $error = WPAdm_Core::mkdir(ABSPATH . 'wpadm_backup');
+                if (!empty($error)) {
+                    $this->result->setError($error);
+                    $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
+                    return $this->result; 
+                }
                 $mysql_dump_file = ABSPATH . 'wpadm_backup/mysqldump.sql';
                 if (file_exists($mysql_dump_file)) {
                     unlink($mysql_dump_file);

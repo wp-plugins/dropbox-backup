@@ -60,8 +60,16 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
 
             // folder for backup
             $this->dir = ABSPATH . 'wpadm_backups/' . $this->name;
-            WPAdm_Core::mkdir(ABSPATH . 'wpadm_backups/');
-            WPAdm_Core::mkdir($this->dir);
+            $error = WPAdm_Core::mkdir(ABSPATH . '/wpadm_backups/');
+            if (!empty($error)) {
+                $this->result->setError($error);
+                $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
+            }
+            $error = WPAdm_Core::mkdir($this->dir);
+            if (!empty($error)) {
+                $this->result->setError($error);
+                $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
+            }
         }
 
         public function getResult()
@@ -75,7 +83,12 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
 
             # create db dump
             WPAdm_Core::log( langWPADM::get('Start create db dump', false) );
-            WPAdm_Core::mkdir(ABSPATH . 'wpadm_backup');
+            $error = WPAdm_Core::mkdir(ABSPATH . 'wpadm_backup');
+            if (!empty($error)) {
+                $this->result->setError($error);
+                $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
+                return $this->result;
+            }
             $mysql_dump_file = ABSPATH . 'wpadm_backup/mysqldump.sql';
             if (file_exists($mysql_dump_file)) {
                 unlink($mysql_dump_file);

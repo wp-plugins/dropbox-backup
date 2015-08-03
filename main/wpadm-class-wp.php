@@ -155,23 +155,32 @@
                     if ($dropbox->isAuth()) {
                         $name_backup = isset($_POST['name']) ? trim($_POST['name']) : "";
                         $dir_backup = ABSPATH . "wpadm_backups/$name_backup";
-                        WPAdm_Core::mkdir($dir_backup);
-                        $files = $dropbox->listing("$folder_project/$name_backup");
-                        if (isset($files['items'])) {
-                            $n = count($files['items']);
-                            for($i = 0; $i < $n; $i++) {
-                                $res = $dropbox->downloadFile("$folder_project/$name_backup/{$files['items'][$i]['name']}", "$dir_backup/{$files['items'][$i]['name']}");
-                                if ($res != "$dir_backup/{$files['items'][$i]['name']}" && isset($res['text'])) {
-                                    WPAdm_Core::log(langWPADM::get('Error: ' , false) . $res['text'] );
-                                } else {
-                                    $log = str_replace('%s', $files['items'][$i]['name'], langWPADM::get('Download file (%s) with Dropbox' , false) );
-                                    WPAdm_Core::log($log);
+                        $error = WPAdm_Core::mkdir($dir_backup);
+                        if (!empty($error)) {
+                            WPAdm_Core::log($error);
+                            $res['result'] = WPAdm_Result::WPADM_RESULT_ERROR;
+                            $res['error'] = $error;
+                            $res['data'] = array();
+                            $res['size'] = 0;
+                            
+                        } else {
+                            $files = $dropbox->listing("$folder_project/$name_backup");
+                            if (isset($files['items'])) {
+                                $n = count($files['items']);
+                                for($i = 0; $i < $n; $i++) {
+                                    $res = $dropbox->downloadFile("$folder_project/$name_backup/{$files['items'][$i]['name']}", "$dir_backup/{$files['items'][$i]['name']}");
+                                    if ($res != "$dir_backup/{$files['items'][$i]['name']}" && isset($res['text'])) {
+                                        WPAdm_Core::log(langWPADM::get('Error: ' , false) . $res['text'] );
+                                    } else {
+                                        $log = str_replace('%s', $files['items'][$i]['name'], langWPADM::get('Download file (%s) with Dropbox' , false) );
+                                        WPAdm_Core::log($log);
+                                    }
                                 }
+                                parent::$type = 'full'; 
+                                $backup = new WPAdm_Core(array('method' => "local_restore", 'params' => array('types' => array('files', 'db'), 'name_backup' => $name_backup )), 'full_backup_dropbox', WPAdm_Core::$pl_dir);
+                                $res = $backup->getResult()->toArray();
+                                WPAdm_Core::rmdir($dir_backup);
                             }
-                            parent::$type = 'full'; 
-                            $backup = new WPAdm_Core(array('method' => "local_restore", 'params' => array('types' => array('files', 'db'), 'name_backup' => $name_backup )), 'full_backup_dropbox', WPAdm_Core::$pl_dir);
-                            $res = $backup->getResult()->toArray();
-                            WPAdm_Core::rmdir($dir_backup);
                         }
                     } else {
                         WPAdm_Core::log( langWPADM::get('Error: Auth to Dropbox is empty, please repeat connection' , false) );
