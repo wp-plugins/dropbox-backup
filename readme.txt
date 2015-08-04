@@ -101,6 +101,10 @@ Note that Drop-ins have app keys but no app secrets.
 
 = How to restore my site from dropbox backup? =
 
+- First of all, install the Dropbox backup & restore plugin;<br />
+- In Dropbox backup & restore plugin check your connection to dropbox as "dropbox app" or as connection with use of app key & app secret;
+
+
 = My web page completely crashed and not available. How can I restore my web page from dropbox backup? =
 
 Just login or Register at WPAdm www.wpadm.com If your web page wasn't added and verified - just do it. Add your domain and verified this on WPAdm account.
