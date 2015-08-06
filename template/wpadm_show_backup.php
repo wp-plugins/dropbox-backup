@@ -7,6 +7,7 @@
         }
     </style>
     <script>
+        var home_url = '<?php echo SITE_HOME; ?>';
         function blickForm(id, t)
         {
             if(t.checked == true) {
@@ -91,11 +92,25 @@
                     jQuery('.table').css('display', 'table');
 
                 },
-                error: function(){
+                error: function(jqXHR, textStatus, errorThrown){
                     processStop();
-                    alert('Error in Ajax request')
+                    AjaxAlert(jqXHR, textStatus, errorThrown);
                 },
                 dataType: 'json'
+            });
+        }
+        function AjaxAlert(jqXHR, textStatus, errorThrown)
+        {
+            var msg = 'Website "' + home_url + '" returned an error during operation with return:<br /><br /> <span style="font-size:13px; font-style: italic;">code: ' + jqXHR.status + ', text status: ' + textStatus + ', text: ' + errorThrown + "</span>";
+            jQuery("#ajax-message").html(msg);
+            jQuery("#msg_ajax").val(msg);
+            jQuery('#ajax-alert').arcticmodal({
+                beforeOpen: function(data, el) {
+                    jQuery('#ajax-alert').css('display','block');
+                },
+                afterClose: function(data, el) {
+                    jQuery('#ajax-alert').css('display','none');
+                }
             });
         }
 
@@ -140,9 +155,9 @@
                         jQuery('.table').css('display', 'table');
 
                     },
-                    error: function(){
+                    error: function(jqXHR, textStatus, errorThrown) {
                         processStop();
-                        alert('Error in Ajax request')
+                        AjaxAlert(jqXHR, textStatus, errorThrown);
                     },
                     dataType: 'json'
                 });
@@ -164,7 +179,7 @@
         function showData(data)
         {
             size_backup = data.size / 1024 / 1024;
-            if (data.size != 0) {
+            if (data.size != 0 || data.result != 'error') {
                 var img_table = 
                 '<img src="<?php echo plugin_dir_url(__FILE__) . "ok.png" ;?>" title="Successful" alt="Successful" style="float: left; width: 20px; height: 20px;" />' +
                 '<div style="margin-top :1px;float: left;"><?php echo langWPADM::get('Successful', false);?></div>';
@@ -176,54 +191,56 @@
                 name_backup = '<?php echo langWPADM::get('Not available', false);?>';
             }
             info = "";
-            for(i = 0; i < data.data.length; i++) {
-                e = data.data[i].split('/');
-                info += '<tr style="border: 0;">' +
-                '<td style="border: 0;padding: 0px;"><a href="<?php echo get_option('siteurl') . "/wpadm_backups/"?>' + data.name + '/' + e[e.length - 1] + '">' + e[e.length - 1] + '</td>' +
-                '</tr>' ;
-            }
+            if (data.data) {
+                for(i = 0; i < data.data.length; i++) {
+                    e = data.data[i].split('/');
+                    info += '<tr style="border: 0;">' +
+                    '<td style="border: 0;padding: 0px;"><a href="<?php echo content_url(WPADM_DIR_NAME) . '/'; ?>' + data.name + '/' + e[e.length - 1] + '">' + e[e.length - 1] + '</td>' +
+                    '</tr>' ;
+                }
 
-            co = jQuery('.number-backup').length + 1;
-            jQuery('.table > tbody:last').after(
-            '<tr>'+
-            '<td class="number-backup" onclick="shows(\'' + data.md5_data + '\', this)">' +
-            co + 
-            '</td>' +
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)" style="text-align: left; padding-left: 7px;" >' +
-            data.time + 
-            '</td>' +
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)">' +
-            name_backup +
-            '</td>' +
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\',this)">' +
-            data.counts +
-            '</td>' +
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)">' +
-            img_table +
-            '</td>' +
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)">' +
-            data.type + ' <?php langWPADM::get('backup')?>' +
-            '</td>' +
-            '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)">' +
-            size_backup.toFixed(2) + "<?php langWPADM::get('Mb')?>" +
-            '</td>' +
-            '<td>' + 
-            '<a href="javascript:void(0)" class="button-wpadm" title="<?php langWPADM::get('Restore')?>" onclick="show_recovery_form(\'' + data.type + '\', \'' + data.name + '\')"><span class="pointer dashicons dashicons-backup"></span><?php langWPADM::get('Restore')?></a> &nbsp;' +
-            '<a href="javascript:void(0)" class="button-wpadm" title="<?php langWPADM::get('Delete')?>" onclick="delete_backup(\'' + data.name + '\', \'' + data.type + '\')"><span class="pointer dashicons dashicons-trash"></span><?php langWPADM::get('Delete')?></a> &nbsp;' +
-            '</td>' +
-            '</tr>'+
-            '<tr id="' + data.md5_data + '" style="display: none;">'+
-            '<td colspan="2">' +
-            '</td>' +
-            '<td align="center" style="padding: 0px; width: 350px;">' +
-            '<div style="overflow: auto; max-height: 150px;">' +
-            '<table border="0" align="center" style="width: 100%;" class="info-path">' +
-            info +
-            '</table>' +
-            '</div>' +
-            '</td>' +
-            '<td colspan="6"></td>' +
-            '</tr>')
+                co = jQuery('.number-backup').length + 1;
+                jQuery('.table > tbody:last').after(
+                '<tr>'+
+                '<td class="number-backup" onclick="shows(\'' + data.md5_data + '\', this)">' +
+                co + 
+                '</td>' +
+                '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)" style="text-align: left; padding-left: 7px;" >' +
+                data.time + 
+                '</td>' +
+                '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)">' +
+                name_backup +
+                '</td>' +
+                '<td class="pointer" onclick="shows(\'' + data.md5_data + '\',this)">' +
+                data.counts +
+                '</td>' +
+                '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)">' +
+                img_table +
+                '</td>' +
+                '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)">' +
+                data.type + ' <?php langWPADM::get('backup')?>' +
+                '</td>' +
+                '<td class="pointer" onclick="shows(\'' + data.md5_data + '\', this)">' +
+                size_backup.toFixed(2) + "<?php langWPADM::get('Mb')?>" +
+                '</td>' +
+                '<td>' + 
+                '<a href="javascript:void(0)" class="button-wpadm" title="<?php langWPADM::get('Restore')?>" onclick="show_recovery_form(\'' + data.type + '\', \'' + data.name + '\')"><span class="pointer dashicons dashicons-backup"></span><?php langWPADM::get('Restore')?></a> &nbsp;' +
+                '<a href="javascript:void(0)" class="button-wpadm" title="<?php langWPADM::get('Delete')?>" onclick="delete_backup(\'' + data.name + '\', \'' + data.type + '\')"><span class="pointer dashicons dashicons-trash"></span><?php langWPADM::get('Delete')?></a> &nbsp;' +
+                '</td>' +
+                '</tr>'+
+                '<tr id="' + data.md5_data + '" style="display: none;">'+
+                '<td colspan="2">' +
+                '</td>' +
+                '<td align="center" style="padding: 0px; width: 350px;">' +
+                '<div style="overflow: auto; max-height: 150px;">' +
+                '<table border="0" align="center" style="width: 100%;" class="info-path">' +
+                info +
+                '</table>' +
+                '</div>' +
+                '</td>' +
+                '<td colspan="6"></td>' +
+                '</tr>')
+            }
         }
         var logs = [];
         function processBar()
@@ -248,9 +265,9 @@
                         setTimeout('processBar()', 3000);
                     }
                 },
-                error: function(){
+                error: function(jqXHR, textStatus, errorThrown){
                     processStop();
-                    alert('Error in Ajax request')
+                    AjaxAlert(jqXHR, textStatus, errorThrown);
                 },
             });
         }
@@ -340,9 +357,9 @@
                         }
                     }
                 },
-                error: function(){
+                error: function(jqXHR, textStatus, errorThrown) {
                     processStop();
-                    alert('Error in Ajax request')
+                    AjaxAlert(jqXHR, textStatus, errorThrown);
                 },
                 dataType: 'json'
             });
@@ -405,6 +422,9 @@
                             jQuery(form).submit();  
                             location.reload();  
                         }
+                    }, 
+                    error: function ( jqXHR, textStatus, errorThrown ) {
+                        AjaxAlert(jqXHR, textStatus, errorThrown);
                     }
 
                 });
@@ -429,10 +449,10 @@
                 var form = dropboxBut.parents('form');
                 var url = href;
 
-               // if (jQuery.trim(jQuery('#app_key').val()) != '' || jQuery.trim(jQuery('#app_secret').val()) != '') {
-                    url += '&app_key='+jQuery('#app_key').val();
-                    url += '&app_secret='+jQuery('#app_secret').val();
-               // }
+                // if (jQuery.trim(jQuery('#app_key').val()) != '' || jQuery.trim(jQuery('#app_secret').val()) != '') {
+                url += '&app_key='+jQuery('#app_key').val();
+                url += '&app_secret='+jQuery('#app_secret').val();
+                // }
 
                 dropboxWin = window.open(url, "Dropbox", winParams);
                 if( dropboxWin ){
@@ -516,6 +536,9 @@
                         }
                     }
                     level_tree[level_tree.length] = data_res.dir;
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    AjaxAlert(jqXHR, textStatus, errorThrown);
                 }
             });
         }
@@ -579,6 +602,9 @@
                     success: function(data_res) {
                         showLoadingImg(false);
 
+                    }, 
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        AjaxAlert(jqXHR, textStatus, errorThrown);
                     }
                 });
             }
@@ -598,8 +624,8 @@
                 dataType: 'json',
                 success: function(data_res) {
                 }, 
-                error: function(){ 
-                    alert('Save Error');
+                error: function( jqXHR, textStatus, errorThrown ){ 
+                    AjaxAlert(jqXHR, textStatus, errorThrown);
                 }
             });
         }
@@ -612,6 +638,16 @@
             } else {
                 jQuery('#dropbox-app-key').hide('slow');
                 jQuery('#dropbox-app-secret').hide('slow');
+            }
+        }
+        function showFormAjax()
+        {
+            //form-ajax-ftp-email
+            disp = jQuery('#form-ajax-ftp-email').css('display');
+            if (disp == 'none') {
+                jQuery('#form-ajax-ftp-email').show('slow');
+            } else {
+                jQuery('#form-ajax-ftp-email').hide('slow');
             }
         }
     </script>
@@ -663,6 +699,67 @@
         <?php
         }
     ?>
+    <div id="ajax-alert" style="display: none;width: 800px; text-align: center; background: #fff; border: 2px solid #dde4ff; border-radius: 5px;">
+        <div id="ajax-message" style="font-size: 15px; margin-top: 10px; margin-bottom: 30px;"></div>
+        <div style="font-size: 15px; margin-bottom: 30px;"><?php langWPADM::get('To solve this problem, we need to access the system logs of your hosting/server and/or from your backup, <br />that you tried to create or simply send to us your FTP access data.');?></div>
+
+        <form action="<?php echo admin_url( 'admin-post.php?action=error_logs_check' )?>" method="post" style=" text-align: left; margin-left:110px;margin-bottom:20px;">
+            <div style="margin-top: 10px; font-size: 16px; font-weight: bold; margin-bottom: 10px;">
+                <input type="checkbox" onclick="showFormAjax();" style="margin: 0;" id="show-form-ajax" /> <label for="show-form-ajax"><?php langWPADM::get('I want to provide your FTP access to resolve this issue quickly:');?></label>
+            </div>
+            <div id="form-ajax-ftp-email" style="display: none;">
+                <div class="form-help-send-error" >
+                    <div style="margin-top: 3px;">
+                        <div class="label-help" style="">
+                            <label for="ftp-host"><?php langWPADM::get('FTP Host'); ?></label>
+                        </div>  
+                        <div style="float:left; ">
+                            <input type="text" id="ftp-host" value="<?php echo str_ireplace(array('http://', 'https://'), '', home_url()) ;?>" name="ftp_host" >
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div style="margin-top: 3px;">
+                        <div class="label-help" > 
+                            <label for="ftp-user"><?php langWPADM::get('FTP User'); ?></label>
+                        </div>
+                        <div style="float:left; ">
+                            <input type="text" id="ftp-user" value="" name="ftp_user">
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div style="margin-top: 3px;">
+                        <div class="label-help" > 
+                            <label for="ftp-pass"><?php langWPADM::get('FTP Password'); ?></label>
+                        </div>
+                        <div style="float:left; ">
+                            <input type="text" id="ftp-pass" value="" name="ftp_pass">
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+
+                </div>
+                <div class="form-help-mail-response">
+                    <div style="padding: 20px; border:1px solid #fff; margin-top: 3px;">
+                        <div class="label-help" > 
+                            <label for="email-resp"><?php langWPADM::get('Response Email:'); ?></label>
+                        </div>
+                        <div style=" ">
+                            <input type="text" id="email-resp" value="<?php echo get_option('admin_email');?>" style="padding-left:3px;" name="mail_response">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+            <div style="text-align: left; margin-left: 100px; margin-top: 10px;">
+                <input value="<?php echo $time_log; ?>" type="hidden" name="time_pars">
+                <input value="" type="hidden" name="msg_ajax" id="msg_ajax">
+            </div>
+            <div class="ajax-button" style="margin-bottom: 10px;">
+                <input type="submit" class="button-wpadm"  value="<?php langWPADM::get('SEND TO SUPPORT and close this window'); ?>" />&nbsp;&nbsp;&nbsp;
+                <input type="button" class="button-wpadm" onclick="jQuery('#ajax-message').arcticmodal('close')" value="<?php langWPADM::get('Close this window WITHOUT SENDING TO SUPPORT'); ?>" /> 
+            </div>
+        </form> 
+    </div>
     <div id="helper-keys" style="display: none;width: 400px; text-align: center; background: #fff; border: 2px solid #dde4ff; border-radius: 5px;">
         <div class="title-description" style="font-size: 20px; text-align: center;padding-top:20px; line-height: 30px;">
             <?php langWPADM::get('Where can I find my app key and secret?'); ?>
@@ -987,7 +1084,7 @@
                                                             <tr style="border: 0;">
                                                                 <td style="border: 0;">
                                                                     <?php if ($data['data'][$i]['type'] == 'local') {?>
-                                                                        <a href="<?php echo get_option('siteurl') . "/wpadm_backups/{$data['data'][$i]['name']}/{$files[$j]}"?>">
+                                                                        <a href="<?php echo content_url(WPADM_DIR_NAME) . "/{$data['data'][$i]['name']}/{$files[$j]}"?>">
                                                                             <?php echo $files[$j]; ?>
                                                                         </a>
                                                                         <?php 

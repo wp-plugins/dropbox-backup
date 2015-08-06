@@ -64,7 +64,6 @@ if (!class_exists('WPAdm_Queue')) {
             $host = $pu['host'];
             $path = isset($pu['path']) ? $pu['path'] . "/" : "/" ;
 
-            //WPAdm_Core::log('execute on host ' . $host);
             $data = array(
             'method'    =>  'queue_controller',
             'params'    =>  array(
@@ -118,16 +117,17 @@ if (!class_exists('WPAdm_Queue')) {
             }
             if (!file_exists($done_file)) {
                 $this->error  = 'No result of the command';
-                return false;
             } else {
                 $queue = unserialize(file_get_contents($done_file));
                 if (isset($queue['contexts'][0])) {
                     $this->error  = $queue['contexts'][0]->getError();
-                    return false;
                 }
             }
             if (file_exists($done_file)) {
                 unlink($done_file);
+            }
+            if (!empty($this->error) ) {
+                return false;
             }
             return true;
         }

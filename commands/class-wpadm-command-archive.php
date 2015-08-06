@@ -9,16 +9,12 @@ class WPadm_Command_Archive extends WPAdm_Сommand{
         $archive = new WPAdm_Archive($af, $context->get('to_file') . '.md5');
         $archive->setRemovePath($context->get('remove_path'));
         $files = $context->get('files');
-
-        // если привышен максимальный размер архива, создадим новый
         if (file_exists($af) && filesize($af) > $context->get('max_file_size')) {
-            //WPAdm_Core::log(filesize($af) . ', max=' . $context->get('max_file_size'));
             $af = $this->getNextArchiveName($context->get('to_file'));
             unset($archive);
             $archive = new WPAdm_Archive($af, $context->get('to_file') . '.md5');
             $archive->setRemovePath($context->get('remove_path'));
         }
-        //WPAdm_Core::log('Add to archive ' . $af);
         $archive->add(implode(',', $files));
         return true;
     }
@@ -31,7 +27,6 @@ class WPadm_Command_Archive extends WPAdm_Сommand{
         }
         $n = count($archives);
         $f = "{$name}-{$n}.zip";
-        //$f = array_pop($archives);
         return $f;
     }
 

@@ -33,28 +33,39 @@ if (!class_exists('WPAdm_Method_Local_Restore')) {
         }
         private function getFiles()
         {
+            $res = false;
             if (isset($this->params['name_backup']) && !empty($this->params['name_backup'])) {
-                $dir_backup = ABSPATH . 'wpadm_backups/' . $this->params['name_backup'];
-                if (is_dir($dir_backup)) { 
-                    WPAdm_Core::log('Read of Backup Files for Restore (' . $this->params['name_backup'] . ')');
-                    $dir_open = opendir($dir_backup);
-                    while($d = readdir($dir_open)) {
-                        if ($d != "." && $d != '..') {
-                            if(strpos($d, ".md5") !== false) {
-                                $this->md5_info = explode ("\n", file_get_contents( $dir_backup . "/$d" ) );
-                            } elseif(strpos($d, ".zip") !== false) {
-                                $this->files_resotre[$d] = $dir_backup . "/$d";
-                            }
-                        }
-                    }
-                    return true;
+                $res = self::readFiles( WPADM_DIR_BACKUP . '/' . $this->params['name_backup'] );
+                if ($res === false) {
+                    $res = self::readFiles(ABSPATH . WPADM_DIR_NAME . '/' . $this->params['name_backup']);
                 }
             } 
-            $str = str_replace('%s', $this->params['name_backup'], langWPADM::get('Error: folder is not exist (%s)', false));
-            WPAdm_Core::log($str);
-            $this->setError($str);
-            return false;
+            if ($res === false) {
+                $str = langWPADM::get('Website "%d" returned an error during backup restoration: Archive of Backup wasn\'t found "%s"', false, array('%d', '%s'), array(SITE_HOME, $this->params['name_backup']) );
+                WPAdm_Core::log($str);
+                $this->setError($str);
+            }
+            return $res;
 
+        }
+
+        private function readFiles($dir_backup)
+        {
+            if (is_dir($dir_backup)) { 
+                WPAdm_Core::log('Read of Backup Files for Restore (' . $this->params['name_backup'] . ')');
+                $dir_open = opendir($dir_backup);
+                while($d = readdir($dir_open)) {
+                    if ($d != "." && $d != '..') {
+                        if(strpos($d, ".md5") !== false) {
+                            $this->md5_info = explode ("\n", file_get_contents( $dir_backup . "/$d" ) );
+                        } elseif(strpos($d, ".zip") !== false) {
+                            $this->files_resotre[$d] = $dir_backup . "/$d";
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
         }
         private function setError($errors)
         {
@@ -75,9 +86,7 @@ if (!class_exists('WPAdm_Method_Local_Restore')) {
 
                 WPAdm_Core::log(langWPADM::get('Start Restore process', false));
                 $n = count($this->md5_info);
-                if (in_array('db', $this->params['types'])) {
-
-                }
+               
                 if (in_array('files', $this->params['types']) ) {
                     foreach($this->files_resotre as $key => $file) {
                         if (file_exists($file)) {
@@ -110,7 +119,7 @@ if (!class_exists('WPAdm_Method_Local_Restore')) {
                                 ->execute();
                                 unset($commandContext);
                             } else {
-                                $log = str_replace("%s",  $data[2], langWPADM::get('File (%s) not Exist', false) );
+                                $log = langWPADM::get('Website "%d" returned an error during backup restoration: Part Backup is not exist "%s" ', false, array('%d', '%s'), array(SITE_HOME, $data[2]) );
                                 $this->setError($log);
                                 WPAdm_Core::log($log);
                                 break;
@@ -119,7 +128,9 @@ if (!class_exists('WPAdm_Method_Local_Restore')) {
                     }
                 }
             } else {
-                WPAdm_Core::log(langWPADM::get('Files to restore is empty', false));
+                WPAdm_Core::log(
+                langWPADM::get('Website "%d" returned an error during restore backup: Files for restore is not exist, check permission your backup data or You can send to us support request using "Help" button on plugin page.', false, array('%d'), array(SITE_HOME) )
+                );
             }
             return $this->result;
         }

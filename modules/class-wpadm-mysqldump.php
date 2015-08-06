@@ -8,7 +8,7 @@ if (!class_exists('WPAdm_Mysqldump')) {
         public $host = '';
         public $user = '';
         public $password = '';
-        public $dbh ;
+        public $dbh = null ;
 
         private function connect($db = '') {
             WPAdm_Core::log("----------------------------------------------------");
@@ -16,10 +16,22 @@ if (!class_exists('WPAdm_Mysqldump')) {
             if (! class_exists('wpdb')) {
                 require_once ABSPATH . '/' . WPINC . '/wp-db.php';
             }
-            $this->dbh = new wpdb( $this->user, $this->password, $db, $this->host );
-            $errors = $this->dbh->last_error;
-            if ($errors) {
-                $this->setError( langWPADM::get('MySQL Connect failed: ' , false) . $errors);
+            if ($this->dbh === null) {
+                $this->dbh = new wpdb( $this->user, $this->password, $db, $this->host );
+                $errors = $this->dbh->last_error;
+                if ($errors) {
+                    $this->setError( langWPADM::get('MySQL Connect failed: ' , false) . $errors);
+                }
+                if (isset($this->dbh->error->errors) && count($this->dbh->error->errors) > 0 ) {
+                    $error = '';
+                    foreach($this->dbh->error->errors as $key => $err) {
+                        if ($key === 'db_connect_fail') {
+                            $error .= "Connect fail: Check the number of connections to the database or \n";
+                        }
+                        $error .= strip_tags( implode("\n", ($err) ) );
+                    }
+                    $this->setError( $error );
+                }
             }
             return $this->dbh;
         }
@@ -52,11 +64,20 @@ if (!class_exists('WPAdm_Mysqldump')) {
             $link = $this->connect($db);
             WPAdm_Core::log( langWPADM::get('MySQL of Dump was started' , false) );
             $tables = array();
+            WPAdm_Core::log( serialize($link) );
             $n = $link->query('SHOW TABLES');
             $result = $link->last_result;
-            if (!empty( $link->last_error ) && $n > 0) {
+            if (!empty( $link->last_error )) {
                 $this->setError($link->last_error);
+                return false;
             } 
+            if ($link->last_result === null) {     
+               /* foreach($link->error->errors as $key => $errors) {
+                    if ($key == db_connect_fail)
+                }*/
+                $this->setError(print_r(implode("\n", $link->error->errors), 1));
+                return false;
+            }
             for($i = 0; $i < $n; $i++ ) {
                 $row = array_values( get_object_vars( $result[$i] ) );
                 $tables[] = $row[0];

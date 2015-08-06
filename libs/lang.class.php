@@ -37,27 +37,25 @@ if ( ! class_exists("langWPADM")) {
             }
             return false;
         }
-        public static function get($key, $echo = true) 
+        public static function get($key, $echo = true, $replace_from = false, $replace_to = false) 
         {
+            $result = '';
             if(!empty($key)) {
                 if ( isset(self::$lang[self::$lang_name][$key]) ) {
-                    if ($echo) {
-                        echo self::$lang[self::$lang_name][$key];
-                        return true;
-                    } else {
-                        return self::$lang[self::$lang_name][$key];
-                    }
+                    $result = self::$lang[self::$lang_name][$key];
+                } else {
+                    $result = $key; 
                 }
             }    
-            /*if(!isset(self::$debug[$key])) {
-            self::$debug[$key] = $key;
-            file_put_contents( dirname(__FILE__) . "/debug.lang", print_r(self::$debug, 1) );
-            }  */
+            if ($replace_from && $replace_to) {
+                $result = str_replace($replace_from, $replace_to, $result);
+            }
+
             if ($echo) {
-                echo $key;
+                echo $result;
                 return true;
             } else {
-                return $key;
+                return $result;
             }
         }
         public static function getLanguageSystem()

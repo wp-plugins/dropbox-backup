@@ -29,7 +29,7 @@ if (!class_exists('WPAdm_Archive')) {
             if ($this->md5_file) {
                 $files = explode(',', $file); {
                     foreach($files as $f) {
-                        file_put_contents($this->md5_file, $f . "\t" . md5_file($f) . "\t" . basename($this->archive->zipname) . "\n", FILE_APPEND);
+                        file_put_contents($this->md5_file, $f . "\t" . @md5_file($f) . "\t" . basename($this->archive->zipname) . "\n", FILE_APPEND);
                     }
                 }
             }

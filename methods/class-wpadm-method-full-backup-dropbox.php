@@ -59,8 +59,8 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
             $this->name = $name;
 
             // folder for backup
-            $this->dir = ABSPATH . 'wpadm_backups/' . $this->name;
-            $error = WPAdm_Core::mkdir(ABSPATH . '/wpadm_backups/');
+            $this->dir = WPADM_DIR_BACKUP . '/' . $this->name;
+            $error = WPAdm_Core::mkdir(WPADM_DIR_BACKUP);
             if (!empty($error)) {
                 $this->result->setError($error);
                 $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
@@ -83,13 +83,13 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
 
             # create db dump
             WPAdm_Core::log( langWPADM::get('Start create db dump', false) );
-            $error = WPAdm_Core::mkdir(ABSPATH . 'wpadm_backup');
+            $error = WPAdm_Core::mkdir(WPADM_DIR_BACKUP);
             if (!empty($error)) {
                 $this->result->setError($error);
                 $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
                 return $this->result;
             }
-            $mysql_dump_file = ABSPATH . 'wpadm_backup/mysqldump.sql';
+            $mysql_dump_file = WPADM_DIR_BACKUP . '/mysqldump.sql';
             if (file_exists($mysql_dump_file)) {
                 unlink($mysql_dump_file);
             }
@@ -319,12 +319,12 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
             }
 
             #Removing TMP-files
-            WPAdm_Core::rmdir(ABSPATH . 'wpadm_backup');
+            WPAdm_Core::rmdir(WPADM_DIR_BACKUP . '/mysqldump.sql');
 
             #Removind old backups(if limit the number of stored backups)
             WPAdm_Core::log( langWPADM::get('Start removing old backups' , false) );
             if ($this->params['limit'] != 0) {
-                $files = glob(ABSPATH . 'wpadm_backups/*');
+                $files = glob(WPADM_DIR_BACKUP . '/*');
                 if (count($files) > $this->params['limit']) {
                     $files2 = array();
                     foreach($files as $f) {
@@ -358,11 +358,7 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
             }
             wpadm_class::backupSend();
             return $this->result;
-
-
         }
-
-
 
         public function createListFilesForArchive() {
             $folders = array();

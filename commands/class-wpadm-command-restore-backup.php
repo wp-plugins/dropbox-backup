@@ -19,8 +19,8 @@ if (!class_exists('WPadm_Command_Restore_Backup')) {
                 }
                 
                 if ($file_in_zip == 0) {
-                    WPAdm_Core::log( "ERROR Archived: " . $this->archive->errorInfo(true) );
-                    $context->setError( "ERROR Archived: " . $this->archive->errorInfo(true));  
+                    WPAdm_Core::log( langWPADM::get("Website \"%d\" returned an error during archive extracting: ", false, "%d", SITE_HOME) . $this->archive->errorInfo(true) );
+                    $context->setError( langWPADM::get("Website \"%d\" returned an error during archive extracting: ", false, "%d", SITE_HOME) . $this->archive->errorInfo(true) );  
                     return false;
                 }
                 //WPAdm_Core::log(print_r($file_in_zip, 1));
@@ -40,10 +40,9 @@ if (!class_exists('WPadm_Command_Restore_Backup')) {
                         }
                     }
                 } 
-
             } else {
-                $context->setError("File Archive Not Exist " . $context->get('zip_file'));
-                WPAdm_Core::log( "File Archive Not Exist " . $context->get('zip_file') );
+                $context->setError( langWPADM::get("Website \"%d\" returned an error: The necessary file of archive \"%f\" wasn't found ", false, array('%d', '%f'), array(SITE_HOME, $context->get('zip_file') ) ) );
+                WPAdm_Core::log( langWPADM::get("Website \"%d\" returned an error: The necessary file of archive \"%f\" wasn't found ", false, array('%d', '%f'), array(SITE_HOME, $context->get('zip_file') ) ) );
                 return false;
             }
             return true;

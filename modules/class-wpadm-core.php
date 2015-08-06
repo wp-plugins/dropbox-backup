@@ -28,7 +28,7 @@ if (!class_exists('WPAdm_Core')) {
         private $result;
 
         private $plugin;
-        
+
         public $name = '',
         $time = '';
 
@@ -272,7 +272,22 @@ if (!class_exists('WPAdm_Core')) {
                     }
                 }
                 @rmdir($dir);
+            } elseif (is_file($dir)) {
+                @unlink($dir);
             }
+        }
+        static function dir_writeble($dir)
+        {
+            $error = self::mkdir($dir);
+            $ret = true;
+            if (empty($dir)) {
+                @file_put_contents($dir . "/test", "hello World!!!");
+                if (!is_writable($dir . "/test") && filesize($dir . "/test") == 0) {
+                    $ret = false;
+                }
+                @unlink($dir . "/test");
+            }
+            return $ret;
         }
     }
 }

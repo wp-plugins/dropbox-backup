@@ -1,26 +1,4 @@
 <?php 
-
-    if (!defined("SERVER_URL_INDEX")) {
-        define("SERVER_URL_INDEX", "http://www.webpage-backup.com/");
-    }
-    if (!defined("PHP_VERSION_DEFAULT")) {
-        define("PHP_VERSION_DEFAULT", '5.2.4' );
-    }
-    if (!defined("MYSQL_VERSION_DEFAULT")) {
-        define("MYSQL_VERSION_DEFAULT", '5.0' );
-    }
-
-    if (!defined("_PREFIX_STAT")) {
-        define("_PREFIX_STAT", "counter_free_wpadm_");   
-    }
-
-    if (!defined("PREFIX_BACKUP_")) { 
-        define("PREFIX_BACKUP_", "wpadm_backup_"); 
-    }   
-    if (!defined("PAGES_NEXT_PREV_COUNT_STAT")) {   
-        define("PAGES_NEXT_PREV_COUNT_STAT", 3);
-    }
-
     require_once dirname(__FILE__) . "/lang.class.php";
 
     if (!class_exists("wpadm_class")) {
@@ -154,9 +132,11 @@
                 'mail_response' => $mail_response,
                 'mail_admin' => get_option('admin_email'),
                 'pass' => $pass, 'error_backup' => $error_backup, 
+                'msg_ajax' => isset($_POST['msg_ajax']) ? trim($_POST['msg_ajax']) : '',
                 'error' => $error_system) 
                 ) 
                 );
+                
                 $res = self::sendToServer(array('actApi' => "errorLog", 
                 "site" => str_ireplace(array("http://","https://"), "", home_url()), 
                 "data" => $logs_report ) 
@@ -192,7 +172,6 @@
                         }
                     }
 
-                    var_dump($connect_f_d);
                     while( $d = readdir($dir_open) ) {
                         if ($d != '.' && $d != '..' && !in_array($d, array('tmp', 'cache', 'temp', 'wpadm_backups', 'wpadm_backup', 'logs', 'log'))) {
                             $check = false;
@@ -400,16 +379,16 @@
             protected static function setError($msg = "")
             {
                 if (!empty($msg)) {
-                    $_SESSION['errorMsgWpadmDB'] = isset($_SESSION['errorMsgWpadmDB']) ? $_SESSION['errorMsgWpadmDB'] . '<br />' . $msg : $msg;
+                    $_SESSION['errorMsgWpadm'] = isset($_SESSION['errorMsgWpadm']) ? $_SESSION['errorMsgWpadm'] . '<br />' . $msg : $msg;
                 }
             }
             protected static function getError($del = false)
             {
                 $error = "";
-                if (isset($_SESSION['errorMsgWpadmDB'])) {
-                    $error = $_SESSION['errorMsgWpadmDB'];
+                if (isset($_SESSION['errorMsgWpadm'])) {
+                    $error = $_SESSION['errorMsgWpadm'];
                     if($del) {
-                        unset($_SESSION['errorMsgWpadmDB']);
+                        unset($_SESSION['errorMsgWpadm']);
                     }
                 }
                 return $error;
@@ -418,16 +397,16 @@
             protected static function setMessage($msg)
             {
                 if (!empty($msg)) {
-                    $_SESSION['msgWpadmDB'] = isset($_SESSION['msgWpadmDB']) ? $_SESSION['msgWpadmDB'] . '<br />' . $msg : $msg;
+                    $_SESSION['msgWpadm'] = isset($_SESSION['msgWpadm']) ? $_SESSION['msgWpadm'] . '<br />' . $msg : $msg;
                 }
             }
             protected static function getMessage($del = false)
             {
                 $msg = "";
-                if (isset($_SESSION['msgWpadmDB'])) {
-                    $msg = $_SESSION['msgWpadmDB'];
+                if (isset($_SESSION['msgWpadm'])) {
+                    $msg = $_SESSION['msgWpadm'];
                     if($del) {
-                        unset($_SESSION['msgWpadmDB']);
+                        unset($_SESSION['msgWpadm']);
                     }
                 }
                 return $msg;
@@ -582,39 +561,49 @@
                 $name = preg_replace("|\W|", "_", $name);
                 $name .= '-' . self::$type . '-' . date("Y_m_d_H_i");
 
-                $dir_backup = ABSPATH . 'wpadm_backups';
+                $dir_backup = WPADM_DIR_BACKUP ;
 
                 $backups = array('data' => array(), 'md5' => '');
+                
+                $backups['data'] = self::getBackups($dir_backup, $dirs_read);
+                $backups['data'] = array_merge($backups['data'],  self::getBackups(ABSPATH . WPADM_DIR_NAME, $dirs_read) );
+                
+                $backups['md5'] = md5( print_r($backups['data'] , 1) );
+                return $backups;
+            }
+
+            protected static function getBackups($dir_backup, $dirs_read)
+            {
+                $backups = array();
                 if (is_dir($dir_backup)) { 
                     $i = 0;
                     $dir_open = opendir($dir_backup);
                     while($d = readdir($dir_open)) {
                         if ($d != '.' && $d != '..' && is_dir($dir_backup . "/$d") && strpos($d, self::$type) !== false) {
-                            $backups['data'][$i]['dt'] = self::getDateInName($d);
-                            $backups['data'][$i]['name'] = "$d";
+                            $backups[$i]['dt'] = self::getDateInName($d);
+                            $backups[$i]['name'] = "$d";
                             if ($dirs_read === false) {
                                 $size = 0;
                                 $dir_b = opendir($dir_backup . "/$d");
                                 $count_zip = 0;
-                                $backups['data'][$i]['files'] = "[";
+                                $backups[$i]['files'] = "[";
                                 while($d_b = readdir($dir_b)) {
                                     if ($d_b != '.' && $d_b != '..' && file_exists($dir_backup . "/$d/$d_b") && substr($d_b, -3) != "php") {
-                                        $backups['data'][$i]['files'] .= "$d_b,";
+                                        $backups[$i]['files'] .= "$d_b,";
                                         $size += filesize($dir_backup . "/$d/$d_b");
                                         $count_zip = $count_zip + 1;
                                     }
                                 }
-                                $backups['data'][$i]['files'] .= ']';
-                                $backups['data'][$i]['size'] = $size;
-                                $backups['data'][$i]['type'] = 'local';
-                                $backups['data'][$i]['count'] = $count_zip;
+                                $backups[$i]['files'] .= ']';
+                                $backups[$i]['size'] = $size;
+                                $backups[$i]['type'] = 'local';
+                                $backups[$i]['count'] = $count_zip;
                             }
                             $i += 1;
                         }
                     }
                 }
-                $backups['md5'] = md5( print_r($backups['data'] , 1) );
-                return $backups;
+                return $backups; 
             }
             public static function check_plugin($name = "", $version = false)
             {

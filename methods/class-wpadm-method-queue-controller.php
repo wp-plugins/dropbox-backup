@@ -46,7 +46,6 @@ if (!class_exists('WPAdm_Method_Queue_Controller')) {
         private $id = '';
     
         public function __construct($params) {
-            //WPAdm_Core::log("Запуск очереди. Параметры: " . print_r($params, true));
             $this->stime = time();
             parent::__construct($params);
             $this->queue_file = WPAdm_Core::getTmpDir() . '/' . $this->params['id'] . '.queue';
@@ -54,9 +53,7 @@ if (!class_exists('WPAdm_Method_Queue_Controller')) {
                 $this->log("queue-file not exists: {$this->queue_file}");
                 exit;
             }
-            //WPAdm_Core::log('Открываем файл очереди ' . $this->queue_file);
             $queue = unserialize(file_get_contents($this->queue_file));
-            //WPAdm_Core::log(print_r($queue, true));
             $this->id = $queue['id'];
             $this->step = (isset($queue['step']) && (int)$queue['step'] > 1) ? (int)$queue['step']+1 : 1;
             $this->contexts = $queue['contexts'];
@@ -65,28 +62,24 @@ if (!class_exists('WPAdm_Method_Queue_Controller')) {
     
         public function getResult()
         {
-            // пока время не закончилось и есть задачи - выполняем
             while(!$this->timeIsOver() && $context = $this->getNextContext()) {
                 $com = $context->get('command');
                 $cmd = WPAdm_Command_Factory::getCommand($com);
                 if ($cmd === null) {
-                    $this->result->setError('Command error: ' . $com . ' : '. 'Command not found: ' . $com);
+                    $this->result->setError( langWPADM::get('Website "%d" returned an error: Command "%com" not found. To solve this problem, we need to access the system logs of your hosting/server and/or from your backup, that you tried to create or simply send to us your FTP access data. You can send to us support request using "Help" button on plugin page.', false, array('%d', '%com'), array(SITE_HOME, $com ) ) );
                     $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
                     array_unshift($this->contexts, $context);
                     $this->done();
                     return $this->result;
                 } elseif (!$cmd->execute($context)) {
-                    //произошла какая то ошибка
-                    $this->result->setError('Command error: ' . $com . ' : '. $context->getError());
+                    $this->result->setError( langWPADM::get('Website "%d" returned some unknown error during command "%com" was running. To solve this problem, we need to access the system logs of your hosting/server and/or from your backup, that you tried to create or simply send to us your FTP access data. You can send to us support request using "Help" button on plugin page.', false, array('%d', '%com'), array(SITE_HOME, $com ) ) );
                     $this->result->setResult(WPAdm_Result::WPADM_RESULT_ERROR);
                     array_unshift($this->contexts, $context);
                     $this->done();
                     return $this->result;
                 } else {
-                    //команда выполнена успешно
-                    //WPAdm_Core::log("Команда выполнена: {$com}");
+                    
                 }
-                //продолжаем работу
             }
     
             if ($this->step >= self::MAX_COUNT_STEPS) {
@@ -125,7 +118,6 @@ if (!class_exists('WPAdm_Method_Queue_Controller')) {
         }
     
         private function restart() {
-            $this->log('restart(' . $this->step .'): ' . $this->id);
             $this->step ++;
             $url = get_option('siteurl');
             $pu = parse_url($url);

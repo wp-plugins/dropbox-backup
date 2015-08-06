@@ -2,13 +2,14 @@
 /*
 Plugin Name: Dropbox Backup & Restore
 Description: Dropbox Backup & Restore Plugin to create Dropbox Full Backup (Files + Database) of your Web Page
-Version: 1.2.9.4
+Version: 1.2.9.5
 */
 
 if (!defined('DRBBACKUP_BASE_DIR')) {
     define('DRBBACKUP_BASE_DIR', dirname(__FILE__));
 }
 
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '/modules/constant.php';
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '/functions/wpadm.php';
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '/main/wpadm-class-wp.php';
 

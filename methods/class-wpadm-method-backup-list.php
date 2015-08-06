@@ -7,7 +7,7 @@ if (!class_exists('WPAdm_Method_Backup_List')) {
     class WPAdm_Method_Backup_List extends WPAdm_Method_Class {
         public function getResult()
         {
-            $backups_dir = ABSPATH . '/wpadm_backups/';
+            $backups_dir = WPADM_DIR_BACKUP . '/';
             $dirs = glob($backups_dir . '*');
     
             $backups = array();
