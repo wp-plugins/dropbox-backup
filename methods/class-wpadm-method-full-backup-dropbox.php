@@ -459,6 +459,9 @@ if (!class_exists('WPadm_Method_Full_Backup_Dropbox')) {
                 WPAdm_Core::log('Skip dir(cache) ' . $directory);
                 return array();
             }
+            if(strpos($directory, 'wpadm_backups') !== false) {
+                return array();
+            }
 
             if ($handle = opendir($directory)) {
                 while (false !== ($file = readdir($handle))) {
