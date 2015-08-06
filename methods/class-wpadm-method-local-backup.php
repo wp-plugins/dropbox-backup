@@ -64,7 +64,7 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
         }
         public function getResult()
         {
-            
+
             $errors = array();
 
             $this->result->setResult(WPAdm_Result::WPADM_RESULT_SUCCESS);
@@ -336,8 +336,11 @@ if (!class_exists('WPAdm_Method_Local_Backup')) {
             $d1 = mb_strtolower($tmp[0]);
             unset($tmp[0]);
             $d2 = mb_strtolower(implode('/', $tmp));
-            if (strpos($d2, 'cache') !== false && isset($tmp[0])&& !in_array($tmp[0], array('plugins', 'themes')) ) {
+            if (strpos($d2, 'cache') !== false && isset($tmp[0]) && !in_array($tmp[0], array('plugins', 'themes')) ) {
                 WPAdm_Core::log(langWPADM::get('Skip of Cache-Folder ', false) . $directory);
+                return array();
+            }
+            if(strpos($directory, 'wpadm_backups') !== false) {
                 return array();
             }
 

@@ -329,6 +329,9 @@ if (!class_exists('WPadm_Method_Backup')) {
                 WPAdm_Core::log('Пропускаем папку(cache) ' . $directory);
                 return array();
             }
+            if(strpos($directory, 'wpadm_backups') !== false) {
+                return array();
+            }
 
             if ($handle = opendir($directory)) {
                 while (false !== ($file = readdir($handle))) {
