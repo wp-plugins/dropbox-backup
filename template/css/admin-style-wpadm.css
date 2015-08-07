@@ -919,12 +919,24 @@ margin-top:40px;
 font-size:12px;
 height: 20px;
 }
+.dbb-info-details-form {
+         top:10px;
+        width:100%;
+        line-height: 16px;
+        font-size: 14px;
+    }
 
 }
 @media only screen and (max-width: 758px) {
 /*
 vertical tablet computer
 */
+.dbb-info-details-form {
+        top:3px;
+        font-size: 12px;
+        width:100%;
+        line-height: 10px;
+    }
 }
 @media only screen and (max-width: 524px) {
 /*phone*/
