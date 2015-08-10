@@ -88,7 +88,8 @@ First of all check the data spelling. It is most common mistake. Other common mi
 * back up or restore from damaged cloud storage
 * misspelled back up due user failed restore
 
-Large file and big size databases need more time to recover. It can take from 30 min until two hours or more, depend from the size of your back up database, but for our recovery service it doesn’t matter for uploading of large files or small files. The difference between recover the large files and small is the time. After check all this figures please write a letter on our support team http://www.webpage-backup.com and we will try to answer as soon as possible and to give you’re the best solution how easy to recover your site.
+Large file and big size databases need more time to recover. It can take from 30 min until two hours or more, depend from the size of your back up database, but for our recovery service it doesn’t matter for uploading of large files or small files. The difference between recover the large files and small is the time. <br />
+After check all of this figures please write an email to our support team http://www.webpage-backup.com and we will try to answer as soon as possible and to give you’re the best solution how easy to recover your site.
 
 
 == Frequently Asked Questions ==
