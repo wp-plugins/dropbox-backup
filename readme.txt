@@ -5,7 +5,7 @@ Donate link: http://www.wpadm.com/donate
 URI: http://www.wpadm.com/dropbox-backup
 Tags: dropbox, backup, dropbox backup, database, file, full backup, manage, sicherung, database backup, file backup, page backup, page, web, web backup, web page, synchronize, clone, duplicate, move, web page backup, site, site backup, back up, cloud, Cloud Files, cloud backup, db backup, dump, german, migrate, multisite, Russian, schedule, storage, time, upload, data bank, zip, archive, backups, restore, db, recover, recovery
 Requires at least: 3.9
-Tested up to: 4.2.3
+Tested up to: 4.2.4
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
