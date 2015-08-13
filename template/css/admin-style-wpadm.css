@@ -940,4 +940,10 @@ vertical tablet computer
 }
 @media only screen and (max-width: 524px) {
 /*phone*/
+.dbb-info-details-form {
+        top:1px;
+        font-size: 10px;
+        width:80%;
+        line-height: 8px;
+    }
 }
