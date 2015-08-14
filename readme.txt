@@ -46,7 +46,7 @@ If you need help with the plugin or you want to report a bug please refer to htt
 = Very easy and secure Dropbox Backup and Restoration (website / web page restore from backup) =
 
 Usefull additional functions can be found at www.wpadm.com in the User profile.
-DropBox Backup is a new plugin, so we tryed have to provide a bug-free plugin/widget. We are maintain this project.
+DropBox Backup is a new plugin, so we tryed to provide a bug-free plugin/widget. We are maintain this project.
 
 Information about privacy: AFTER the user has been registered at WPAdm service AND has confirmed their registration,
 our plugin will get the minimum requirements of php and mysql configuration, version and language of wordpress.
