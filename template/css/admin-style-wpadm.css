@@ -920,11 +920,15 @@ font-size:12px;
 height: 20px;
 }
 .dbb-info-details-form {
-         top:10px;
-        width:100%;
-        line-height: 16px;
-        font-size: 14px;
-    }
+    top:10px;
+    width:100%;
+    line-height: 16px;
+    font-size: 14px;
+}
+.dbb-info-details-form .button-submit {
+    font-size:14px;
+    padding:5px;
+}
 
 }
 @media only screen and (max-width: 758px) {
@@ -937,6 +941,10 @@ vertical tablet computer
         width:100%;
         line-height: 10px;
     }
+.dbb-info-details-form .button-submit {
+    font-size:12px;
+    padding:3px;
+}
 }
 @media only screen and (max-width: 524px) {
 /*phone*/
@@ -946,4 +954,8 @@ vertical tablet computer
         width:80%;
         line-height: 8px;
     }
+.dbb-info-details-form .button-submit {
+    font-size:10px;
+    padding:1px;
+}
 }
